@@ -1,0 +1,157 @@
+allprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'idea'
+    apply plugin: 'signing'
+    apply plugin: 'maven-publish'
+
+    group = projGroupId
+    version = projVersion
+
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        // temporary maven repositories
+        maven { url 'https://s01.oss.sonatype.org/content/repositories/releases' }
+        maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots' }
+    }
+
+    dependencies {
+        api 'org.joml:joml:1.10.5'
+
+        compileOnly 'org.jetbrains:annotations:23.0.0'
+        testCompileOnly 'org.jetbrains:annotations:23.0.0'
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.compilerArgs += '--enable-preview'
+    }
+
+    jar {
+        manifestContentCharset 'utf-8'
+        metadataCharset 'utf-8'
+        from 'LICENSE'
+        manifest.attributes(
+            'Specification-Title': projName,
+            'Specification-Vendor': orgName,
+            'Specification-Version': '0',
+            'Implementation-Title': projName,
+            'Implementation-Vendor': orgName,
+            'Implementation-Version': archiveVersion
+        )
+    }
+
+    tasks.register("sourcesJar", Jar) {
+        dependsOn(classes)
+        archiveClassifier.set 'sources'
+        from sourceSets.main.allSource, 'LICENSE'
+    }
+
+    tasks.register("javadocJar", Jar) {
+        dependsOn(javadoc)
+        archiveClassifier.set 'javadoc'
+        from javadoc, 'LICENSE'
+    }
+
+    artifacts {
+        archives tasks.javadocJar, tasks.sourcesJar
+    }
+
+    java {
+        withJavadocJar()
+        withSourcesJar()
+    }
+
+    javadoc {
+        failOnError = false
+        options.encoding 'UTF-8'
+        options.charSet 'UTF-8'
+        options.author true
+        options.locale 'en_US'
+        options.links "https://docs.oracle.com/en/java/javase/${sourceCompatibility}/docs/api/"
+    }
+
+    // You have to add 'OSSRH_USERNAME', 'OSSRH_PASSWORD', 'signing.keyId',
+    // 'signing.password' and 'signing.secretKeyRingFile' to
+    // GRADLE_USER_HOME/gradle.properties
+    publishing.repositories {
+        maven {
+            name = "OSSRH"
+            credentials {
+                username = project.findProperty("OSSRH_USERNAME") ?: "null"
+                password = project.findProperty("OSSRH_PASSWORD") ?: "null"
+            }
+            url = version.endsWith('-SNAPSHOT')
+                ? "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                : "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+        }
+    }
+
+    publishing.publications {
+        it.register("mavenJava", MavenPublication) {
+            groupId = projGroupId
+            artifactId = archivesBaseName
+            version = projVersion
+            description = projDesc
+            from components.java
+            pom {
+                name = projName
+                description = projDesc
+                url = "https://github.com/$projVcs"
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = "https://raw.githubusercontent.com/$projVcs/$projBranch/LICENSE"
+                    }
+                }
+                organization {
+                    name = orgName
+                    url = orgUrl
+                }
+                developers {
+                    String[] prop = project.developers.split(',')
+                    for (String s : prop) {
+                        String[] dev = s.split(':', 3)
+                        developer {
+                            id = dev[0]
+                            name = dev[1]
+                            email = dev[2]
+                        }
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/${projVcs}.git"
+                    developerConnection = "scm:git:https://github.com/${projVcs}.git"
+                    url = "https://github.com/${projVcs}.git"
+                }
+            }
+        }
+    }
+}
+
+subprojects {
+    dependencies {
+        implementation(rootProject)
+    }
+}
+
+archivesBaseName = projArtifactId
+
+dependencies {
+    constraints {
+        api "io.github.xenfork:fork-engine-lwjgl3-backend:$version"
+    }
+}
+
+javadoc {
+    options.windowTitle "ForkEngine $projVersion JavaDoc"
+}
+
+signing {
+    if (!version.endsWith('-SNAPSHOT') && Boolean.parseBoolean(System.getProperty("gpg.signing", "true")))
+        sign publishing.publications
+}
+
+idea.module.inheritOutputDirs = true

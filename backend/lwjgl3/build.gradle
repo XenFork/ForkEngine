@@ -1,0 +1,33 @@
+import org.gradle.internal.os.OperatingSystem
+
+archivesBaseName = "$projArtifactId-lwjgl3-backend"
+
+def osArch = System.getProperty("os.arch")
+switch (OperatingSystem.current()) {
+    case OperatingSystem.LINUX:
+        project.ext.lwjglNatives = osArch.startsWith("arm") || osArch.startsWith("aarch64")
+            ? "linux-${osArch.contains("64") || osArch.startsWith("armv8") ? "arm64" : "arm32"}"
+            : "linux"
+        break
+    case OperatingSystem.MAC_OS:
+        project.ext.lwjglNatives = osArch.startsWith("aarch64") ? "macos-arm64" : "macos"
+        break
+    case OperatingSystem.WINDOWS:
+        project.ext.lwjglNatives = osArch.contains("64")
+            ? "windows${osArch.startsWith("aarch64") ? "-arm64" : ""}"
+            : "windows-x86"
+        break
+}
+
+dependencies {
+    api platform("org.lwjgl:lwjgl-bom:3.3.1")
+
+    for (String depend in ['', '-glfw', '-opengl', '-stb', '-jemalloc']) {
+        api "org.lwjgl:lwjgl$depend"
+        testRuntimeOnly "org.lwjgl:lwjgl$depend::natives-$lwjglNatives"
+    }
+}
+
+javadoc {
+    options.windowTitle "ForkEngine LWJGL3 Backend $projVersion JavaDoc"
+}

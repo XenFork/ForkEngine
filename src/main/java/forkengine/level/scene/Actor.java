@@ -22,25 +22,13 @@
  * SOFTWARE.
  */
 
-package forkengine.level.model;
+package forkengine.level.scene;
 
 /**
- * The base model.
+ * The actor, or game object.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class Model implements AutoCloseable {
-    /**
-     * Creates the rectangle model builder.
-     *
-     * @return the rectangle model builder.
-     */
-    public static Rectangle rectangle() {
-        return new Rectangle();
-    }
-
-    @Override
-    public void close() {
-    }
+public class Actor {
 }

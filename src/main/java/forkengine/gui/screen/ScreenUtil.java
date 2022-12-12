@@ -25,6 +25,7 @@
 package forkengine.gui.screen;
 
 import forkengine.core.ForkEngine;
+import org.intellij.lang.annotations.MagicConstant;
 
 /**
  * The screen util.
@@ -45,7 +46,8 @@ public final class ScreenUtil {
      *
      * @param flag the clear flag.
      */
-    public static void clear(int flag) {
+    public static void clear(@MagicConstant(flags = {DEPTH_BUFFER_BIT, STENCIL_BUFFER_BIT, COLOR_BUFFER_BIT})
+                             int flag) {
         ForkEngine.gl.clear(flag);
     }
 

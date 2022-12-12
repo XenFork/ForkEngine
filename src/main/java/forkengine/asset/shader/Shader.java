@@ -36,6 +36,10 @@ import static forkengine.core.ForkEngine.gl;
 /**
  * The base shader program.
  *
+ * <h2>Loading Shaders</h2>
+ * To load shaders, use {@link #attach(int)}, {@link Builder#source(String) source(String)}, {@link Builder#compile() compile()},
+ * {@link #link()}, {@link #detach(Builder)} and {@link Builder#close()}.
+ *
  * @author squid233
  * @since 0.1.0
  */
@@ -109,8 +113,19 @@ public abstract class Shader extends Asset {
          * @param msg the message.
          * @throws IllegalStateException if failed to compile the shader.
          */
-        public void compileThrow(Supplier<String> msg) throws IllegalStateException {
+        public Builder compileThrow(Supplier<String> msg) throws IllegalStateException {
             if (!compile()) throw exception(msg.get());
+            return this;
+        }
+
+        /**
+         * Compiles this shader or throw with info log if failed.
+         *
+         * @throws IllegalStateException if failed to compile the shader.
+         */
+        public Builder compileThrowLog() throws IllegalStateException {
+            if (!compile()) throw exception(getInfoLog());
+            return this;
         }
 
         /**

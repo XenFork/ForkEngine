@@ -29,6 +29,10 @@ import forkengine.backend.lwjgl3.LWJGL3App;
 import forkengine.core.Game;
 import forkengine.core.GameCreateInfo;
 import forkengine.gui.screen.ScreenUtil;
+import forkengine.level.model.Model;
+import forkengine.level.model.VertexElement;
+import forkengine.level.model.VertexLayout;
+import forkengine.util.DataType;
 
 import static org.lwjgl.opengl.GL30C.*;
 
@@ -40,14 +44,15 @@ import static org.lwjgl.opengl.GL30C.*;
  */
 public final class RectangleGame extends Game {
     private Shader shader;
+    private Model model;
     private int vao, vbo;
 
     @Override
     public void init() {
         super.init();
         shader = Shader.create();
-        Shader.Builder vsh = shader.attach(Shader.VERTEX_SHADER).source(
-            """
+        Shader.Builder vsh = shader.attach(Shader.VERTEX_SHADER)
+            .source("""
                 #version 330 core
                 layout (location = 0) in vec2 Position;
                 layout (location = 1) in vec3 Color;
@@ -56,21 +61,36 @@ public final class RectangleGame extends Game {
                     gl_Position = vec4(Position, 0.0, 1.0);
                     vertexColor = vec4(Color, 1.0);
                 }
-                """);
-        Shader.Builder fsh = shader.attach(Shader.FRAGMENT_SHADER).source(
-            """
+                """)
+            .compileThrowLog();
+        Shader.Builder fsh = shader.attach(Shader.FRAGMENT_SHADER)
+            .source("""
                 #version 330 core
                 in vec4 vertexColor;
                 out vec4 FragColor;
                 void main() {
                     FragColor = vertexColor;
                 }
-                """);
-        vsh.compileThrow(vsh::getInfoLog);
-        fsh.compileThrow(fsh::getInfoLog);
+                """)
+            .compileThrowLog();
         shader.linkThrow(shader::getInfoLog);
         shader.detach(vsh).close();
         shader.detach(fsh).close();
+
+        VertexElement positionElement = VertexElement.builder(DataType.FLOAT, 2)
+            .name("Position")
+            .index(0)
+            .build();
+        VertexElement colorElement = VertexElement.builder(DataType.FLOAT, 3)
+            .name("Color")
+            .index(1)
+            .build();
+        VertexLayout layout = VertexLayout.interleaved()
+            .addElement(positionElement)
+            .addElement(colorElement);
+
+        model = Model.rectangle()
+            .buildStatic(layout);
 
         vao = glGenVertexArrays();
         vbo = glGenBuffers();
@@ -86,7 +106,6 @@ public final class RectangleGame extends Game {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
-        glBindVertexArray(0);
     }
 
     @Override
@@ -95,24 +114,23 @@ public final class RectangleGame extends Game {
         shader.use();
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
-        glBindVertexArray(0);
-        Shader.useProgram(0);
         super.render();
     }
 
     @Override
     public void exit() {
         shader.close();
+        model.close();
         glDeleteVertexArrays(vao);
         glDeleteBuffers(vbo);
         super.exit();
     }
 
     public static void main(String[] args) {
-        new RectangleGame().run(GameCreateInfo.of(createInfo -> {
-            createInfo.width = 800;
-            createInfo.height = 640;
-            createInfo.title = "Rectangle Game";
-        }), LWJGL3App.getInstance());
+        new RectangleGame().run(new GameCreateInfo()
+                .width(800)
+                .height(640)
+                .title("Rectangle Game"),
+            LWJGL3App.getInstance());
     }
 }

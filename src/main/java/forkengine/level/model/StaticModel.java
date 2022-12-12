@@ -25,22 +25,10 @@
 package forkengine.level.model;
 
 /**
- * The base model.
+ * The static model, which is built to the vertex buffer.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class Model implements AutoCloseable {
-    /**
-     * Creates the rectangle model builder.
-     *
-     * @return the rectangle model builder.
-     */
-    public static Rectangle rectangle() {
-        return new Rectangle();
-    }
-
-    @Override
-    public void close() {
-    }
+public class StaticModel extends Model {
 }

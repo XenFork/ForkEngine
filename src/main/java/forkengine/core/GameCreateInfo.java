@@ -64,6 +64,72 @@ public final class GameCreateInfo {
     public int swapInterval = 0;
 
     /**
+     * Sets {@link #errorCallback}.
+     *
+     * @param errorCallback the new value.
+     * @return this.
+     */
+    public GameCreateInfo errorCallback(ObjIntConsumer<String> errorCallback) {
+        this.errorCallback = errorCallback;
+        return this;
+    }
+
+    /**
+     * Sets {@link #width}.
+     *
+     * @param width the new value.
+     * @return this.
+     */
+    public GameCreateInfo width(int width) {
+        this.width = width;
+        return this;
+    }
+
+    /**
+     * Sets {@link #height}.
+     *
+     * @param height the new value.
+     * @return this.
+     */
+    public GameCreateInfo height(int height) {
+        this.height = height;
+        return this;
+    }
+
+    /**
+     * Sets {@link #title}.
+     *
+     * @param title the new value.
+     * @return this.
+     */
+    public GameCreateInfo title(String title) {
+        this.title = title;
+        return this;
+    }
+
+    /**
+     * Sets {@link #monitor}.
+     *
+     * @param monitor the new value.
+     * @return this.
+     */
+    public GameCreateInfo monitor(long monitor) {
+        this.monitor = monitor;
+        return this;
+    }
+
+    /**
+     * Sets {@link #swapInterval}.
+     *
+     * @param swapInterval the new value.
+     * @return this.
+     */
+    public GameCreateInfo swapInterval(int swapInterval) {
+        this.swapInterval = swapInterval;
+        return this;
+    }
+
+    /**
      * Creates the creation info.
      *
      * @param consumer the consumer to set the arguments.

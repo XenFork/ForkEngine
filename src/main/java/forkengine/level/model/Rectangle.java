@@ -25,22 +25,19 @@
 package forkengine.level.model;
 
 /**
- * The base model.
+ * The rectangle model builder.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class Model implements AutoCloseable {
+public class Rectangle {
     /**
-     * Creates the rectangle model builder.
+     * Builds a static model.
      *
-     * @return the rectangle model builder.
+     * @param layout the layout of the model.
+     * @return the static model.
      */
-    public static Rectangle rectangle() {
-        return new Rectangle();
-    }
-
-    @Override
-    public void close() {
+    public StaticModel buildStatic(VertexLayout layout) {
+        return new StaticModel();
     }
 }

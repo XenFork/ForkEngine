@@ -30,5 +30,8 @@ package forkengine.level.model;
  * @author squid233
  * @since 0.1.0
  */
-public class Mesh {
+public class Mesh implements AutoCloseable {
+    @Override
+    public void close() {
+    }
 }

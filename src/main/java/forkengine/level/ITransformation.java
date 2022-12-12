@@ -22,25 +22,21 @@
  * SOFTWARE.
  */
 
-package forkengine.level.model;
+package forkengine.level;
+
+import org.joml.Matrix4fc;
 
 /**
- * The base model.
+ * The transformation.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class Model implements AutoCloseable {
+public interface ITransformation {
     /**
-     * Creates the rectangle model builder.
+     * Converts the transformation into a matrix.
      *
-     * @return the rectangle model builder.
+     * @return the matrix.
      */
-    public static Rectangle rectangle() {
-        return new Rectangle();
-    }
-
-    @Override
-    public void close() {
-    }
+    Matrix4fc toMatrix();
 }

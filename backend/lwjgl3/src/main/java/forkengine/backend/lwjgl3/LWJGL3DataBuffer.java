@@ -36,7 +36,7 @@ import java.nio.ByteBuffer;
  * @since 0.1.0
  */
 public class LWJGL3DataBuffer extends DataBuffer {
-    private final ByteBuffer buffer;
+    private ByteBuffer buffer;
 
     /**
      * Creates the data buffer.
@@ -49,37 +49,37 @@ public class LWJGL3DataBuffer extends DataBuffer {
     }
 
     @Override
-    public DataBuffer setByte(long offset, byte value) {
+    public DataBuffer putByte(long offset, byte value) {
         buffer.put((int) offset, value);
         return this;
     }
 
     @Override
-    public DataBuffer setShort(long offset, short value) {
+    public DataBuffer putShort(long offset, short value) {
         buffer.putShort((int) offset, value);
         return this;
     }
 
     @Override
-    public DataBuffer setInt(long offset, int value) {
+    public DataBuffer putInt(long offset, int value) {
         buffer.putInt((int) offset, value);
         return this;
     }
 
     @Override
-    public DataBuffer setLong(long offset, long value) {
+    public DataBuffer putLong(long offset, long value) {
         buffer.putLong((int) offset, value);
         return this;
     }
 
     @Override
-    public DataBuffer setFloat(long offset, float value) {
+    public DataBuffer putFloat(long offset, float value) {
         buffer.putFloat((int) offset, value);
         return this;
     }
 
     @Override
-    public DataBuffer setDouble(long offset, double value) {
+    public DataBuffer putDouble(long offset, double value) {
         buffer.putDouble((int) offset, value);
         return this;
     }
@@ -112,5 +112,11 @@ public class LWJGL3DataBuffer extends DataBuffer {
     @Override
     public double getDouble(long offset) {
         return buffer.getDouble((int) offset);
+    }
+
+    @Override
+    public DataBuffer realloc(long size) {
+        buffer = MemoryUtil.memRealloc(buffer, (int) size);
+        return this;
     }
 }

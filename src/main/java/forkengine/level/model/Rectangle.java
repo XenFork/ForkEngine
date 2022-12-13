@@ -38,6 +38,6 @@ public class Rectangle {
      * @return the static model.
      */
     public StaticModel buildStatic(VertexLayout layout) {
-        return new StaticModel();
+        return new StaticModel(layout, Model.Type.TRIANGLES, );
     }
 }

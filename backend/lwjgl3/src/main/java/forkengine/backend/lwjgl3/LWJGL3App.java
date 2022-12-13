@@ -25,7 +25,7 @@
 package forkengine.backend.lwjgl3;
 
 import forkengine.core.*;
-import forkengine.gl.IGLContext;
+import forkengine.gl.IGL;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -104,9 +104,9 @@ public final class LWJGL3App extends Application {
     }
 
     @Override
-    public IGLContext loadOpenGL(boolean forwardCompatible) {
+    public IGL loadOpenGL(boolean forwardCompatible) {
         GL.createCapabilities(forwardCompatible);
-        return LWJGL3GLContext.getInstance();
+        return LWJGL3GL.getInstance();
     }
 
     @Override

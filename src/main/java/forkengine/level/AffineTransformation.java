@@ -25,19 +25,30 @@
 package forkengine.level;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 /**
- * The transformation.
+ * The affine transformation, with a translation vector.
+ * <p>
+ * The translation is applied at last, that is, let the translation matrix be {@code T}, and the result will be {@code T * S * R * v}.
  *
  * @author squid233
  * @since 0.1.0
  */
-public interface ITransformation {
+public class AffineTransformation extends LinearTransformation {
+    private final Vector3f translate = new Vector3f();
+
     /**
-     * Applies this transformation to the given matrix.
+     * Gets the translation vector.
      *
-     * @param matrix the matrix to be applied.
-     * @return the matrix.
+     * @return the translation vector.
      */
-    Matrix4f applyMatrix(Matrix4f matrix);
+    public Vector3f translate() {
+        return translate;
+    }
+
+    @Override
+    public Matrix4f applyMatrix(Matrix4f matrix) {
+        return super.applyMatrix(matrix.translate(translate()));
+    }
 }

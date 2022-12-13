@@ -25,19 +25,39 @@
 package forkengine.level;
 
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 /**
- * The transformation.
+ * The linear transformation.
  *
  * @author squid233
  * @since 0.1.0
  */
-public interface ITransformation {
+public class LinearTransformation implements ITransformation {
+    private final Vector3f scale = new Vector3f(1);
+    private final Quaternionf rotate = new Quaternionf();
+
     /**
-     * Applies this transformation to the given matrix.
+     * Gets the scaling value.
      *
-     * @param matrix the matrix to be applied.
-     * @return the matrix.
+     * @return the scale vector.
      */
-    Matrix4f applyMatrix(Matrix4f matrix);
+    public Vector3f scale() {
+        return scale;
+    }
+
+    /**
+     * Gets the rotation value.
+     *
+     * @return the quaternion.
+     */
+    public Quaternionf rotate() {
+        return rotate;
+    }
+
+    @Override
+    public Matrix4f applyMatrix(Matrix4f matrix) {
+        return matrix.scale(scale()).rotate(rotate());
+    }
 }

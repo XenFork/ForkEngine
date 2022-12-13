@@ -24,6 +24,11 @@
 
 package forkengine.level.model;
 
+import forkengine.gl.IGL;
+
+import static forkengine.core.ForkEngine.gl;
+import static forkengine.gl.GLStateManager.bindVertexArray;
+
 /**
  * The static model, which is built to the vertex buffer.
  *
@@ -31,4 +36,41 @@ package forkengine.level.model;
  * @since 0.1.0
  */
 public class StaticModel extends Model {
+    private final VertexLayout layout;
+    private final Type type;
+    private final int vao;
+    private final int vbo;
+    private final int ebo;
+
+    /**
+     * Creates the static model with the given vertex layout and render type.
+     *
+     * @param layout the vertex layout.
+     * @param type   the render type.
+     * @param mesh   the mesh to be built.
+     */
+    public StaticModel(VertexLayout layout, Type type, Mesh mesh) {
+        this.layout = layout;
+        this.type = type;
+        vao = gl.genVertexArray();
+        vbo = gl.genBuffer();
+        ebo = gl.genBuffer();
+        bindVertexArray(vao);
+    }
+
+    /**
+     * Renders the model.
+     */
+    public void render() {
+        bindVertexArray(vao);
+        gl.drawElements(type.value(), , IGL.UNSIGNED_INT, 0);
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        gl.deleteVertexArray(vao);
+        gl.deleteBuffer(vbo);
+        gl.deleteBuffer(ebo);
+    }
 }

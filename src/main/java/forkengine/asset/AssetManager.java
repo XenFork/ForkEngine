@@ -22,22 +22,13 @@
  * SOFTWARE.
  */
 
-package forkengine.level;
-
-import org.joml.Matrix4f;
+package forkengine.asset;
 
 /**
- * The transformation.
+ * The asset manager.
  *
  * @author squid233
  * @since 0.1.0
  */
-public interface ITransformation {
-    /**
-     * Applies this transformation to the given matrix.
-     *
-     * @param matrix the matrix to be applied.
-     * @return the matrix.
-     */
-    Matrix4f applyMatrix(Matrix4f matrix);
+public class AssetManager {
 }

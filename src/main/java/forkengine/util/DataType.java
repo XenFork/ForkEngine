@@ -24,6 +24,8 @@
 
 package forkengine.util;
 
+import forkengine.gl.IGL;
+
 /**
  * The data types.
  *
@@ -34,35 +36,35 @@ public enum DataType {
     /**
      * The byte type.
      */
-    BYTE(0x1400, 1, "Byte"),
+    BYTE(IGL.BYTE, 1, "Byte"),
     /**
      * The unsigned byte type.
      */
-    UNSIGNED_BYTE(0x1401, 1, "Unsigned Byte"),
+    UNSIGNED_BYTE(IGL.UNSIGNED_BYTE, 1, "Unsigned Byte"),
     /**
      * The short type.
      */
-    SHORT(0x1402, 2, "Short"),
+    SHORT(IGL.SHORT, 2, "Short"),
     /**
      * The unsigned short type.
      */
-    UNSIGNED_SHORT(0x1403, 2, "Unsigned Short"),
+    UNSIGNED_SHORT(IGL.UNSIGNED_SHORT, 2, "Unsigned Short"),
     /**
      * The int type.
      */
-    INT(0x1404, 4, "Int"),
+    INT(IGL.INT, 4, "Int"),
     /**
      * The unsigned int type.
      */
-    UNSIGNED_INT(0x1405, 4, "Unsigned Int"),
+    UNSIGNED_INT(IGL.UNSIGNED_INT, 4, "Unsigned Int"),
     /**
      * The float type.
      */
-    FLOAT(0x1406, 4, "Float"),
+    FLOAT(IGL.FLOAT, 4, "Float"),
     /**
      * The double type.
      */
-    DOUBLE(0x140A, 8, "Double");
+    DOUBLE(IGL.DOUBLE, 8, "Double");
 
     private final int value;
     private final int bytesSize;

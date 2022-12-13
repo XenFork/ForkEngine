@@ -24,6 +24,13 @@
 
 package forkengine.level.model;
 
+import org.joml.Vector3fc;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * The mesh.
  *
@@ -31,6 +38,19 @@ package forkengine.level.model;
  * @since 0.1.0
  */
 public class Mesh implements AutoCloseable {
+    private final Map<VertexElement, List<Vector3fc>> vertices = new HashMap<>();
+
+    /**
+     * Creates an empty mesh.
+     */
+    public Mesh() {
+    }
+
+    public Mesh addVertex(VertexElement element, Vector3fc vertex) {
+        vertices.computeIfAbsent(element, e -> new ArrayList<>()).add(vertex);
+        return this;
+    }
+
     @Override
     public void close() {
     }

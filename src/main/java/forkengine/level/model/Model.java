@@ -24,6 +24,8 @@
 
 package forkengine.level.model;
 
+import forkengine.gl.IGL;
+
 /**
  * The base model.
  *
@@ -31,6 +33,42 @@ package forkengine.level.model;
  * @since 0.1.0
  */
 public class Model implements AutoCloseable {
+    /**
+     * The model render type.
+     *
+     * @author squid233
+     * @since 0.1.0
+     */
+    public enum Type {
+        /**
+         * The points render
+         */
+        POINTS(IGL.POINTS),
+        /**
+         * The lines render
+         */
+        LINES(IGL.LINES),
+        /**
+         * The triangles render
+         */
+        TRIANGLES(IGL.TRIANGLES);
+
+        private final int value;
+
+        Type(int value) {
+            this.value = value;
+        }
+
+        /**
+         * Gets the enum value of this type.
+         *
+         * @return the enum value.
+         */
+        public int value() {
+            return value;
+        }
+    }
+
     /**
      * Creates the rectangle model builder.
      *

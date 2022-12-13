@@ -24,7 +24,7 @@
 
 package forkengine.core;
 
-import forkengine.gl.IGLContext;
+import forkengine.gl.IGL;
 
 /**
  * The Fork Engine global states.
@@ -44,5 +44,5 @@ public final class ForkEngine {
     /**
      * The OpenGL functions.
      */
-    public static IGLContext gl;
+    public static IGL gl;
 }

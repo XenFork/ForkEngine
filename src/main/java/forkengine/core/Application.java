@@ -24,7 +24,7 @@
 
 package forkengine.core;
 
-import forkengine.gl.IGLContext;
+import forkengine.gl.IGL;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.ObjIntConsumer;
@@ -79,7 +79,7 @@ public abstract class Application {
      * @param forwardCompatible {@code true} to creates a forward compatible context, which cannot access deprecated functions.
      * @return the OpenGL functions.
      */
-    public abstract IGLContext loadOpenGL(boolean forwardCompatible);
+    public abstract IGL loadOpenGL(boolean forwardCompatible);
 
     /**
      * Sets the swap interval for the current OpenGL or OpenGL ES context, i.e. the number of screen updates to wait from the time {@link Window#swapBuffers() SwapBuffers} was called

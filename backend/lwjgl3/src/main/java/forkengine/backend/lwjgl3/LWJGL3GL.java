@@ -26,7 +26,8 @@ package forkengine.backend.lwjgl3;
 
 import forkengine.asset.shader.Shader;
 import forkengine.asset.shader.ShaderUniform;
-import forkengine.gl.IGLContext;
+import forkengine.gl.IGL;
+import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.opengl.GL30C.*;
 
@@ -36,10 +37,10 @@ import static org.lwjgl.opengl.GL30C.*;
  * @author squid233
  * @since 0.1.0
  */
-public final class LWJGL3GLContext implements IGLContext {
-    private static final LWJGL3GLContext INSTANCE = new LWJGL3GLContext();
+public final class LWJGL3GL implements IGL {
+    private static final LWJGL3GL INSTANCE = new LWJGL3GL();
 
-    private LWJGL3GLContext() {
+    private LWJGL3GL() {
     }
 
     @Override
@@ -53,8 +54,13 @@ public final class LWJGL3GLContext implements IGLContext {
     }
 
     @Override
-    public ShaderUniform createUniform(int location, ShaderUniform.Type type) {
+    public @NotNull ShaderUniform createUniform(int location, ShaderUniform.Type type) {
         return new LWJGL3ShaderUniform(location, type);
+    }
+
+    @Override
+    public int getUniformLocation(int program, String name) {
+        return glGetUniformLocation(program, name);
     }
 
     @Override
@@ -87,12 +93,67 @@ public final class LWJGL3GLContext implements IGLContext {
         glBindVertexArray(array);
     }
 
+    @Override
+    public int genVertexArray() {
+        return glGenVertexArrays();
+    }
+
+    @Override
+    public void deleteVertexArray(int array) {
+        glDeleteVertexArrays(array);
+    }
+
+    @Override
+    public int genBuffer() {
+        return glGenBuffers();
+    }
+
+    @Override
+    public void bindBuffer(int target, int buffer) {
+        glBindBuffer(target, buffer);
+    }
+
+    @Override
+    public void deleteBuffer(int buffer) {
+        glDeleteBuffers(buffer);
+    }
+
+    @Override
+    public int getAttribLocation(int program, String name) {
+        return glGetAttribLocation(program, name);
+    }
+
+    @Override
+    public void bindAttribLocation(int program, int index, String name) {
+        glBindAttribLocation(program, index, name);
+    }
+
+    @Override
+    public void enableVertexAttribArray(int index) {
+        glEnableVertexAttribArray(index);
+    }
+
+    @Override
+    public void disableVertexAttribArray(int index) {
+        glDisableVertexAttribArray(index);
+    }
+
+    @Override
+    public void vertexAttribArrayPointer(int index, int size, int type, boolean normalized, int stride, long pointer) {
+        glVertexAttribPointer(index, size, type, normalized, stride, pointer);
+    }
+
+    @Override
+    public void drawElements(int mode, int count, int type, long indices) {
+        glDrawElements(mode, count, type, indices);
+    }
+
     /**
      * Gets the instance of this.
      *
      * @return this
      */
-    public static LWJGL3GLContext getInstance() {
+    public static LWJGL3GL getInstance() {
         return INSTANCE;
     }
 }

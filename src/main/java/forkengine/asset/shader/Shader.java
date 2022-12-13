@@ -26,9 +26,11 @@ package forkengine.asset.shader;
 
 import forkengine.asset.Asset;
 import forkengine.gl.GLStateManager;
+import forkengine.level.model.VertexLayout;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import static forkengine.core.ForkEngine.gl;
@@ -54,6 +56,7 @@ public abstract class Shader extends Asset {
     public static final int VERTEX_SHADER = 0x8B31;
 
     private final int id;
+    private final Map<String, Integer> attribIndexCache = new HashMap<>();
     private final Map<String, ShaderUniform> uniformCache = new HashMap<>();
 
     /**
@@ -224,6 +227,85 @@ public abstract class Shader extends Asset {
     }
 
     /**
+     * Associates a generic vertex attribute index with a named attribute variable.
+     * <p>
+     * Attribute bindings do not go into effect until {@link #link()} is called. After a program object has been linked
+     * successfully, the index values for generic attributes remain fixed (and their values can be queried) until the next
+     * link command occurs.
+     *
+     * @param index the index of the generic vertex attribute to be bound.
+     * @param name  a null terminated string containing the name of the vertex shader attribute variable to which index is to be bound.
+     * @return this.
+     */
+    public Shader bindAttribLocation(int index, String name) {
+        attribIndexCache.put(name, index);
+        gl.bindAttribLocation(id(), index, name);
+        return this;
+    }
+
+    /**
+     * Associates the vertex attribute indexes with a vertex layout.
+     *
+     * @param layout the vertex layout to be bound.
+     * @return this.
+     * @see #bindAttribLocation(int, String)
+     */
+    public Shader bindLayout(VertexLayout layout) {
+        layout.forEach((element, index) -> this.bindAttribLocation(index, element.name()));
+        return this;
+    }
+
+    /**
+     * Returns the location of an attribute variable.
+     *
+     * @param name a null terminated string containing the name of the attribute variable whose location is to be queried
+     * @return the location of the attribute variable.
+     */
+    public int getAttribLocation(String name) {
+        return attribIndexCache.computeIfAbsent(name, s -> gl.getAttribLocation(id(), s));
+    }
+
+    /**
+     * Creates or gets a shader uniform with the given type.
+     *
+     * @param name the name of the uniform.
+     * @param type the type.
+     * @return the uniform, or empty if not found.
+     * @see #getUniform(String)
+     */
+    public Optional<ShaderUniform> createUniform(String name, ShaderUniform.Type type) {
+        Optional<ShaderUniform> uniform = getUniform(name);
+        if (uniform.isPresent()) {
+            return uniform;
+        }
+        final int location = gl.getUniformLocation(id(), name);
+        if (location == -1) {
+            return Optional.empty();
+        }
+        final ShaderUniform result = gl.createUniform(location, type);
+        uniformCache.put(name, result);
+        return Optional.of(result);
+    }
+
+    /**
+     * Gets a shader uniform with the given name.
+     *
+     * @param name the name of the uniform.
+     * @return the uniform, or empty if not found.
+     * @see #createUniform(String, ShaderUniform.Type)
+     */
+    public Optional<ShaderUniform> getUniform(String name) {
+        return Optional.ofNullable(uniformCache.get(name));
+    }
+
+    /**
+     * Uploads the uniforms.
+     */
+    public void uploadUniforms() {
+        uniformCache.values().forEach(uniform -> uniform.upload(id()));
+    }
+
+    /**
      * Gets the info log.
      *
      * @return the info log.
@@ -247,5 +329,7 @@ public abstract class Shader extends Asset {
     }
 
     @Override
-    public abstract void close();
+    public void close() {
+        uniformCache.values().forEach(ShaderUniform::close);
+    }
 }

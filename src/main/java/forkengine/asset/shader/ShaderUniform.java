@@ -236,7 +236,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param x x.
      */
     public void set(int x) {
-        buffer.setInt(0, x);
+        buffer.putInt(0, x);
         markDirty();
     }
 
@@ -247,7 +247,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param y y.
      */
     public void set(int x, int y) {
-        buffer.setInt(0, x).setInt(4, y);
+        buffer.putInt(0, x).putInt(4, y);
         markDirty();
     }
 
@@ -259,7 +259,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param z z.
      */
     public void set(int x, int y, int z) {
-        buffer.setInt(0, x).setInt(4, y).setInt(8, z);
+        buffer.putInt(0, x).putInt(4, y).putInt(8, z);
         markDirty();
     }
 
@@ -272,7 +272,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param w w.
      */
     public void set(int x, int y, int z, int w) {
-        buffer.setInt(0, x).setInt(4, y).setInt(8, z).setInt(12, w);
+        buffer.putInt(0, x).putInt(4, y).putInt(8, z).putInt(12, w);
         markDirty();
     }
 
@@ -282,7 +282,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param x x.
      */
     public void set(boolean x) {
-        buffer.setInt(0, x ? 1 : 0);
+        buffer.putInt(0, x ? 1 : 0);
         markDirty();
     }
 
@@ -293,7 +293,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param y y.
      */
     public void set(boolean x, boolean y) {
-        buffer.setInt(0, x ? 1 : 0).setInt(4, y ? 1 : 0);
+        buffer.putInt(0, x ? 1 : 0).putInt(4, y ? 1 : 0);
         markDirty();
     }
 
@@ -305,7 +305,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param z z.
      */
     public void set(boolean x, boolean y, boolean z) {
-        buffer.setInt(0, x ? 1 : 0).setInt(4, y ? 1 : 0).setInt(8, z ? 1 : 0);
+        buffer.putInt(0, x ? 1 : 0).putInt(4, y ? 1 : 0).putInt(8, z ? 1 : 0);
         markDirty();
     }
 
@@ -318,7 +318,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param w w.
      */
     public void set(boolean x, boolean y, boolean z, boolean w) {
-        buffer.setInt(0, x ? 1 : 0).setInt(4, y ? 1 : 0).setInt(8, z ? 1 : 0).setInt(12, w ? 1 : 0);
+        buffer.putInt(0, x ? 1 : 0).putInt(4, y ? 1 : 0).putInt(8, z ? 1 : 0).putInt(12, w ? 1 : 0);
         markDirty();
     }
 
@@ -328,7 +328,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param x x.
      */
     public void set(float x) {
-        buffer.setFloat(0, x);
+        buffer.putFloat(0, x);
         markDirty();
     }
 
@@ -339,7 +339,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param y y.
      */
     public void set(float x, float y) {
-        buffer.setFloat(0, x).setFloat(4, y);
+        buffer.putFloat(0, x).putFloat(4, y);
         markDirty();
     }
 
@@ -351,7 +351,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param z z.
      */
     public void set(float x, float y, float z) {
-        buffer.setFloat(0, x).setFloat(4, y).setFloat(8, z);
+        buffer.putFloat(0, x).putFloat(4, y).putFloat(8, z);
         markDirty();
     }
 
@@ -364,7 +364,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param w w.
      */
     public void set(float x, float y, float z, float w) {
-        buffer.setFloat(0, x).setFloat(4, y).setFloat(8, z).setFloat(12, w);
+        buffer.putFloat(0, x).putFloat(4, y).putFloat(8, z).putFloat(12, w);
         markDirty();
     }
 
@@ -374,7 +374,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param x x.
      */
     public void set(double x) {
-        buffer.setDouble(0, x);
+        buffer.putDouble(0, x);
         markDirty();
     }
 
@@ -385,7 +385,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param y y.
      */
     public void set(double x, double y) {
-        buffer.setDouble(0, x).setDouble(4, y);
+        buffer.putDouble(0, x).putDouble(4, y);
         markDirty();
     }
 
@@ -397,7 +397,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param z z.
      */
     public void set(double x, double y, double z) {
-        buffer.setDouble(0, x).setDouble(4, y).setDouble(8, z);
+        buffer.putDouble(0, x).putDouble(4, y).putDouble(8, z);
         markDirty();
     }
 
@@ -410,7 +410,7 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param w w.
      */
     public void set(double x, double y, double z, double w) {
-        buffer.setDouble(0, x).setDouble(4, y).setDouble(8, z).setDouble(12, w);
+        buffer.putDouble(0, x).putDouble(4, y).putDouble(8, z).putDouble(12, w);
         markDirty();
     }
 
@@ -501,10 +501,10 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param value the value.
      */
     public void set(Matrix2fc value) {
-        buffer.setFloat(0, value.m00())
-            .setFloat(4, value.m01())
-            .setFloat(8, value.m10())
-            .setFloat(12, value.m11());
+        buffer.putFloat(0, value.m00())
+            .putFloat(4, value.m01())
+            .putFloat(8, value.m10())
+            .putFloat(12, value.m11());
         markDirty();
     }
 
@@ -514,10 +514,10 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param value the value.
      */
     public void set(Matrix2dc value) {
-        buffer.setDouble(0, value.m00())
-            .setDouble(8, value.m01())
-            .setDouble(16, value.m10())
-            .setDouble(24, value.m11());
+        buffer.putDouble(0, value.m00())
+            .putDouble(8, value.m01())
+            .putDouble(16, value.m10())
+            .putDouble(24, value.m11());
         markDirty();
     }
 
@@ -527,15 +527,15 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param value the value.
      */
     public void set(Matrix3fc value) {
-        buffer.setFloat(0, value.m00())
-            .setFloat(4, value.m01())
-            .setFloat(8, value.m02())
-            .setFloat(12, value.m10())
-            .setFloat(16, value.m11())
-            .setFloat(20, value.m12())
-            .setFloat(24, value.m20())
-            .setFloat(28, value.m21())
-            .setFloat(32, value.m22());
+        buffer.putFloat(0, value.m00())
+            .putFloat(4, value.m01())
+            .putFloat(8, value.m02())
+            .putFloat(12, value.m10())
+            .putFloat(16, value.m11())
+            .putFloat(20, value.m12())
+            .putFloat(24, value.m20())
+            .putFloat(28, value.m21())
+            .putFloat(32, value.m22());
         markDirty();
     }
 
@@ -545,15 +545,15 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param value the value.
      */
     public void set(Matrix3dc value) {
-        buffer.setDouble(0, value.m00())
-            .setDouble(8, value.m01())
-            .setDouble(16, value.m02())
-            .setDouble(24, value.m10())
-            .setDouble(32, value.m11())
-            .setDouble(40, value.m12())
-            .setDouble(48, value.m20())
-            .setDouble(56, value.m21())
-            .setDouble(64, value.m22());
+        buffer.putDouble(0, value.m00())
+            .putDouble(8, value.m01())
+            .putDouble(16, value.m02())
+            .putDouble(24, value.m10())
+            .putDouble(32, value.m11())
+            .putDouble(40, value.m12())
+            .putDouble(48, value.m20())
+            .putDouble(56, value.m21())
+            .putDouble(64, value.m22());
         markDirty();
     }
 
@@ -563,22 +563,22 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param value the value.
      */
     public void set(Matrix4fc value) {
-        buffer.setFloat(0, value.m00())
-            .setFloat(4, value.m01())
-            .setFloat(8, value.m02())
-            .setFloat(12, value.m03())
-            .setFloat(16, value.m10())
-            .setFloat(20, value.m11())
-            .setFloat(24, value.m12())
-            .setFloat(28, value.m13())
-            .setFloat(32, value.m20())
-            .setFloat(36, value.m21())
-            .setFloat(40, value.m22())
-            .setFloat(44, value.m23())
-            .setFloat(48, value.m30())
-            .setFloat(52, value.m31())
-            .setFloat(56, value.m32())
-            .setFloat(60, value.m33());
+        buffer.putFloat(0, value.m00())
+            .putFloat(4, value.m01())
+            .putFloat(8, value.m02())
+            .putFloat(12, value.m03())
+            .putFloat(16, value.m10())
+            .putFloat(20, value.m11())
+            .putFloat(24, value.m12())
+            .putFloat(28, value.m13())
+            .putFloat(32, value.m20())
+            .putFloat(36, value.m21())
+            .putFloat(40, value.m22())
+            .putFloat(44, value.m23())
+            .putFloat(48, value.m30())
+            .putFloat(52, value.m31())
+            .putFloat(56, value.m32())
+            .putFloat(60, value.m33());
         markDirty();
     }
 
@@ -588,22 +588,22 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param value the value.
      */
     public void set(Matrix4dc value) {
-        buffer.setDouble(0, value.m00())
-            .setDouble(8, value.m01())
-            .setDouble(16, value.m02())
-            .setDouble(24, value.m03())
-            .setDouble(32, value.m10())
-            .setDouble(40, value.m11())
-            .setDouble(48, value.m12())
-            .setDouble(56, value.m13())
-            .setDouble(64, value.m20())
-            .setDouble(72, value.m21())
-            .setDouble(80, value.m22())
-            .setDouble(88, value.m23())
-            .setDouble(96, value.m30())
-            .setDouble(104, value.m31())
-            .setDouble(112, value.m32())
-            .setDouble(120, value.m33());
+        buffer.putDouble(0, value.m00())
+            .putDouble(8, value.m01())
+            .putDouble(16, value.m02())
+            .putDouble(24, value.m03())
+            .putDouble(32, value.m10())
+            .putDouble(40, value.m11())
+            .putDouble(48, value.m12())
+            .putDouble(56, value.m13())
+            .putDouble(64, value.m20())
+            .putDouble(72, value.m21())
+            .putDouble(80, value.m22())
+            .putDouble(88, value.m23())
+            .putDouble(96, value.m30())
+            .putDouble(104, value.m31())
+            .putDouble(112, value.m32())
+            .putDouble(120, value.m33());
         markDirty();
     }
 
@@ -613,12 +613,12 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param value the value.
      */
     public void set(Matrix3x2fc value) {
-        buffer.setFloat(0, value.m00())
-            .setFloat(4, value.m01())
-            .setFloat(8, value.m10())
-            .setFloat(12, value.m11())
-            .setFloat(16, value.m20())
-            .setFloat(20, value.m21());
+        buffer.putFloat(0, value.m00())
+            .putFloat(4, value.m01())
+            .putFloat(8, value.m10())
+            .putFloat(12, value.m11())
+            .putFloat(16, value.m20())
+            .putFloat(20, value.m21());
         markDirty();
     }
 
@@ -628,12 +628,12 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param value the value.
      */
     public void set(Matrix3x2dc value) {
-        buffer.setDouble(0, value.m00())
-            .setDouble(8, value.m01())
-            .setDouble(16, value.m10())
-            .setDouble(24, value.m11())
-            .setDouble(32, value.m20())
-            .setDouble(40, value.m21());
+        buffer.putDouble(0, value.m00())
+            .putDouble(8, value.m01())
+            .putDouble(16, value.m10())
+            .putDouble(24, value.m11())
+            .putDouble(32, value.m20())
+            .putDouble(40, value.m21());
         markDirty();
     }
 
@@ -643,18 +643,18 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param value the value.
      */
     public void set(Matrix4x3fc value) {
-        buffer.setFloat(0, value.m00())
-            .setFloat(4, value.m01())
-            .setFloat(8, value.m02())
-            .setFloat(12, value.m10())
-            .setFloat(16, value.m11())
-            .setFloat(20, value.m12())
-            .setFloat(24, value.m20())
-            .setFloat(28, value.m21())
-            .setFloat(32, value.m22())
-            .setFloat(36, value.m30())
-            .setFloat(40, value.m31())
-            .setFloat(44, value.m32());
+        buffer.putFloat(0, value.m00())
+            .putFloat(4, value.m01())
+            .putFloat(8, value.m02())
+            .putFloat(12, value.m10())
+            .putFloat(16, value.m11())
+            .putFloat(20, value.m12())
+            .putFloat(24, value.m20())
+            .putFloat(28, value.m21())
+            .putFloat(32, value.m22())
+            .putFloat(36, value.m30())
+            .putFloat(40, value.m31())
+            .putFloat(44, value.m32());
         markDirty();
     }
 
@@ -664,32 +664,32 @@ public abstract class ShaderUniform implements AutoCloseable {
      * @param value the value.
      */
     public void set(Matrix4x3dc value) {
-        buffer.setDouble(0, value.m00())
-            .setDouble(8, value.m01())
-            .setDouble(16, value.m02())
-            .setDouble(24, value.m10())
-            .setDouble(32, value.m11())
-            .setDouble(40, value.m12())
-            .setDouble(48, value.m20())
-            .setDouble(56, value.m21())
-            .setDouble(64, value.m22())
-            .setDouble(72, value.m30())
-            .setDouble(80, value.m31())
-            .setDouble(88, value.m32());
+        buffer.putDouble(0, value.m00())
+            .putDouble(8, value.m01())
+            .putDouble(16, value.m02())
+            .putDouble(24, value.m10())
+            .putDouble(32, value.m11())
+            .putDouble(40, value.m12())
+            .putDouble(48, value.m20())
+            .putDouble(56, value.m21())
+            .putDouble(64, value.m22())
+            .putDouble(72, value.m30())
+            .putDouble(80, value.m31())
+            .putDouble(88, value.m32());
         markDirty();
     }
 
     /**
      * Uploads this uniform.
      *
-     * @param program the shader program id
+     * @param program the shader program id.
      */
     protected abstract void internalUpload(int program);
 
     /**
      * Uploads this uniform.
      *
-     * @param program the shader program id
+     * @param program the shader program id.
      */
     public void upload(int program) {
         if (!dirty) {
@@ -701,7 +701,7 @@ public abstract class ShaderUniform implements AutoCloseable {
     /**
      * Gets the location of this uniform.
      *
-     * @return the location
+     * @return the location.
      */
     public int location() {
         return location;
@@ -710,7 +710,7 @@ public abstract class ShaderUniform implements AutoCloseable {
     /**
      * Gets the type of this uniform.
      *
-     * @return the type
+     * @return the type.
      */
     public Type type() {
         return type;

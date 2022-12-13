@@ -25,14 +25,18 @@
 package forkengine.test;
 
 import forkengine.asset.shader.Shader;
+import forkengine.asset.shader.ShaderUniform;
 import forkengine.backend.lwjgl3.LWJGL3App;
 import forkengine.core.Game;
 import forkengine.core.GameCreateInfo;
 import forkengine.gui.screen.ScreenUtil;
+import forkengine.level.LinearTransformation;
 import forkengine.level.model.Model;
+import forkengine.level.model.StaticModel;
 import forkengine.level.model.VertexElement;
 import forkengine.level.model.VertexLayout;
 import forkengine.util.DataType;
+import org.joml.Matrix4f;
 
 import static org.lwjgl.opengl.GL30C.*;
 
@@ -44,7 +48,9 @@ import static org.lwjgl.opengl.GL30C.*;
  */
 public final class RectangleGame extends Game {
     private Shader shader;
-    private Model model;
+    private StaticModel model;
+    private final LinearTransformation transformation = new LinearTransformation();
+    private final Matrix4f modelMat = new Matrix4f();
     private int vao, vbo;
 
     @Override
@@ -53,19 +59,20 @@ public final class RectangleGame extends Game {
         shader = Shader.create();
         Shader.Builder vsh = shader.attach(Shader.VERTEX_SHADER)
             .source("""
-                #version 330 core
-                layout (location = 0) in vec2 Position;
-                layout (location = 1) in vec3 Color;
+                #version 150 core
+                in vec2 Position;
+                in vec3 Color;
                 out vec4 vertexColor;
+                uniform mat4 ModelMat;
                 void main() {
-                    gl_Position = vec4(Position, 0.0, 1.0);
+                    gl_Position = ModelMat * vec4(Position, 0.0, 1.0);
                     vertexColor = vec4(Color, 1.0);
                 }
                 """)
             .compileThrowLog();
         Shader.Builder fsh = shader.attach(Shader.FRAGMENT_SHADER)
             .source("""
-                #version 330 core
+                #version 150 core
                 in vec4 vertexColor;
                 out vec4 FragColor;
                 void main() {
@@ -73,21 +80,22 @@ public final class RectangleGame extends Game {
                 }
                 """)
             .compileThrowLog();
-        shader.linkThrow(shader::getInfoLog);
-        shader.detach(vsh).close();
-        shader.detach(fsh).close();
 
         VertexElement positionElement = VertexElement.builder(DataType.FLOAT, 2)
             .name("Position")
             .index(0)
-            .build();
+            .build(VertexElement.Putter.VEC2);
         VertexElement colorElement = VertexElement.builder(DataType.FLOAT, 3)
             .name("Color")
             .index(1)
-            .build();
-        VertexLayout layout = VertexLayout.interleaved()
-            .addElement(positionElement)
-            .addElement(colorElement);
+            .build(VertexElement.Putter.VEC3);
+        VertexLayout.Interleaved layout = VertexLayout.interleaved(positionElement, colorElement);
+
+        shader.bindLayout(layout).linkThrow(shader::getInfoLog);
+        shader.detach(vsh).close();
+        shader.detach(fsh).close();
+
+        shader.createUniform("ModelMat", ShaderUniform.Type.MAT4);
 
         model = Model.rectangle()
             .buildStatic(layout);
@@ -101,17 +109,24 @@ public final class RectangleGame extends Game {
             0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
         }, GL_STATIC_DRAW);
         glBindVertexArray(vao);
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 20, 0);
-        glVertexAttribPointer(1, 3, GL_FLOAT, false, 20, 8);
+        layout.pointerAll();
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
+        layout.enableAll();
+    }
+
+    @Override
+    public void update(double delta) {
+        super.update(delta);
+        transformation.rotate().rotateZ((float) delta);
+        transformation.applyMatrix(modelMat.identity());
     }
 
     @Override
     public void render() {
         ScreenUtil.clear(ScreenUtil.COLOR_BUFFER_BIT | ScreenUtil.DEPTH_BUFFER_BIT);
         shader.use();
+        shader.getUniform("ModelMat").orElseThrow().set(modelMat);
+        shader.uploadUniforms();
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         super.render();

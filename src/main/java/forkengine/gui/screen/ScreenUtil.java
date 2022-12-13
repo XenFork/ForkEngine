@@ -25,6 +25,7 @@
 package forkengine.gui.screen;
 
 import forkengine.core.ForkEngine;
+import forkengine.gl.IGL;
 import org.intellij.lang.annotations.MagicConstant;
 
 /**
@@ -37,17 +38,19 @@ public final class ScreenUtil {
     /**
      * The clear flag.
      */
-    public static final int DEPTH_BUFFER_BIT = 0x100,
-        STENCIL_BUFFER_BIT = 0x400,
-        COLOR_BUFFER_BIT = 0x4000;
+    public static final int DEPTH_BUFFER_BIT = IGL.DEPTH_BUFFER_BIT,
+        STENCIL_BUFFER_BIT = IGL.STENCIL_BUFFER_BIT,
+        COLOR_BUFFER_BIT = IGL.COLOR_BUFFER_BIT;
 
     /**
      * Call {@code glClear}.
      *
      * @param flag the clear flag.
      */
-    public static void clear(@MagicConstant(flags = {DEPTH_BUFFER_BIT, STENCIL_BUFFER_BIT, COLOR_BUFFER_BIT})
-                             int flag) {
+    public static void clear(@MagicConstant(
+        flags = {IGL.DEPTH_BUFFER_BIT, IGL.STENCIL_BUFFER_BIT, IGL.COLOR_BUFFER_BIT,
+            DEPTH_BUFFER_BIT, STENCIL_BUFFER_BIT, COLOR_BUFFER_BIT}
+    ) int flag) {
         ForkEngine.gl.clear(flag);
     }
 

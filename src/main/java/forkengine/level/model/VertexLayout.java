@@ -29,6 +29,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.function.ObjIntConsumer;
+import java.util.function.ToLongFunction;
+
+import static forkengine.core.ForkEngine.gl;
 
 /**
  * The vertex layout.
@@ -36,10 +40,9 @@ import java.util.StringJoiner;
  * @author squid233
  * @since 0.1.0
  */
-public class VertexLayout {
+public sealed class VertexLayout permits VertexLayout.Flat, VertexLayout.Interleaved {
     protected final Map<String, VertexElement> elements = new LinkedHashMap<>();
     protected final Map<VertexElement, Integer> elementIndex = new LinkedHashMap<>();
-    protected int stride = 0;
     private int nextIndex = 0;
 
     /**
@@ -52,6 +55,20 @@ public class VertexLayout {
     }
 
     /**
+     * Creates the flat vertex layout with the given vertex elements.
+     *
+     * @param elements the vertex elements.
+     * @return the vertex layout.
+     */
+    public static Flat flat(VertexElement... elements) {
+        var flat = flat();
+        for (VertexElement element : elements) {
+            flat.addElement(element);
+        }
+        return flat;
+    }
+
+    /**
      * Creates the interleaved vertex layout.
      *
      * @return the vertex layout.
@@ -61,16 +78,54 @@ public class VertexLayout {
     }
 
     /**
+     * Creates the interleaved vertex layout with the given vertex elements.
+     *
+     * @param elements the vertex elements.
+     * @return the vertex layout.
+     */
+    public static Interleaved interleaved(VertexElement... elements) {
+        var interleaved = interleaved();
+        for (VertexElement element : elements) {
+            interleaved.addElement(element);
+        }
+        return interleaved;
+    }
+
+    /**
      * The flat vertex layout.
      *
      * @author squid233
      * @since 0.1.0
      */
-    public static class Flat extends VertexLayout {
+    public static final class Flat extends VertexLayout {
         @Override
         public Flat addElement(VertexElement element) {
             super.addElement(element);
             return this;
+        }
+
+        /**
+         * Specifies the location and organization of a vertex attribute array.
+         *
+         * @param pointer the offset getter for each vertex element.
+         */
+        public void pointerAll(ToLongFunction<VertexElement> pointer) {
+            forEach((element, index) -> element.pointer(index, element.bytesSize(), pointer.applyAsLong(element)));
+        }
+
+        /**
+         * Specifies the location and organization of a vertex attribute array.
+         *
+         * @param arraySize the length of the array for each element.
+         */
+        public void pointerAll(int arraySize) {
+            long pointer = 0;
+            for (var e : elementIndex.entrySet()) {
+                VertexElement element = e.getKey();
+                int index = e.getValue();
+                element.pointer(index, element.bytesSize(), pointer);
+                pointer += (long) element.bytesSize() * arraySize;
+            }
         }
     }
 
@@ -80,12 +135,27 @@ public class VertexLayout {
      * @author squid233
      * @since 0.1.0
      */
-    public static class Interleaved extends VertexLayout {
+    public static final class Interleaved extends VertexLayout {
+        private int stride;
+
         @Override
         public Interleaved addElement(VertexElement element) {
             super.addElement(element);
-            stride += element.dataType().bytesSize() * element.count();
+            stride += element.bytesSize();
             return this;
+        }
+
+        /**
+         * Specifies the location and organization of a vertex attribute array.
+         */
+        public void pointerAll() {
+            long pointer = 0;
+            for (var e : elementIndex.entrySet()) {
+                VertexElement element = e.getKey();
+                int index = e.getValue();
+                element.pointer(index, stride(), pointer);
+                pointer += element.bytesSize();
+            }
         }
 
         /**
@@ -137,11 +207,53 @@ public class VertexLayout {
         return elementIndex.get(element);
     }
 
+    /**
+     * Enables a generic vertex attribute array.
+     *
+     * @param element the vertex elements to be enabled.
+     */
+    public void enable(VertexElement element) {
+        gl.enableVertexAttribArray(getIndex(element));
+    }
+
+    /**
+     * Enables all vertex elements.
+     */
+    public void enableAll() {
+        elementIndex.keySet().forEach(this::enable);
+    }
+
+    /**
+     * Disables a generic vertex attribute array.
+     *
+     * @param element the vertex elements to be disabled.
+     */
+    public void disable(VertexElement element) {
+        gl.disableVertexAttribArray(getIndex(element));
+    }
+
+    /**
+     * Disables all vertex elements.
+     */
+    public void disableAll() {
+        elementIndex.keySet().forEach(this::disable);
+    }
+
+    /**
+     * Performs the given action for each vertex element in this vertex layout until all elements have been processed
+     * or the action throws an exception.
+     *
+     * @param action The action to be performed for each entry.
+     */
+    public void forEach(ObjIntConsumer<VertexElement> action) {
+        elementIndex.forEach(action::accept);
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", VertexLayout.class.getSimpleName() + "[", "]")
+            .add("elements=" + elements)
             .add("elementIndex=" + elementIndex)
-            .add("stride=" + stride)
             .add("nextIndex=" + nextIndex)
             .toString();
     }

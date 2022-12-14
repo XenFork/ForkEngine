@@ -27,6 +27,7 @@ package forkengine.level.model;
 import forkengine.core.DataBuffer;
 import forkengine.core.ForkEngine;
 import forkengine.util.DataType;
+import forkengine.util.MathHelper;
 import org.joml.Vector3fc;
 
 import java.util.Objects;

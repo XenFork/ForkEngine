@@ -64,6 +64,26 @@ public interface IGL {
         TRIANGLES = 0x4,
         TRIANGLE_STRIP = 0x5,
         TRIANGLE_FAN = 0x6;
+    /**
+     * The buffer target enum values.
+     */
+    int
+        ARRAY_BUFFER = 0x8892,
+        ELEMENT_ARRAY_BUFFER = 0x8893,
+        UNIFORM_BUFFER = 0x8A11;
+    /**
+     * The buffer data usage enum values.
+     */
+    int
+        STREAM_DRAW = 0x88E0,
+        STREAM_READ = 0x88E1,
+        STREAM_COPY = 0x88E2,
+        STATIC_DRAW = 0x88E4,
+        STATIC_READ = 0x88E5,
+        STATIC_COPY = 0x88E6,
+        DYNAMIC_DRAW = 0x88E8,
+        DYNAMIC_READ = 0x88E9,
+        DYNAMIC_COPY = 0x88EA;
 
     /**
      * Call {@code glClear}.
@@ -180,6 +200,17 @@ public interface IGL {
      * @param buffer the named buffer object.
      */
     void deleteBuffer(int buffer);
+
+    /**
+     * Creates and initializes a buffer object's data store.
+     *
+     * @param target the target buffer object.
+     * @param buffer the name of the target buffer object.
+     * @param size   the size in bytes of the buffer object's new data store.
+     * @param data   the data.
+     * @param usage  the expected usage pattern of the data store.
+     */
+    void bufferData(int target, int buffer, long size, long data, int usage);
 
     /**
      * Returns the location of an attribute variable.

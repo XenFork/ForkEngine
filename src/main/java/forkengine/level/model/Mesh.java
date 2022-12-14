@@ -26,10 +26,7 @@ package forkengine.level.model;
 
 import org.joml.Vector3fc;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The mesh.
@@ -37,7 +34,7 @@ import java.util.Map;
  * @author squid233
  * @since 0.1.0
  */
-public class Mesh implements AutoCloseable {
+public class Mesh {
     private final Map<VertexElement, List<Vector3fc>> vertices = new HashMap<>();
 
     /**
@@ -46,12 +43,34 @@ public class Mesh implements AutoCloseable {
     public Mesh() {
     }
 
+    /**
+     * Adds a vertex to the given element.
+     *
+     * @param element the vertex element.
+     * @param vertex  the vertex.
+     * @return this.
+     */
     public Mesh addVertex(VertexElement element, Vector3fc vertex) {
         vertices.computeIfAbsent(element, e -> new ArrayList<>()).add(vertex);
         return this;
     }
 
-    @Override
-    public void close() {
+    /**
+     * Gets the vertices with the given element.
+     *
+     * @param element the vertex elements.
+     * @return the vertices.
+     */
+    public List<Vector3fc> getVertices(VertexElement element) {
+        return vertices.get(element);
+    }
+
+    /**
+     * Gets the vertex elements in this mesh.
+     *
+     * @return the vertex elements.
+     */
+    public Set<VertexElement> getElements() {
+        return vertices.keySet();
     }
 }

@@ -25,6 +25,9 @@
 package forkengine.level.model;
 
 import forkengine.gl.IGL;
+import org.joml.Vector3fc;
+
+import java.util.List;
 
 /**
  * The base model.
@@ -41,17 +44,21 @@ public class Model implements AutoCloseable {
      */
     public enum Type {
         /**
-         * The points render
+         * The points render.
          */
         POINTS(IGL.POINTS),
         /**
-         * The lines render
+         * The lines render.
          */
         LINES(IGL.LINES),
         /**
-         * The triangles render
+         * The triangles render.
          */
-        TRIANGLES(IGL.TRIANGLES);
+        TRIANGLES(IGL.TRIANGLES),
+        /**
+         * The polygon render.
+         */
+        POLYGON(IGL.TRIANGLES);
 
         private final int value;
 
@@ -70,12 +77,64 @@ public class Model implements AutoCloseable {
     }
 
     /**
-     * Creates the rectangle model builder.
+     * The model builder with single mesh.
      *
-     * @return the rectangle model builder.
+     * @author squid233
+     * @since 0.1.0
      */
-    public static Rectangle rectangle() {
-        return new Rectangle();
+    public static class SingleBuilder {
+        private final Mesh mesh = new Mesh();
+
+        /**
+         * Adds a vertex to the given element.
+         *
+         * @param element the vertex element.
+         * @param vec     the vertex.
+         * @return this.
+         */
+        public SingleBuilder addVertex(VertexElement element, Vector3fc vec) {
+            mesh.addVertex(element, vec);
+            return this;
+        }
+
+        /**
+         * Builds a static model.
+         *
+         * @param layout the layout of the model.
+         * @return the static model.
+         */
+        public StaticModel buildStatic(VertexLayout layout, Type type) {
+            return new StaticModel(layout, type, mesh);
+        }
+    }
+
+    /**
+     * Finds the index of the given vertex in the list, or -1 if not found.
+     *
+     * @param list   the vertex list.
+     * @param vertex the vertex.
+     * @return the index, or -1 if not found.
+     */
+    public static int getVertexIndex(List<Vector3fc> list, Vector3fc vertex) {
+        final float x = vertex.x();
+        final float y = vertex.y();
+        final float z = vertex.z();
+        for (int i = 0, len = list.size(); i < len; i++) {
+            Vector3fc v = list.get(i);
+            if (v.equals(x, y, z)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Creates the model builder with single mesh.
+     *
+     * @return the model builder.
+     */
+    public static SingleBuilder single() {
+        return new SingleBuilder();
     }
 
     @Override

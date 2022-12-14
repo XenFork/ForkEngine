@@ -28,8 +28,10 @@ import forkengine.asset.shader.Shader;
 import forkengine.asset.shader.ShaderUniform;
 import forkengine.gl.IGL;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLCapabilities;
 
-import static org.lwjgl.opengl.GL30C.*;
+import static org.lwjgl.opengl.GL45C.*;
 
 /**
  * The OpenGL functions implemented with LWJGL 3.
@@ -116,6 +118,16 @@ public final class LWJGL3GL implements IGL {
     @Override
     public void deleteBuffer(int buffer) {
         glDeleteBuffers(buffer);
+    }
+
+    @Override
+    public void bufferData(int target, int buffer, long size, long data, int usage) {
+        GLCapabilities caps = GL.getCapabilities();
+        if (caps.GL_ARB_direct_state_access) {
+            nglNamedBufferData(buffer, size, data, usage);
+        } else {
+            nglBufferData(target, size, data, usage);
+        }
     }
 
     @Override

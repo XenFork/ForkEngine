@@ -695,6 +695,7 @@ public abstract class ShaderUniform implements AutoCloseable {
         if (!dirty) {
             return;
         }
+        dirty = false;
         internalUpload(program);
     }
 

@@ -90,8 +90,22 @@ public final class VertexElement {
          * The float vector putter.
          */
         Putter VEC2 =
-            (buffer, vector3fc) -> buffer.putFloat(buffer.position(), vector3fc.x()).putFloat(buffer.position() + 4, vector3fc.y()),
-            VEC3 = VEC2.andThen((buffer, vector3fc) -> buffer.putFloat(buffer.position() + 8, vector3fc.z()));
+            (buffer, vector3fc) -> buffer.putFloat(vector3fc.x()).putFloat(vector3fc.y()),
+            VEC3 = VEC2.andThen((buffer, vector3fc) -> buffer.putFloat(vector3fc.z()));
+        /**
+         * The color putter with 3 components.
+         */
+        Putter COLOR3 = (buffer, vector3fc) -> buffer
+            .putByte(MathHelper.colorFloatToByte(vector3fc.x()))
+            .putByte(MathHelper.colorFloatToByte(vector3fc.y()))
+            .putByte(MathHelper.colorFloatToByte(vector3fc.z()));
+        /**
+         * The vertex normal putter.
+         */
+        Putter NORMAL = (buffer, vector3fc) -> buffer
+            .putByte(MathHelper.normalFloatToByte(vector3fc.x()))
+            .putByte(MathHelper.normalFloatToByte(vector3fc.y()))
+            .putByte(MathHelper.normalFloatToByte(vector3fc.z()));
 
         /**
          * Returns a composed {@code Putter} that performs, in sequence, this operation followed by the after operation.

@@ -46,6 +46,7 @@ public class LWJGL3DataBuffer extends DataBuffer {
     public LWJGL3DataBuffer(ByteBuffer buffer) {
         super(MemoryUtil.memAddress(buffer));
         this.buffer = buffer;
+        capacity = buffer.capacity();
     }
 
     @Override
@@ -117,6 +118,7 @@ public class LWJGL3DataBuffer extends DataBuffer {
     @Override
     public DataBuffer realloc(long size) {
         buffer = MemoryUtil.memRealloc(buffer, (int) size);
+        capacity = size;
         return this;
     }
 }

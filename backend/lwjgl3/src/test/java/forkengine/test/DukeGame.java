@@ -37,21 +37,19 @@ import forkengine.level.model.VertexElement;
 import forkengine.level.model.VertexLayout;
 import forkengine.util.DataType;
 import org.joml.Matrix4f;
-
-import static org.lwjgl.opengl.GL30C.*;
+import org.joml.Vector3f;
 
 /**
- * Tests rectangle
+ * Tests basic features
  *
  * @author squid233
  * @since 0.1.0
  */
-public final class RectangleGame extends Game {
+public final class DukeGame extends Game {
     private Shader shader;
     private StaticModel model;
     private final LinearTransformation transformation = new LinearTransformation();
     private final Matrix4f modelMat = new Matrix4f();
-    private int vao, vbo;
 
     @Override
     public void init() {
@@ -97,21 +95,20 @@ public final class RectangleGame extends Game {
 
         shader.createUniform("ModelMat", ShaderUniform.Type.MAT4);
 
-        model = Model.rectangle()
-            .buildStatic(layout);
-
-        vao = glGenVertexArrays();
-        vbo = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, new float[]{
-            0.0f, 0.5f, 1.0f, 0.0f, 0.0f,
-            -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-            0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-        }, GL_STATIC_DRAW);
-        glBindVertexArray(vao);
-        layout.pointerAll();
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        layout.enableAll();
+        Vector3f v0 = new Vector3f(-0.5f, 0.5f, 0.0f);
+        Vector3f v1 = new Vector3f(-0.5f, -0.5f,0.0f);
+        Vector3f v2 = new Vector3f(0.5f, -0.5f,0.0f);
+        Vector3f v3 = new Vector3f(0.5f, 0.5f,0.0f);
+        Vector3f c0 = new Vector3f(1.0f, 0.0f, 0.0f);
+        Vector3f c1 = new Vector3f(0.0f, 1.0f, 0.0f);
+        Vector3f c2 = new Vector3f(0.0f, 0.0f, 1.0f);
+        Vector3f c3 = new Vector3f(1.0f, 1.0f, 1.0f);
+        model = Model.single()
+            .addVertex(positionElement, v0).addVertex(colorElement, c0)
+            .addVertex(positionElement, v1).addVertex(colorElement, c1)
+            .addVertex(positionElement, v2).addVertex(colorElement, c2)
+            .addVertex(positionElement, v3).addVertex(colorElement, c3)
+            .buildStatic(layout, Model.Type.POLYGON);
     }
 
     @Override
@@ -127,8 +124,8 @@ public final class RectangleGame extends Game {
         shader.use();
         shader.getUniform("ModelMat").orElseThrow().set(modelMat);
         shader.uploadUniforms();
-        glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        model.render();
+        Shader.useProgram(0);
         super.render();
     }
 
@@ -136,16 +133,14 @@ public final class RectangleGame extends Game {
     public void exit() {
         shader.close();
         model.close();
-        glDeleteVertexArrays(vao);
-        glDeleteBuffers(vbo);
         super.exit();
     }
 
     public static void main(String[] args) {
-        new RectangleGame().run(new GameCreateInfo()
+        new DukeGame().run(new GameCreateInfo()
                 .width(800)
                 .height(640)
-                .title("Rectangle Game"),
+                .title("Duke Game"),
             LWJGL3App.getInstance());
     }
 }

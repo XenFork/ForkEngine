@@ -33,6 +33,10 @@ package forkengine.core;
 public abstract class DataBuffer {
     private final long address;
     private long position = 0;
+    /**
+     * The capacity of this buffer.
+     */
+    protected long capacity = 0;
 
     /**
      * Creates the data buffer.
@@ -243,6 +247,15 @@ public abstract class DataBuffer {
      */
     public long position() {
         return position;
+    }
+
+    /**
+     * Gets the capacity of this buffer.
+     *
+     * @return the capacity.
+     */
+    public long capacity() {
+        return capacity;
     }
 
     /**

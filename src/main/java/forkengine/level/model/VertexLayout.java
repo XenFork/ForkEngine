@@ -40,7 +40,7 @@ import static forkengine.core.ForkEngine.gl;
  * @author squid233
  * @since 0.1.0
  */
-public sealed class VertexLayout permits VertexLayout.Flat, VertexLayout.Interleaved {
+public sealed abstract class VertexLayout permits VertexLayout.Flat, VertexLayout.Interleaved {
     protected final Map<String, VertexElement> elements = new LinkedHashMap<>();
     protected final Map<VertexElement, Integer> elementIndex = new LinkedHashMap<>();
     private int nextIndex = 0;
@@ -104,6 +104,11 @@ public sealed class VertexLayout permits VertexLayout.Flat, VertexLayout.Interle
             return this;
         }
 
+        @Override
+        public void pointer(VertexElement element, long pointer) {
+            pointer(element, element.bytesSize(), pointer);
+        }
+
         /**
          * Specifies the location and organization of a vertex attribute array.
          *
@@ -143,6 +148,11 @@ public sealed class VertexLayout permits VertexLayout.Flat, VertexLayout.Interle
             super.addElement(element);
             stride += element.bytesSize();
             return this;
+        }
+
+        @Override
+        public void pointer(VertexElement element, long pointer) {
+            pointer(element, stride(), pointer);
         }
 
         /**
@@ -188,6 +198,45 @@ public sealed class VertexLayout permits VertexLayout.Flat, VertexLayout.Interle
     }
 
     /**
+     * Specifies the location and organization of a vertex element.
+     *
+     * @param element the vertex element.
+     * @param index   the index of the generic vertex attribute to be modified.
+     * @param stride  the byte offset between consecutive generic vertex attributes. If stride is 0, the generic vertex attributes
+     *                are understood to be tightly packed in the array. The initial value is 0.
+     * @param pointer the vertex attribute data or the offset of the first component of the first generic vertex attribute
+     *                in the array in the data store of the buffer currently bound to the {@link forkengine.gl.IGL#ARRAY_BUFFER ARRAY_BUFFER} target. The initial value is 0.
+     * @see #pointer(VertexElement, int, long)
+     */
+    protected void pointer(VertexElement element, int index, int stride, long pointer) {
+        element.pointer(index, stride, pointer);
+    }
+
+    /**
+     * Specifies the location and organization of a vertex element.
+     *
+     * @param element the vertex element.
+     * @param stride  the byte offset between consecutive generic vertex attributes. If stride is 0, the generic vertex attributes
+     *                are understood to be tightly packed in the array. The initial value is 0.
+     * @param pointer the vertex attribute data or the offset of the first component of the first generic vertex attribute
+     *                in the array in the data store of the buffer currently bound to the {@link forkengine.gl.IGL#ARRAY_BUFFER ARRAY_BUFFER} target. The initial value is 0.
+     * @see #pointer(VertexElement, int, int, long)
+     */
+    public void pointer(VertexElement element, int stride, long pointer) {
+        pointer(element, getIndex(element), stride, pointer);
+    }
+
+    /**
+     * Specifies the location and organization of a vertex element.
+     *
+     * @param element the vertex element.
+     * @param pointer the vertex attribute data or the offset of the first component of the first generic vertex attribute
+     *                in the array in the data store of the buffer currently bound to the {@link forkengine.gl.IGL#ARRAY_BUFFER ARRAY_BUFFER} target. The initial value is 0.
+     * @see #pointer(VertexElement, int, int, long)
+     */
+    public abstract void pointer(VertexElement element, long pointer);
+
+    /**
      * Gets the vertex element by the given name.
      *
      * @param name the name of vertex element.
@@ -207,12 +256,18 @@ public sealed class VertexLayout permits VertexLayout.Flat, VertexLayout.Interle
         return elementIndex.get(element);
     }
 
+    private void checkElement(VertexElement element) {
+        if (!elementIndex.containsKey(element))
+            throw new IllegalArgumentException("the element is not exists in this layout! got: " + element);
+    }
+
     /**
      * Enables a generic vertex attribute array.
      *
      * @param element the vertex elements to be enabled.
      */
     public void enable(VertexElement element) {
+        checkElement(element);
         gl.enableVertexAttribArray(getIndex(element));
     }
 
@@ -229,6 +284,7 @@ public sealed class VertexLayout permits VertexLayout.Flat, VertexLayout.Interle
      * @param element the vertex elements to be disabled.
      */
     public void disable(VertexElement element) {
+        checkElement(element);
         gl.disableVertexAttribArray(getIndex(element));
     }
 

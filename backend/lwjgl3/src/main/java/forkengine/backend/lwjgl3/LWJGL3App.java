@@ -134,8 +134,8 @@ public final class LWJGL3App extends Application {
     }
 
     @Override
-    public Timer createTimer() {
-        return new LWJGL3Timer();
+    public Timer createTimer(int ticksPerSecond) {
+        return new LWJGL3Timer(ticksPerSecond);
     }
 
     @Override

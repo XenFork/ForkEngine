@@ -27,7 +27,9 @@ package forkengine.level.model;
 import forkengine.gl.IGL;
 import org.joml.Vector3fc;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * The base model.
@@ -100,11 +102,58 @@ public class Model implements AutoCloseable {
         /**
          * Builds a static model.
          *
-         * @param layout the layout of the model.
+         * @param layout          the layout of the model.
+         * @param positionElement the position element in the layout.
+         * @param type            the render type.
          * @return the static model.
          */
-        public StaticModel buildStatic(VertexLayout layout, Type type) {
-            return new StaticModel(layout, type, mesh);
+        public StaticModel buildStatic(VertexLayout layout, VertexElement positionElement, Type type) {
+            return new StaticModel(layout, positionElement, type, mesh);
+        }
+    }
+
+    /**
+     * The model builder with multi mesh.
+     *
+     * @author squid233
+     * @since 0.1.0
+     */
+    public static class MultiBuilder {
+        private final List<Mesh> meshes = new ArrayList<>();
+
+        /**
+         * Adds a mesh to this builder.
+         *
+         * @param mesh the mesh.
+         * @return this.
+         */
+        public MultiBuilder addMesh(Mesh mesh) {
+            meshes.add(mesh);
+            return this;
+        }
+
+        /**
+         * Creates an empty mesh, performs the given action and adds the mesh to this builder.
+         *
+         * @param consumer the action to be performed.
+         * @return this.
+         */
+        public MultiBuilder createMesh(Consumer<Mesh> consumer) {
+            Mesh mesh = new Mesh();
+            consumer.accept(mesh);
+            return addMesh(mesh);
+        }
+
+        /**
+         * Builds a static model.
+         *
+         * @param layout          the layout of the model.
+         * @param positionElement the position element in the layout.
+         * @param type            the render type.
+         * @return the static model.
+         */
+        public StaticModel buildStatic(VertexLayout layout, VertexElement positionElement, Type type) {
+            return new StaticModel(layout, positionElement, type, meshes.toArray(new Mesh[0]));
         }
     }
 
@@ -135,6 +184,15 @@ public class Model implements AutoCloseable {
      */
     public static SingleBuilder single() {
         return new SingleBuilder();
+    }
+
+    /**
+     * Creates the model builder with multi mesh.
+     *
+     * @return the model builder.
+     */
+    public static MultiBuilder multi() {
+        return new MultiBuilder();
     }
 
     @Override

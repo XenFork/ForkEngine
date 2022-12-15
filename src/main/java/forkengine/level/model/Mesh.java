@@ -73,4 +73,17 @@ public class Mesh {
     public Set<VertexElement> getElements() {
         return vertices.keySet();
     }
+
+    /**
+     * Checks the vertex elements of this mesh are all in the given layout.
+     *
+     * @param layout the layout.
+     */
+    public void checkLayout(Set<VertexElement> layout) {
+        getElements().forEach(element -> {
+            if (!layout.contains(element)) {
+                throw new IllegalStateException("Vertex element not found in the given layout! got: " + element + ", layout: " + layout);
+            }
+        });
+    }
 }

@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.ObjIntConsumer;
 import java.util.function.ToLongFunction;
@@ -256,6 +257,15 @@ public sealed abstract class VertexLayout permits VertexLayout.Flat, VertexLayou
         return elementIndex.get(element);
     }
 
+    /**
+     * Gets the elements of this layout.
+     *
+     * @return the vertex elements.
+     */
+    public Set<VertexElement> getElements() {
+        return elementIndex.keySet();
+    }
+
     private void checkElement(VertexElement element) {
         if (!elementIndex.containsKey(element))
             throw new IllegalArgumentException("the element is not exists in this layout! got: " + element);
@@ -275,7 +285,7 @@ public sealed abstract class VertexLayout permits VertexLayout.Flat, VertexLayou
      * Enables all vertex elements.
      */
     public void enableAll() {
-        elementIndex.keySet().forEach(this::enable);
+        getElements().forEach(this::enable);
     }
 
     /**
@@ -292,7 +302,7 @@ public sealed abstract class VertexLayout permits VertexLayout.Flat, VertexLayou
      * Disables all vertex elements.
      */
     public void disableAll() {
-        elementIndex.keySet().forEach(this::disable);
+        getElements().forEach(this::disable);
     }
 
     /**

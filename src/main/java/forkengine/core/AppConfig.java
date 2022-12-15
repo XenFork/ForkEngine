@@ -30,12 +30,12 @@ import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
 
 /**
- * The creation info of the game.
+ * The config of an application adapter.
  *
  * @author squid233
  * @since 0.1.0
  */
-public final class GameCreateInfo {
+public final class AppConfig {
     /**
      * The GLFW error callback.
      */
@@ -62,6 +62,10 @@ public final class GameCreateInfo {
      * For example, 0 to disable v-sync, and 1 to enable v-sync.
      */
     public int swapInterval = 0;
+    /**
+     * The initial ticks per second for the default timer of {@link Game}.
+     */
+    public int ticksPerSecond = 50;
 
     /**
      * Sets {@link #errorCallback}.
@@ -69,7 +73,7 @@ public final class GameCreateInfo {
      * @param errorCallback the new value.
      * @return this.
      */
-    public GameCreateInfo errorCallback(ObjIntConsumer<String> errorCallback) {
+    public AppConfig errorCallback(ObjIntConsumer<String> errorCallback) {
         this.errorCallback = errorCallback;
         return this;
     }
@@ -80,7 +84,7 @@ public final class GameCreateInfo {
      * @param width the new value.
      * @return this.
      */
-    public GameCreateInfo width(int width) {
+    public AppConfig width(int width) {
         this.width = width;
         return this;
     }
@@ -91,7 +95,7 @@ public final class GameCreateInfo {
      * @param height the new value.
      * @return this.
      */
-    public GameCreateInfo height(int height) {
+    public AppConfig height(int height) {
         this.height = height;
         return this;
     }
@@ -102,7 +106,7 @@ public final class GameCreateInfo {
      * @param title the new value.
      * @return this.
      */
-    public GameCreateInfo title(String title) {
+    public AppConfig title(String title) {
         this.title = title;
         return this;
     }
@@ -113,7 +117,7 @@ public final class GameCreateInfo {
      * @param monitor the new value.
      * @return this.
      */
-    public GameCreateInfo monitor(long monitor) {
+    public AppConfig monitor(long monitor) {
         this.monitor = monitor;
         return this;
     }
@@ -124,8 +128,19 @@ public final class GameCreateInfo {
      * @param swapInterval the new value.
      * @return this.
      */
-    public GameCreateInfo swapInterval(int swapInterval) {
+    public AppConfig swapInterval(int swapInterval) {
         this.swapInterval = swapInterval;
+        return this;
+    }
+
+    /**
+     * Sets {@link #ticksPerSecond}.
+     *
+     * @param ticksPerSecond the new value.
+     * @return this.
+     */
+    public AppConfig ticksPerSecond(int ticksPerSecond) {
+        this.ticksPerSecond = ticksPerSecond;
         return this;
     }
 
@@ -133,10 +148,10 @@ public final class GameCreateInfo {
      * Creates the creation info.
      *
      * @param consumer the consumer to set the arguments.
-     * @return the {@link GameCreateInfo}
+     * @return the {@link AppConfig}
      */
-    public static GameCreateInfo of(Consumer<GameCreateInfo> consumer) {
-        var info = new GameCreateInfo();
+    public static AppConfig of(Consumer<AppConfig> consumer) {
+        var info = new AppConfig();
         consumer.accept(info);
         return info;
     }

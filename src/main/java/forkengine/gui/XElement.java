@@ -22,29 +22,28 @@
  * SOFTWARE.
  */
 
-package forkengine.backend.lwjgl3;
-
-import forkengine.core.Timer;
-import org.lwjgl.glfw.GLFW;
+package forkengine.gui;
 
 /**
- * The timer implemented with LWJGL 3.
+ * The gui element.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class LWJGL3Timer extends Timer {
+public interface XElement {
     /**
-     * Creates the timer with the given tps.
+     * Returns the flag of focused that means the element can be performed by pressing space key.
      *
-     * @param ticksPerSecond the ticks per second.
+     * @return the focused value.
      */
-    public LWJGL3Timer(int ticksPerSecond) {
-        super(ticksPerSecond);
-    }
+    boolean isFocused();
 
-    @Override
-    public double getTimeSecond() {
-        return GLFW.glfwGetTime();
-    }
+    /**
+     * Returns the flag of cursor hover.
+     *
+     * @param cursorX the x position of the cursor.
+     * @param cursorY the y position of the cursor.
+     * @return {@code true} if the cursor is hovering.
+     */
+    boolean isCursorHover(double cursorX, double cursorY);
 }

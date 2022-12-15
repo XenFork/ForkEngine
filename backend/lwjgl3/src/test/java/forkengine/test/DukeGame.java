@@ -24,17 +24,19 @@
 
 package forkengine.test;
 
+import forkengine.asset.AssetFile;
 import forkengine.asset.shader.Shader;
 import forkengine.asset.shader.ShaderUniform;
 import forkengine.backend.lwjgl3.LWJGL3App;
+import forkengine.core.AppConfig;
 import forkengine.core.Game;
-import forkengine.core.GameCreateInfo;
 import forkengine.gui.screen.ScreenUtil;
 import forkengine.level.LinearTransformation;
 import forkengine.level.model.Model;
 import forkengine.level.model.StaticModel;
 import forkengine.level.model.VertexElement;
 import forkengine.level.model.VertexLayout;
+import forkengine.level.scene.Actor;
 import forkengine.util.DataType;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -48,6 +50,7 @@ import org.joml.Vector3f;
 public final class DukeGame extends Game {
     private Shader shader;
     private StaticModel model;
+    private final Actor duke = new Actor();
     private final LinearTransformation transformation = new LinearTransformation();
     private final Matrix4f modelMat = new Matrix4f();
 
@@ -56,27 +59,10 @@ public final class DukeGame extends Game {
         super.init();
         shader = Shader.create();
         Shader.Builder vsh = shader.attach(Shader.VERTEX_SHADER)
-            .source("""
-                #version 150 core
-                in vec2 Position;
-                in vec3 Color;
-                out vec4 vertexColor;
-                uniform mat4 ModelMat;
-                void main() {
-                    gl_Position = ModelMat * vec4(Position, 0.0, 1.0);
-                    vertexColor = vec4(Color, 1.0);
-                }
-                """)
+            .source(AssetFile.internal("shader/position_color.vert"))
             .compileThrowLog();
         Shader.Builder fsh = shader.attach(Shader.FRAGMENT_SHADER)
-            .source("""
-                #version 150 core
-                in vec4 vertexColor;
-                out vec4 FragColor;
-                void main() {
-                    FragColor = vertexColor;
-                }
-                """)
+            .source(AssetFile.internal("shader/position_color.frag"))
             .compileThrowLog();
 
         VertexElement positionElement = VertexElement.builder(DataType.FLOAT, 2)
@@ -87,7 +73,7 @@ public final class DukeGame extends Game {
             .name("Color")
             .index(1)
             .build(VertexElement.Putter.VEC3);
-        VertexLayout.Interleaved layout = VertexLayout.interleaved(positionElement, colorElement);
+        VertexLayout layout = VertexLayout.interleaved(positionElement, colorElement);
 
         shader.bindLayout(layout).linkThrow(shader::getInfoLog);
         shader.detach(vsh).close();
@@ -96,9 +82,9 @@ public final class DukeGame extends Game {
         shader.createUniform("ModelMat", ShaderUniform.Type.MAT4);
 
         Vector3f v0 = new Vector3f(-0.5f, 0.5f, 0.0f);
-        Vector3f v1 = new Vector3f(-0.5f, -0.5f,0.0f);
-        Vector3f v2 = new Vector3f(0.5f, -0.5f,0.0f);
-        Vector3f v3 = new Vector3f(0.5f, 0.5f,0.0f);
+        Vector3f v1 = new Vector3f(-0.5f, -0.5f, 0.0f);
+        Vector3f v2 = new Vector3f(0.5f, -0.5f, 0.0f);
+        Vector3f v3 = new Vector3f(0.5f, 0.5f, 0.0f);
         Vector3f c0 = new Vector3f(1.0f, 0.0f, 0.0f);
         Vector3f c1 = new Vector3f(0.0f, 1.0f, 0.0f);
         Vector3f c2 = new Vector3f(0.0f, 0.0f, 1.0f);
@@ -108,7 +94,7 @@ public final class DukeGame extends Game {
             .addVertex(positionElement, v1).addVertex(colorElement, c1)
             .addVertex(positionElement, v2).addVertex(colorElement, c2)
             .addVertex(positionElement, v3).addVertex(colorElement, c3)
-            .buildStatic(layout, Model.Type.POLYGON);
+            .buildStatic(layout, positionElement, Model.Type.POLYGON);
     }
 
     @Override
@@ -137,7 +123,7 @@ public final class DukeGame extends Game {
     }
 
     public static void main(String[] args) {
-        new DukeGame().run(new GameCreateInfo()
+        new DukeGame().run(new AppConfig()
                 .width(800)
                 .height(640)
                 .title("Duke Game"),

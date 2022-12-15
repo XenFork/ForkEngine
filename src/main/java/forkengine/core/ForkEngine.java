@@ -34,9 +34,9 @@ import forkengine.gl.IGL;
  */
 public final class ForkEngine {
     /**
-     * The current game instance.
+     * The current application adapter instance.
      */
-    public static Game game;
+    public static AppAdapter appAdapter;
     /**
      * The current application instance.
      */

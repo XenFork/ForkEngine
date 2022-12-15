@@ -22,29 +22,21 @@
  * SOFTWARE.
  */
 
-package forkengine.backend.lwjgl3;
+package forkengine.gui;
 
-import forkengine.core.Timer;
-import org.lwjgl.glfw.GLFW;
+import java.util.List;
 
 /**
- * The timer implemented with LWJGL 3.
+ * The element which contains elements.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class LWJGL3Timer extends Timer {
+public interface XParentElement extends XElement {
     /**
-     * Creates the timer with the given tps.
+     * Gets the children elements.
      *
-     * @param ticksPerSecond the ticks per second.
+     * @return the children elements.
      */
-    public LWJGL3Timer(int ticksPerSecond) {
-        super(ticksPerSecond);
-    }
-
-    @Override
-    public double getTimeSecond() {
-        return GLFW.glfwGetTime();
-    }
+    List<XElement> getChildren();
 }

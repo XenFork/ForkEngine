@@ -22,29 +22,13 @@
  * SOFTWARE.
  */
 
-package forkengine.backend.lwjgl3;
-
-import forkengine.core.Timer;
-import org.lwjgl.glfw.GLFW;
+package forkengine.gui.screen;
 
 /**
- * The timer implemented with LWJGL 3.
+ * The screen.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class LWJGL3Timer extends Timer {
-    /**
-     * Creates the timer with the given tps.
-     *
-     * @param ticksPerSecond the ticks per second.
-     */
-    public LWJGL3Timer(int ticksPerSecond) {
-        super(ticksPerSecond);
-    }
-
-    @Override
-    public double getTimeSecond() {
-        return GLFW.glfwGetTime();
-    }
+public class Screen {
 }

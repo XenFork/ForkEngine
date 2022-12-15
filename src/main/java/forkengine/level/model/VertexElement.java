@@ -36,6 +36,8 @@ import java.util.function.BiConsumer;
 
 /**
  * The vertex element.
+ * <p>
+ * This class is immutable and value-based.
  *
  * @author squid233
  * @since 0.1.0

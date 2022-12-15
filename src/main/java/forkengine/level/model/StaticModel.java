@@ -55,19 +55,24 @@ public class StaticModel extends Model {
     /**
      * Creates the static model with the given vertex layout and render type.
      *
-     * @param layout the vertex layout.
-     * @param type   the render type.
-     * @param mesh   the mesh to be built.
+     * @param layout          the vertex layout.
+     * @param positionElement the position element in the layout.
+     * @param type            the render type.
+     * @param meshes          the meshes to be built.
      */
-    public StaticModel(VertexLayout layout, Type type, Mesh mesh) {
+    public StaticModel(VertexLayout layout, VertexElement positionElement,
+                       Type type, Mesh... meshes) {
         this.layout = layout;
         this.type = type;
+
+        final var elements = layout.getElements();
+        for (Mesh mesh : meshes) {
+            mesh.checkLayout(elements);
+        }
 
         // Build vertices
         Map<VertexElement, List<Vector3fc>> vertices = new HashMap<>();
         List<Integer> indices = new ArrayList<>();
-        final var elements = mesh.getElements();
-        boolean indicesFrozen = false;
         int vertCount = 0;
         int stride = 0;
         // TODO: 2022/12/14 Points and Lines type
@@ -78,41 +83,48 @@ public class StaticModel extends Model {
             }
             case TRIANGLES -> {
                 for (VertexElement element : elements) {
+                    boolean isPosElem = element.equals(positionElement);
                     stride += element.bytesSize();
                     var list = vertices.computeIfAbsent(element, e -> new ArrayList<>());
-                    var meshVertices = mesh.getVertices(element);
-                    for (Vector3fc vertex : meshVertices) {
-                        // Finds index
-                        int index = getVertexIndex(list, vertex);
-                        if (index == -1) {
-                            // index not found
-                            list.add(vertex);
-                            if (!indicesFrozen) {
-                                indices.add(vertices.size() - 1);
+                    for (Mesh mesh : meshes) {
+                        var meshVertices = mesh.getVertices(element);
+                        for (Vector3fc vertex : meshVertices) {
+                            // Finds index
+                            int index = getVertexIndex(list, vertex);
+                            if (index == -1) {
+                                // index not found
+                                list.add(vertex);
+                                if (isPosElem) {
+                                    indices.add(list.size() - 1);
+                                }
+                            } else if (isPosElem) {
+                                indices.add(index);
                             }
-                        } else if (!indicesFrozen) {
-                            indices.add(index);
                         }
                     }
                     vertCount = list.size();
-                    indicesFrozen = true;
                 }
             }
             case POLYGON -> {
                 for (VertexElement element : elements) {
+                    boolean isPosElem = element.equals(positionElement);
                     stride += element.bytesSize();
                     var list = vertices.computeIfAbsent(element, e -> new ArrayList<>());
-                    var meshVertices = mesh.getVertices(element);
-                    vertCount = meshVertices.size();
-                    list.addAll(meshVertices);
-                    if (!indicesFrozen) {
-                        for (int i = 0; i < vertCount - 2; i++) {
-                            indices.add(0);
-                            indices.add(i + 1);
-                            indices.add(i + 2);
+                    int baseIndex = 0;
+                    for (Mesh mesh : meshes) {
+                        var meshVertices = mesh.getVertices(element);
+                        int vertSz = meshVertices.size();
+                        list.addAll(meshVertices);
+                        if (isPosElem) {
+                            vertCount += vertSz;
+                            for (int i = 0; i < vertSz - 2; i++) {
+                                indices.add(baseIndex);
+                                indices.add(baseIndex + i + 1);
+                                indices.add(baseIndex + i + 2);
+                            }
+                            baseIndex += vertSz;
                         }
                     }
-                    indicesFrozen = true;
                 }
             }
         }
@@ -125,6 +137,7 @@ public class StaticModel extends Model {
         vbo = gl.genBuffer();
         ebo = gl.genBuffer();
         bindVertexArray(vao);
+
         gl.bindBuffer(IGL.ARRAY_BUFFER, vbo);
         DataBuffer buffer = application.allocateNative((long) vertexCount * stride);
         switch (layout) {
@@ -189,10 +202,29 @@ public class StaticModel extends Model {
         bindVertexArray(0);
     }
 
+    /**
+     * Gets the layout.
+     *
+     * @return the layout.
+     */
+    public VertexLayout layout() {
+        return layout;
+    }
+
+    /**
+     * Gets the vertex count.
+     *
+     * @return the vertex count.
+     */
     public int vertexCount() {
         return vertexCount;
     }
 
+    /**
+     * Gets the index count.
+     *
+     * @return the index count.
+     */
     public int indexCount() {
         return indexCount;
     }

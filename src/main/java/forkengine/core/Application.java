@@ -112,9 +112,10 @@ public abstract class Application {
     /**
      * Creates a timer.
      *
+     * @param ticksPerSecond the ticks per second. defaults to 50.
      * @return the timer.
      */
-    public abstract Timer createTimer();
+    public abstract Timer createTimer(int ticksPerSecond);
 
     /**
      * Allocates native memory.

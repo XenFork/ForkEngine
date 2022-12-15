@@ -22,29 +22,15 @@
  * SOFTWARE.
  */
 
-package forkengine.backend.lwjgl3;
+package forkengine.asset.texture;
 
-import forkengine.core.Timer;
-import org.lwjgl.glfw.GLFW;
+import forkengine.asset.Asset;
 
 /**
- * The timer implemented with LWJGL 3.
+ * The base texture.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class LWJGL3Timer extends Timer {
-    /**
-     * Creates the timer with the given tps.
-     *
-     * @param ticksPerSecond the ticks per second.
-     */
-    public LWJGL3Timer(int ticksPerSecond) {
-        super(ticksPerSecond);
-    }
-
-    @Override
-    public double getTimeSecond() {
-        return GLFW.glfwGetTime();
-    }
+public abstract class Texture extends Asset {
 }

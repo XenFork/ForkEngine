@@ -25,6 +25,7 @@
 package forkengine.asset.texture;
 
 import forkengine.asset.Asset;
+import forkengine.core.ForkEngine;
 
 /**
  * The base texture.
@@ -33,4 +34,47 @@ import forkengine.asset.Asset;
  * @since 0.1.0
  */
 public abstract class Texture extends Asset {
+    private final int id;
+    private final int target;
+
+    /**
+     * Creates the texture with the given id and target.
+     *
+     * @param id     the texture id.
+     * @param target the texture target.
+     */
+    public Texture(int id, int target) {
+        this.id = id;
+        this.target = target;
+    }
+
+    /**
+     * Binds this texture to the given unit started at 0.
+     *
+     * @param unit the texture unit to be bound.
+     */
+    public abstract void bind(int unit);
+
+    /**
+     * Gets the id of this texture.
+     *
+     * @return the texture id.
+     */
+    public int id() {
+        return id;
+    }
+
+    /**
+     * Gets the target of this texture.
+     *
+     * @return the texture target.
+     */
+    public int target() {
+        return target;
+    }
+
+    @Override
+    public void close() {
+        ForkEngine.gl.deleteTexture(id());
+    }
 }

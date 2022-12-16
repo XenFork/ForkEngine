@@ -160,6 +160,31 @@ public final class LWJGL3GL implements IGL {
         glDrawElements(mode, count, type, indices);
     }
 
+    @Override
+    public int createTexture(int target) {
+        GLCapabilities caps = GL.getCapabilities();
+        if (caps.GL_ARB_direct_state_access) {
+            return glCreateTextures(target);
+        }
+        return glGenTextures();
+    }
+
+    @Override
+    public void bindTexture(int target, int unit, int texture) {
+        GLCapabilities caps = GL.getCapabilities();
+        if (caps.GL_ARB_direct_state_access) {
+            glBindTextureUnit(unit, texture);
+        } else {
+            glActiveTexture(unit);
+            glBindTexture(target, texture);
+        }
+    }
+
+    @Override
+    public void deleteTexture(int texture) {
+        glDeleteTextures(texture);
+    }
+
     /**
      * Gets the instance of this.
      *

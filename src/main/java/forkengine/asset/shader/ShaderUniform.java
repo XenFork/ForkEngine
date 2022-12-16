@@ -26,7 +26,10 @@ package forkengine.asset.shader;
 
 import forkengine.core.DataBuffer;
 import forkengine.core.ForkEngine;
+import forkengine.util.DataType;
 import org.joml.*;
+
+import java.util.Locale;
 
 /**
  * The base shader uniform.
@@ -65,146 +68,166 @@ public abstract class ShaderUniform implements AutoCloseable {
         /**
          * The single int.
          */
-        INT(4, 1),
+        INT(4, 1, DataType.INT),
         /**
          * The single unsigned int.
          */
-        UNSIGNED_INT(4, 1),
+        UNSIGNED_INT(4, 1, DataType.UNSIGNED_INT),
         /**
          * The single float.
          */
-        FLOAT(4, 1),
+        FLOAT(4, 1, DataType.FLOAT),
         /**
          * The single double.
          */
-        DOUBLE(8, 1),
+        DOUBLE(8, 1, DataType.DOUBLE),
         /**
          * The int vector2.
          */
-        IVEC2(8, 2),
+        IVEC2(8, 2, DataType.INT),
         /**
          * The unsigned int vector2.
          */
-        UVEC2(8, 2),
+        UVEC2(8, 2, DataType.UNSIGNED_INT),
         /**
          * The float vector2.
          */
-        VEC2(8, 2),
+        VEC2(8, 2, DataType.FLOAT),
         /**
          * The double vector2.
          */
-        DVEC2(16, 2),
+        DVEC2(16, 2, DataType.DOUBLE),
         /**
          * The int vector3.
          */
-        IVEC3(12, 3),
+        IVEC3(12, 3, DataType.INT),
         /**
          * The unsigned int vector3.
          */
-        UVEC3(12, 3),
+        UVEC3(12, 3, DataType.UNSIGNED_INT),
         /**
          * The float vector3.
          */
-        VEC3(12, 3),
+        VEC3(12, 3, DataType.FLOAT),
         /**
          * The double vector3.
          */
-        DVEC3(24, 3),
+        DVEC3(24, 3, DataType.DOUBLE),
         /**
          * The int vector4.
          */
-        IVEC4(16, 4),
+        IVEC4(16, 4, DataType.INT),
         /**
          * The unsigned int vector4.
          */
-        UVEC4(16, 4),
+        UVEC4(16, 4, DataType.UNSIGNED_INT),
         /**
          * The float vector4.
          */
-        VEC4(16, 4),
+        VEC4(16, 4, DataType.FLOAT),
         /**
          * The double vector4.
          */
-        DVEC4(32, 4),
+        DVEC4(32, 4, DataType.DOUBLE),
         /**
          * The float 2x2 matrix.
          */
-        MAT2(16, 4),
+        MAT2(16, 4, DataType.FLOAT),
         /**
          * The float 3x3 matrix.
          */
-        MAT3(36, 9),
+        MAT3(36, 9, DataType.FLOAT),
         /**
          * The float 4x4 matrix.
          */
-        MAT4(64, 16),
+        MAT4(64, 16, DataType.FLOAT),
         /**
          * The float 2x3 matrix.
          */
-        MAT2X3(24, 6),
+        MAT2X3(24, 6, DataType.FLOAT),
         /**
          * The float 2x4 matrix.
          */
-        MAT2X4(32, 8),
+        MAT2X4(32, 8, DataType.FLOAT),
         /**
          * The float 3x2 matrix.
          */
-        MAT3X2(24, 6),
+        MAT3X2(24, 6, DataType.FLOAT),
         /**
          * The float 3x4 matrix.
          */
-        MAT3X4(48, 12),
+        MAT3X4(48, 12, DataType.FLOAT),
         /**
          * The float 4x2 matrix.
          */
-        MAT4X2(32, 8),
+        MAT4X2(32, 8, DataType.FLOAT),
         /**
          * The float 4x3 matrix.
          */
-        MAT4X3(48, 12),
+        MAT4X3(48, 12, DataType.FLOAT),
         /**
          * The double 2x2 matrix.
          */
-        DMAT2(32, 4),
+        DMAT2(32, 4, DataType.DOUBLE),
         /**
          * The double 3x3 matrix.
          */
-        DMAT3(72, 9),
+        DMAT3(72, 9, DataType.DOUBLE),
         /**
          * The double 4x4 matrix.
          */
-        DMAT4(128, 16),
+        DMAT4(128, 16, DataType.DOUBLE),
         /**
          * The double 2x3 matrix.
          */
-        DMAT2X3(48, 6),
+        DMAT2X3(48, 6, DataType.DOUBLE),
         /**
          * The double 2x4 matrix.
          */
-        DMAT2X4(64, 8),
+        DMAT2X4(64, 8, DataType.DOUBLE),
         /**
          * The double 3x2 matrix.
          */
-        DMAT3X2(48, 6),
+        DMAT3X2(48, 6, DataType.DOUBLE),
         /**
          * The double 3x4 matrix.
          */
-        DMAT3X4(96, 12),
+        DMAT3X4(96, 12, DataType.DOUBLE),
         /**
          * The double 4x2 matrix.
          */
-        DMAT4X2(64, 8),
+        DMAT4X2(64, 8, DataType.DOUBLE),
         /**
          * The double 4x3 matrix.
          */
-        DMAT4X3(96, 12);
+        DMAT4X3(96, 12, DataType.DOUBLE);
 
         private final int bytesSize;
         private final int count;
+        private final DataType dataType;
 
-        Type(int bytesSize, int count) {
+        Type(int bytesSize, int count, DataType dataType) {
             this.bytesSize = bytesSize;
             this.count = count;
+            this.dataType = dataType;
+        }
+
+        /**
+         * Gets the uniform type by the given GLSL data type name.
+         *
+         * @param name the data type name.
+         * @return the uniform type.
+         */
+        public static Type fromName(String name) {
+            name = name.toUpperCase(Locale.ROOT);
+            return switch (name) {
+                case "BOOL" -> INT;
+                case "UINT" -> UNSIGNED_INT;
+                case "BVEC2" -> IVEC2;
+                case "BVEC3" -> IVEC3;
+                case "BVEC4" -> IVEC4;
+                default -> valueOf(name);
+            };
         }
 
         /**
@@ -223,6 +246,15 @@ public abstract class ShaderUniform implements AutoCloseable {
          */
         public int count() {
             return count;
+        }
+
+        /**
+         * Gets the data type of this uniform type.
+         *
+         * @return the data type.
+         */
+        public DataType dataType() {
+            return dataType;
         }
     }
 
@@ -411,6 +443,54 @@ public abstract class ShaderUniform implements AutoCloseable {
      */
     public void set(double x, double y, double z, double w) {
         buffer.putDouble(0, x).putDouble(4, y).putDouble(8, z).putDouble(12, w);
+        markDirty();
+    }
+
+    /**
+     * Sets the values.
+     *
+     * @param values the values.
+     */
+    public void set(int[] values) {
+        for (int i = 0; i < values.length; i++) {
+            buffer.putInt(i * 4L, values[i]);
+        }
+        markDirty();
+    }
+
+    /**
+     * Sets the values.
+     *
+     * @param values the values.
+     */
+    public void set(boolean[] values) {
+        for (int i = 0; i < values.length; i++) {
+            buffer.putInt(i * 4L, values[i] ? 1 : 0);
+        }
+        markDirty();
+    }
+
+    /**
+     * Sets the values.
+     *
+     * @param values the values.
+     */
+    public void set(float[] values) {
+        for (int i = 0; i < values.length; i++) {
+            buffer.putFloat(i * 4L, values[i]);
+        }
+        markDirty();
+    }
+
+    /**
+     * Sets the values.
+     *
+     * @param values the values.
+     */
+    public void set(double[] values) {
+        for (int i = 0; i < values.length; i++) {
+            buffer.putDouble(i * 8L, values[i]);
+        }
         markDirty();
     }
 

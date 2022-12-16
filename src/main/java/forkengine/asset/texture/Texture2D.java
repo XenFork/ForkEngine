@@ -22,16 +22,39 @@
  * SOFTWARE.
  */
 
-package forkengine.asset;
+package forkengine.asset.texture;
+
+import forkengine.core.ForkEngine;
+import forkengine.gl.GLStateManager;
+import forkengine.gl.IGL;
 
 /**
- * The asset.
+ * The 2D texture.
  *
  * @author squid233
  * @since 0.1.0
  */
-public abstract class Asset implements AutoCloseable {
+public class Texture2D extends Texture {
+    /**
+     * Creates the texture with the given id.
+     *
+     * @param id the texture id.
+     */
+    public Texture2D(int id) {
+        super(id, IGL.TEXTURE_2D);
+    }
+
+    /**
+     * Creates a 2D texture with {@link IGL#createTexture}.
+     *
+     * @return the texture.
+     */
+    public static Texture2D create() {
+        return new Texture2D(ForkEngine.gl.createTexture(IGL.TEXTURE_2D));
+    }
+
     @Override
-    public void close() {
+    public void bind(int unit) {
+        GLStateManager.bindTexture2D(IGL.TEXTURE0 + unit, id());
     }
 }

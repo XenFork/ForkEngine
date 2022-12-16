@@ -19,6 +19,7 @@ allprojects {
 
     dependencies {
         api 'org.joml:joml:1.10.5'
+        api 'com.google.code.gson:gson:2.10'
 
         compileOnly 'org.jetbrains:annotations:23.0.0'
         testCompileOnly 'org.jetbrains:annotations:23.0.0'

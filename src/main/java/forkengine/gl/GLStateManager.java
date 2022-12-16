@@ -35,6 +35,12 @@ import static forkengine.core.ForkEngine.gl;
 public final class GLStateManager {
     private static int programId = 0;
     private static int vertexArray = 0;
+    private static int activeTextureUnit2D = 0;
+    private static int boundTexture2D = 0;
+    private static int activeTextureUnit3D = 0;
+    private static int boundTexture3D = 0;
+    private static int activeTextureUnitCubeMap = 0;
+    private static int boundTextureCubeMap = 0;
 
     /**
      * Installs a program object as part of current rendering state.
@@ -57,6 +63,48 @@ public final class GLStateManager {
         if (vertexArray != array) {
             vertexArray = array;
             gl.bindVertexArray(array);
+        }
+    }
+
+    /**
+     * Binds a 2D texture.
+     *
+     * @param unit    the texture unit.
+     * @param texture the texture id.
+     */
+    public static void bindTexture2D(int unit, int texture) {
+        if (activeTextureUnit2D != unit || boundTexture2D != texture) {
+            activeTextureUnit2D = unit;
+            boundTexture2D = texture;
+            gl.bindTexture(IGL.TEXTURE_2D, unit, texture);
+        }
+    }
+
+    /**
+     * Binds a 3D texture.
+     *
+     * @param unit    the texture unit.
+     * @param texture the texture id.
+     */
+    public static void bindTexture3D(int unit, int texture) {
+        if (activeTextureUnit3D != unit || boundTexture3D != texture) {
+            activeTextureUnit3D = unit;
+            boundTexture3D = texture;
+            gl.bindTexture(IGL.TEXTURE_3D, unit, texture);
+        }
+    }
+
+    /**
+     * Binds a cube-map texture.
+     *
+     * @param unit    the texture unit.
+     * @param texture the texture id.
+     */
+    public static void bindTextureCubeMap(int unit, int texture) {
+        if (activeTextureUnitCubeMap != unit || boundTextureCubeMap != texture) {
+            activeTextureUnitCubeMap = unit;
+            boundTextureCubeMap = texture;
+            gl.bindTexture(IGL.TEXTURE_CUBE_MAP, unit, texture);
         }
     }
 }

@@ -26,7 +26,6 @@ package forkengine.test;
 
 import forkengine.asset.AssetFile;
 import forkengine.asset.shader.Shader;
-import forkengine.asset.shader.ShaderUniform;
 import forkengine.backend.lwjgl3.LWJGL3App;
 import forkengine.core.AppConfig;
 import forkengine.core.Game;
@@ -61,13 +60,7 @@ public final class DukeGame extends Game {
         VertexElement colorElement = VertexElement.colorNormalized(1);
         VertexLayout layout = VertexLayout.interleaved(positionElement, colorElement);
 
-        shader = Shader.loadCustom(
-            AssetFile.internal("shader/position_color.vert"),
-            AssetFile.internal("shader/position_color.frag"),
-            layout
-        );
-
-        shader.createUniform("ModelMat", ShaderUniform.Type.MAT4);
+        shader = Shader.loadJson(AssetFile.internal("shader/position_color.json"), layout);
 
         Vector3f v0 = new Vector3f(-0.5f, 0.5f, 0.0f);
         Vector3f v1 = new Vector3f(-0.5f, -0.5f, 0.0f);
@@ -96,7 +89,7 @@ public final class DukeGame extends Game {
     public void render() {
         ScreenUtil.clear(ScreenUtil.COLOR_BUFFER_BIT | ScreenUtil.DEPTH_BUFFER_BIT);
         shader.use();
-        shader.getUniform("ModelMat").orElseThrow().set(modelMat);
+        shader.getUniform("u_ModelMatrix").orElseThrow().set(modelMat);
         shader.uploadUniforms();
         model.render();
         Shader.useProgram(0);

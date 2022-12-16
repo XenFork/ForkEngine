@@ -24,13 +24,16 @@
 
 package forkengine.asset.shader;
 
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.JsonReader;
 import forkengine.asset.Asset;
+import forkengine.asset.AssetFile;
 import forkengine.gl.GLStateManager;
 import forkengine.level.model.VertexLayout;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static forkengine.core.ForkEngine.gl;
@@ -39,8 +42,24 @@ import static forkengine.core.ForkEngine.gl;
  * The base shader program.
  *
  * <h2>Loading Shaders</h2>
- * To load shaders, use {@link #attach(int)}, {@link Builder#source(String) source(String)}, {@link Builder#compile() compile()},
- * {@link #link()}, {@link #detach(Builder)} and {@link Builder#close()}.
+ * To load shaders, you can use {@link #loadCustom(String, String, VertexLayout) custom sources}.
+ * <h3>JSON Shader Info</h3>
+ * You can store the file provider, file path of the shader and the uniforms in a JSON file. Simply load it
+ * with {@link #loadJson(String, VertexLayout) loadJson}.
+ * <p>
+ * This is an example:
+ * <pre>{@code
+ * {
+ *   "assetType"    : "local|internal", // local or internal
+ *   "vertex"       : "path/to/vertex_shader.vert",
+ *   "fragment"     : "path/to/fragment_shader.frag",
+ *   "uniform"      : {
+ *     "UniformName": {
+ *       "type"     : "GLSL data type", // must be set before values
+ *       "values"   : [1, 2, 3] // must be an array
+ *     }
+ *   }
+ * }}</pre>
  *
  * @author squid233
  * @since 0.1.0
@@ -177,6 +196,109 @@ public abstract class Shader extends Asset {
             shader.detach(fsh);
         }
         return shader;
+    }
+
+    private static Shader readJson(JsonReader in, VertexLayout layout) throws IOException {
+        AssetFile assetType = AssetFile.CLASSPATH;
+        String vertex = null, fragment = null;
+        Map<String, Map.Entry<ShaderUniform.Type, Object>> uniforms = new HashMap<>();
+        in.beginObject();
+        while (in.hasNext()) {
+            switch (in.nextName()) {
+                case "assetType" -> {
+                    String v = in.nextString().toLowerCase(Locale.ROOT);
+                    switch (v) {
+                        case "local" -> assetType = AssetFile.LOCAL;
+                        case "internal", "classpath" -> assetType = AssetFile.CLASSPATH;
+                    }
+                }
+                case "vertex" -> vertex = in.nextString();
+                case "fragment" -> fragment = in.nextString();
+                case "uniform" -> {
+                    in.beginObject();
+                    while (in.hasNext()) {
+                        String uniformName = in.nextName();
+                        ShaderUniform.Type uniformType = null;
+                        Object values = null;
+                        in.beginObject();
+                        while (in.hasNext()) {
+                            switch (in.nextName()) {
+                                case "type" -> {
+                                    uniformType = ShaderUniform.Type.fromName(in.nextString());
+                                    switch (uniformType.dataType()) {
+                                        case INT, UNSIGNED_INT -> values = new int[uniformType.count()];
+                                        case FLOAT -> values = new float[uniformType.count()];
+                                        case DOUBLE -> values = new double[uniformType.count()];
+                                    }
+                                }
+                                case "values" -> {
+                                    if (uniformType == null)
+                                        throw new IllegalStateException("uniform." + uniformName + ".type must be set before values");
+                                    in.beginArray();
+                                    switch (Objects.requireNonNull(values)) {
+                                        case int[] ints -> {
+                                            for (int i = 0; in.hasNext(); i++) {
+                                                ints[i] = in.nextInt();
+                                            }
+                                        }
+                                        case float[] floats -> {
+                                            for (int i = 0; in.hasNext(); i++) {
+                                                floats[i] = (float) in.nextDouble();
+                                            }
+                                        }
+                                        case double[] doubles -> {
+                                            for (int i = 0; in.hasNext(); i++) {
+                                                doubles[i] = in.nextDouble();
+                                            }
+                                        }
+                                        default -> throw new IllegalStateException("Unexpected value: " + values);
+                                    }
+                                    in.endArray();
+                                }
+                            }
+                            uniforms.put(uniformName,
+                                new AbstractMap.SimpleEntry<>(uniformType, values));
+                        }
+                        in.endObject();
+                    }
+                    in.endObject();
+                }
+            }
+        }
+        in.endObject();
+        Shader shader = loadCustom(
+            assetType.loadString(Objects.requireNonNull(vertex)),
+            assetType.loadString(Objects.requireNonNull(fragment)),
+            layout);
+        uniforms.forEach((name, entry) -> {
+            ShaderUniform.Type type = entry.getKey();
+            ShaderUniform uniform = shader.createUniform(name, type).orElseThrow();
+            Object values = entry.getValue();
+            switch (values) {
+                case int[] ints -> uniform.set(ints);
+                case float[] floats -> uniform.set(floats);
+                case double[] doubles -> uniform.set(doubles);
+                default -> throw new IllegalStateException("Unexpected value: " + values);
+            }
+        });
+        return shader;
+    }
+
+    /**
+     * Creates a shader with the given json source.
+     *
+     * @param json   the json source.
+     * @param layout the vertex layout of the shader program.
+     * @return the shader program.
+     */
+    public static Shader loadJson(String json, VertexLayout layout) {
+        try (JsonReader reader = new JsonReader(new StringReader(json))) {
+            reader.setLenient(true);
+            reader.peek();
+            return readJson(reader, layout);
+        } catch (IOException e) {
+            throw new JsonSyntaxException(e);
+        }
     }
 
     /**

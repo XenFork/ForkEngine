@@ -22,16 +22,12 @@
  * SOFTWARE.
  */
 
-package forkengine.asset;
+package forkengine.level.batch;
 
 /**
- * The asset.
- *
+ * The base batch
  * @author squid233
  * @since 0.1.0
  */
-public abstract class Asset implements AutoCloseable {
-    @Override
-    public void close() {
-    }
+public class Batch {
 }

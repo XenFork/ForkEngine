@@ -84,6 +84,49 @@ public interface IGL {
         DYNAMIC_DRAW = 0x88E8,
         DYNAMIC_READ = 0x88E9,
         DYNAMIC_COPY = 0x88EA;
+    /**
+     * The texture targets.
+     */
+    int
+        TEXTURE_2D = 0x0DE1,
+        TEXTURE_3D = 0x806F,
+        TEXTURE_CUBE_MAP = 0x8513;
+    /**
+     * The texture units.
+     */
+    int
+        TEXTURE0 = 0x84C0,
+        TEXTURE1 = 0x84C1,
+        TEXTURE2 = 0x84C2,
+        TEXTURE3 = 0x84C3,
+        TEXTURE4 = 0x84C4,
+        TEXTURE5 = 0x84C5,
+        TEXTURE6 = 0x84C6,
+        TEXTURE7 = 0x84C7,
+        TEXTURE8 = 0x84C8,
+        TEXTURE9 = 0x84C9,
+        TEXTURE10 = 0x84CA,
+        TEXTURE11 = 0x84CB,
+        TEXTURE12 = 0x84CC,
+        TEXTURE13 = 0x84CD,
+        TEXTURE14 = 0x84CE,
+        TEXTURE15 = 0x84CF,
+        TEXTURE16 = 0x84D0,
+        TEXTURE17 = 0x84D1,
+        TEXTURE18 = 0x84D2,
+        TEXTURE19 = 0x84D3,
+        TEXTURE20 = 0x84D4,
+        TEXTURE21 = 0x84D5,
+        TEXTURE22 = 0x84D6,
+        TEXTURE23 = 0x84D7,
+        TEXTURE24 = 0x84D8,
+        TEXTURE25 = 0x84D9,
+        TEXTURE26 = 0x84DA,
+        TEXTURE27 = 0x84DB,
+        TEXTURE28 = 0x84DC,
+        TEXTURE29 = 0x84DD,
+        TEXTURE30 = 0x84DE,
+        TEXTURE31 = 0x84DF;
 
     /**
      * Call {@code glClear}.
@@ -101,6 +144,10 @@ public interface IGL {
      * @param h the viewport height.
      */
     void viewport(int x, int y, int w, int h);
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Shader program
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Creates a shader uniform.
@@ -157,6 +204,10 @@ public interface IGL {
      * @param program the program object whose executables are to be used as part of current rendering state.
      */
     void useProgram(int program);
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Vertex array
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Generates a vertex array object name.
@@ -259,6 +310,10 @@ public interface IGL {
      */
     void vertexAttribArrayPointer(int index, int size, int type, boolean normalized, int stride, long pointer);
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Draw call
+    ///////////////////////////////////////////////////////////////////////////
+
     /**
      * Constructs a sequence of geometric primitives by successively transferring elements for count vertices to the GL.
      *
@@ -268,4 +323,39 @@ public interface IGL {
      * @param indices the index values.
      */
     void drawElements(int mode, int count, int type, long indices);
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Texture
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a previously unused texture name in textures, representing a new texture object.
+     *
+     * @param target the texture target.
+     * @return the texture name.
+     */
+    int createTexture(int target);
+
+    /**
+     * Binds an existing texture object to the texture unit numbered {@code unit} in DSA,
+     * or binds a texture to a texture target.
+     *
+     * @param target  the texture target.
+     * @param unit    the texture unit number in DSA, or which texture unit to make active.
+     * @param texture the texture name in DSA, or the texture object to bind.
+     */
+    void bindTexture(int target, int unit, int texture);
+
+    /**
+     * Deletes texture objects. After a texture object is deleted, it has no contents or dimensionality, and its name is again unused.
+     * If a texture that is currently bound to any of the target bindings of {@link #bindTexture} is deleted, it is as
+     * though {@link #bindTexture} had been executed with the same target and texture zero. Additionally, special care
+     * must be taken when deleting a texture if any of the images of the texture are attached to a framebuffer object.
+     * <p>
+     * Unused names in textures that have been marked as used for the purposes of {@link #createTexture} are marked as unused again.
+     * Unused names in textures are silently ignored, as is the name zero.
+     *
+     * @param texture the texture to be deleted.
+     */
+    void deleteTexture(int texture);
 }

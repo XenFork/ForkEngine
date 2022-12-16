@@ -82,7 +82,7 @@ public class Mesh {
     public void checkLayout(Set<VertexElement> layout) {
         getElements().forEach(element -> {
             if (!layout.contains(element)) {
-                throw new IllegalStateException("Vertex element not found in the given layout! got: " + element + ", layout: " + layout);
+                throw new NoSuchElementException("Vertex element not found in the given layout! got: " + element + ", layout: " + layout);
             }
         });
     }

@@ -24,6 +24,11 @@
 
 package forkengine.level.scene;
 
+import org.joml.Vector3f;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * The actor, or game object.
  *
@@ -31,4 +36,36 @@ package forkengine.level.scene;
  * @since 0.1.0
  */
 public class Actor {
+    public static final String COMP_POSITION = "fe_ActorPosition";
+    private final Map<String, Object> components = new HashMap<>();
+    private final Vector3f position = new Vector3f();
+
+    /**
+     * Creates the actor.
+     */
+    public Actor() {
+        components.put(COMP_POSITION, position);
+    }
+
+    /**
+     * Gets a component by the given name.
+     *
+     * @param name the name of the component.
+     * @param <T>  the type of the component.
+     * @return the component.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getComponent(String name) {
+        Object comp = components.get(name);
+        return comp != null ? (T) comp : null;
+    }
+
+    /**
+     * Gets the position of this actor.
+     *
+     * @return the position.
+     */
+    public Vector3f position() {
+        return position;
+    }
 }

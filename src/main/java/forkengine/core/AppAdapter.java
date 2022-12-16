@@ -25,6 +25,7 @@
 package forkengine.core;
 
 import forkengine.gui.screen.ScreenUtil;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -116,9 +117,21 @@ public class AppAdapter implements ISizeListener, IMouseListener, IKeyListener {
     }
 
     /**
+     * Closes the resource if it is not null.
+     *
+     * @param autoCloseable the resource.
+     * @throws Exception if the resource cannot be closed.
+     */
+    public void dispose(@Nullable AutoCloseable autoCloseable) throws Exception {
+        if (autoCloseable != null) {
+            autoCloseable.close();
+        }
+    }
+
+    /**
      * Exiting.
      */
-    public void exit() {
+    public void exit() throws Exception {
     }
 
     /**

@@ -37,7 +37,6 @@ import forkengine.level.model.StaticModel;
 import forkengine.level.model.VertexElement;
 import forkengine.level.model.VertexLayout;
 import forkengine.level.scene.Actor;
-import forkengine.util.DataType;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -57,27 +56,16 @@ public final class DukeGame extends Game {
     @Override
     public void init() {
         super.init();
-        shader = Shader.create();
-        Shader.Builder vsh = shader.attach(Shader.VERTEX_SHADER)
-            .source(AssetFile.internal("shader/position_color.vert"))
-            .compileThrowLog();
-        Shader.Builder fsh = shader.attach(Shader.FRAGMENT_SHADER)
-            .source(AssetFile.internal("shader/position_color.frag"))
-            .compileThrowLog();
 
-        VertexElement positionElement = VertexElement.builder(DataType.FLOAT, 2)
-            .name("Position")
-            .index(0)
-            .build(VertexElement.Putter.VEC2);
-        VertexElement colorElement = VertexElement.builder(DataType.FLOAT, 3)
-            .name("Color")
-            .index(1)
-            .build(VertexElement.Putter.VEC3);
+        VertexElement positionElement = VertexElement.position(0);
+        VertexElement colorElement = VertexElement.colorNormalized(1);
         VertexLayout layout = VertexLayout.interleaved(positionElement, colorElement);
 
-        shader.bindLayout(layout).linkThrow(shader::getInfoLog);
-        shader.detach(vsh).close();
-        shader.detach(fsh).close();
+        shader = Shader.loadCustom(
+            AssetFile.internal("shader/position_color.vert"),
+            AssetFile.internal("shader/position_color.frag"),
+            layout
+        );
 
         shader.createUniform("ModelMat", ShaderUniform.Type.MAT4);
 
@@ -116,9 +104,9 @@ public final class DukeGame extends Game {
     }
 
     @Override
-    public void exit() {
-        shader.close();
-        model.close();
+    public void exit() throws Exception {
+        dispose(shader);
+        dispose(model);
         super.exit();
     }
 

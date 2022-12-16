@@ -36,7 +36,16 @@ import java.util.function.BiConsumer;
 
 /**
  * The vertex element.
- * <p>
+ * <h2>Builtin Elements</h2>
+ * Builtin elements are used for easily creating vertex layouts. The available builtin elements are:
+ * <ul>
+ *     <li>{@link #position(int) fe_Position}</li>
+ *     <li>{@link #color(int) fe_Color}, or {@link #colorNormalized(int) normalized version}</li>
+ *     <li>{@link #texCoord2(int, int) fe_TexCoord}, or {@link #texCoord3(int, int) 3-Dimension version},
+ *     requires a number at the end, i.e. {@code fe_TexCoord0}, {@code fe_TexCoord1}, etc.</li>
+ *     <li>{@link #normal(int) fe_Normal}, or {@link #normalNormalized(int) normalized version}</li>
+ * </ul>
+ * <h2>Value-Based</h2>
  * This class is immutable and value-based.
  *
  * @author squid233
@@ -79,6 +88,78 @@ public final class VertexElement {
      */
     public static Builder builder(DataType dataType, int count) {
         return new Builder().dataType(dataType).count(count);
+    }
+
+    /**
+     * Creates a position element.
+     *
+     * @param index the index of the element.
+     * @return the element.
+     */
+    public static VertexElement position(int index) {
+        return new VertexElement(Putter.VEC3, index, "fe_Position", DataType.FLOAT, 3, false);
+    }
+
+    /**
+     * Creates a color element.
+     *
+     * @param index the index of the element.
+     * @return the element.
+     */
+    public static VertexElement color(int index) {
+        return new VertexElement(Putter.COLOR3, index, "fe_Color", DataType.UNSIGNED_BYTE, 3, true);
+    }
+
+    /**
+     * Creates a color element, which all components are normalized.
+     *
+     * @param index the index of the element.
+     * @return the element.
+     */
+    public static VertexElement colorNormalized(int index) {
+        return new VertexElement(Putter.VEC3, index, "fe_Color", DataType.FLOAT, 3, false);
+    }
+
+    /**
+     * Creates a 2d texture coordinate element.
+     *
+     * @param index  the index of the element.
+     * @param number the number of the texture coordinate.
+     * @return the element.
+     */
+    public static VertexElement texCoord2(int index, int number) {
+        return new VertexElement(Putter.VEC2, index, "fe_TexCoord" + number, DataType.FLOAT, 2, false);
+    }
+
+    /**
+     * Creates a 3d texture coordinate element.
+     *
+     * @param index  the index of the element.
+     * @param number the number of the texture coordinate.
+     * @return the element.
+     */
+    public static VertexElement texCoord3(int index, int number) {
+        return new VertexElement(Putter.VEC3, index, "fe_TexCoord" + number, DataType.FLOAT, 3, false);
+    }
+
+    /**
+     * Creates a vertex normal element.
+     *
+     * @param index the index of the element.
+     * @return the element.
+     */
+    public static VertexElement normal(int index) {
+        return new VertexElement(Putter.NORMAL, index, "fe_Normal", DataType.BYTE, 3, true);
+    }
+
+    /**
+     * Creates a vertex normal element, which all components are normalized.
+     *
+     * @param index the index of the element.
+     * @return the element.
+     */
+    public static VertexElement normalNormalized(int index) {
+        return new VertexElement(Putter.VEC3, index, "fe_Normal", DataType.FLOAT, 3, false);
     }
 
     /**

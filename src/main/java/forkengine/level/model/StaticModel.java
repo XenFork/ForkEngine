@@ -75,13 +75,8 @@ public class StaticModel extends Model {
         List<Integer> indices = new ArrayList<>();
         int vertCount = 0;
         int stride = 0;
-        // TODO: 2022/12/14 Points and Lines type
         switch (type) {
-            case POINTS -> {
-            }
-            case LINES -> {
-            }
-            case TRIANGLES -> {
+            case POINTS, LINES, TRIANGLES -> {
                 for (VertexElement element : elements) {
                     boolean isPosElem = element.equals(positionElement);
                     stride += element.bytesSize();

@@ -161,6 +161,25 @@ public abstract class Shader extends Asset {
     }
 
     /**
+     * Creates a shader and loads from the custom shader source.
+     *
+     * @param vert   the source of the vertex shader.
+     * @param frag   the source of the fragment shader.
+     * @param layout the vertex layout of the shader program.
+     * @return the shader program.
+     */
+    public static Shader loadCustom(String vert, String frag, VertexLayout layout) {
+        Shader shader = create();
+        try (Builder vsh = shader.attach(VERTEX_SHADER).source(vert).compileThrowLog();
+             Builder fsh = shader.attach(FRAGMENT_SHADER).source(frag).compileThrowLog()) {
+            shader.bindLayout(layout).linkThrow(shader::getInfoLog);
+            shader.detach(vsh);
+            shader.detach(fsh);
+        }
+        return shader;
+    }
+
+    /**
      * Installs a program object as part of current rendering state.
      *
      * @param id the program object whose executables are to be used as part of current rendering state.

@@ -24,15 +24,16 @@
 
 package forkengine.graphics.model;
 
+import forkengine.asset.shader.Shader;
 import forkengine.core.DataBuffer;
 import forkengine.core.ForkEngine;
+import forkengine.graphics.Color;
 import forkengine.util.DataType;
 import forkengine.util.MathHelper;
 import org.joml.Vector3fc;
 
 import java.util.Objects;
 import java.util.StringJoiner;
-import java.util.function.BiConsumer;
 
 /**
  * The vertex element.
@@ -40,7 +41,7 @@ import java.util.function.BiConsumer;
  * Builtin elements are used for easily creating vertex layouts. The available builtin elements are:
  * <ul>
  *     <li>{@link #position(int) fe_Position}</li>
- *     <li>{@link #color(int) fe_Color}, or {@link #colorNormalized(int) normalized version}</li>
+ *     <li>{@link #color(int) fe_Color}, or {@link #colorNormalized(int) normalized version}, or {@link #colorPacked(int) packed version}</li>
  *     <li>{@link #texCoord2(int, int) fe_TexCoord}, or {@link #texCoord3(int, int) 3-Dimension version},
  *     requires a number at the end, i.e. {@code fe_TexCoord0}, {@code fe_TexCoord1}, etc.</li>
  *     <li>{@link #normal(int) fe_Normal}, or {@link #normalNormalized(int) normalized version}</li>
@@ -97,7 +98,7 @@ public final class VertexElement {
      * @return the element.
      */
     public static VertexElement position(int index) {
-        return new VertexElement(Putter.VEC3, index, "fe_Position", DataType.FLOAT, 3, false);
+        return new VertexElement(Putter.VEC3, index, Shader.POSITION_ATTRIBUTE, DataType.FLOAT, 3, false);
     }
 
     /**
@@ -107,7 +108,7 @@ public final class VertexElement {
      * @return the element.
      */
     public static VertexElement color(int index) {
-        return new VertexElement(Putter.COLOR3, index, "fe_Color", DataType.UNSIGNED_BYTE, 3, true);
+        return new VertexElement(Putter.COLOR3, index, Shader.COLOR_ATTRIBUTE, DataType.UNSIGNED_BYTE, 3, true);
     }
 
     /**
@@ -117,7 +118,17 @@ public final class VertexElement {
      * @return the element.
      */
     public static VertexElement colorNormalized(int index) {
-        return new VertexElement(Putter.VEC3, index, "fe_Color", DataType.FLOAT, 3, false);
+        return new VertexElement(Putter.VEC3, index, Shader.COLOR_ATTRIBUTE, DataType.FLOAT, 3, false);
+    }
+
+    /**
+     * Creates a color element, which source contains one {@link Color#pack packed} float.
+     *
+     * @param index the index of the element.
+     * @return the element.
+     */
+    public static VertexElement colorPacked(int index) {
+        return new VertexElement(Putter.COLOR_PACKED3, index, Shader.COLOR_ATTRIBUTE, DataType.UNSIGNED_BYTE, 3, true);
     }
 
     /**
@@ -128,7 +139,7 @@ public final class VertexElement {
      * @return the element.
      */
     public static VertexElement texCoord2(int index, int number) {
-        return new VertexElement(Putter.VEC2, index, "fe_TexCoord" + number, DataType.FLOAT, 2, false);
+        return new VertexElement(Putter.VEC2, index, Shader.TEX_COORD_ATTRIBUTE + number, DataType.FLOAT, 2, false);
     }
 
     /**
@@ -139,7 +150,7 @@ public final class VertexElement {
      * @return the element.
      */
     public static VertexElement texCoord3(int index, int number) {
-        return new VertexElement(Putter.VEC3, index, "fe_TexCoord" + number, DataType.FLOAT, 3, false);
+        return new VertexElement(Putter.VEC3, index, Shader.TEX_COORD_ATTRIBUTE + number, DataType.FLOAT, 3, false);
     }
 
     /**
@@ -149,7 +160,7 @@ public final class VertexElement {
      * @return the element.
      */
     public static VertexElement normal(int index) {
-        return new VertexElement(Putter.NORMAL, index, "fe_Normal", DataType.BYTE, 3, true);
+        return new VertexElement(Putter.NORMAL, index, Shader.NORMAL_ATTRIBUTE, DataType.BYTE, 3, true);
     }
 
     /**
@@ -159,7 +170,7 @@ public final class VertexElement {
      * @return the element.
      */
     public static VertexElement normalNormalized(int index) {
-        return new VertexElement(Putter.VEC3, index, "fe_Normal", DataType.FLOAT, 3, false);
+        return new VertexElement(Putter.VEC3, index, Shader.NORMAL_ATTRIBUTE, DataType.FLOAT, 3, false);
     }
 
     /**
@@ -168,41 +179,129 @@ public final class VertexElement {
      * @author squid233
      * @since 0.1.0
      */
-    @FunctionalInterface
-    public interface Putter extends BiConsumer<DataBuffer, Vector3fc> {
+    public interface Putter {
         /**
          * The float vector putter.
          */
-        Putter VEC2 =
-            (buffer, vector3fc) -> buffer.putFloat(vector3fc.x()).putFloat(vector3fc.y()),
-            VEC3 = VEC2.andThen((buffer, vector3fc) -> buffer.putFloat(vector3fc.z()));
+        Putter VEC2 = new Putter() {
+            @Override
+            public void accept(DataBuffer buffer, Vector3fc vertex) {
+                buffer.putFloat(vertex.x()).putFloat(vertex.y());
+            }
+
+            @Override
+            public void accept(DataBuffer buffer, float value) {
+                buffer.putFloat(value);
+            }
+
+            @Override
+            public int floatPutCount() {
+                return 2;
+            }
+        },
+            VEC3 = new Putter() {
+                @Override
+                public void accept(DataBuffer buffer, Vector3fc vertex) {
+                    buffer.putFloat(vertex.x()).putFloat(vertex.y()).putFloat(vertex.z());
+                }
+
+                @Override
+                public void accept(DataBuffer buffer, float value) {
+                    buffer.putFloat(value);
+                }
+
+                @Override
+                public int floatPutCount() {
+                    return 3;
+                }
+            };
         /**
          * The color putter with 3 components.
          */
-        Putter COLOR3 = (buffer, vector3fc) -> buffer
-            .putByte(MathHelper.colorFloatToByte(vector3fc.x()))
-            .putByte(MathHelper.colorFloatToByte(vector3fc.y()))
-            .putByte(MathHelper.colorFloatToByte(vector3fc.z()));
+        Putter COLOR3 = new Putter() {
+            @Override
+            public void accept(DataBuffer buffer, Vector3fc vertex) {
+                buffer.putByte(Color.floatToByte(vertex.x()))
+                    .putByte(Color.floatToByte(vertex.y()))
+                    .putByte(Color.floatToByte(vertex.z()));
+            }
+
+            @Override
+            public void accept(DataBuffer buffer, float value) {
+                buffer.putByte(Color.floatToByte(value));
+            }
+
+            @Override
+            public int floatPutCount() {
+                return 3;
+            }
+        };
+        /**
+         * The color putter with a packed float, which is ordered in ABGR.
+         */
+        Putter COLOR_PACKED3 = new Putter() {
+            @Override
+            public void accept(DataBuffer buffer, Vector3fc vertex) {
+                accept(buffer, vertex.x());
+            }
+
+            @Override
+            public void accept(DataBuffer buffer, float value) {
+                int bits = Float.floatToRawIntBits(value);
+                buffer.putByte(Color.getRedComponent(bits))
+                    .putByte(Color.getGreenComponent(bits))
+                    .putByte(Color.getBlueComponent(bits));
+            }
+
+            @Override
+            public int floatPutCount() {
+                return 1;
+            }
+        };
         /**
          * The vertex normal putter.
          */
-        Putter NORMAL = (buffer, vector3fc) -> buffer
-            .putByte(MathHelper.normalFloatToByte(vector3fc.x()))
-            .putByte(MathHelper.normalFloatToByte(vector3fc.y()))
-            .putByte(MathHelper.normalFloatToByte(vector3fc.z()));
+        Putter NORMAL = new Putter() {
+            @Override
+            public void accept(DataBuffer buffer, Vector3fc vertex) {
+                buffer.putByte(MathHelper.normalFloatToByte(vertex.x()))
+                    .putByte(MathHelper.normalFloatToByte(vertex.y()))
+                    .putByte(MathHelper.normalFloatToByte(vertex.z()));
+            }
+
+            @Override
+            public void accept(DataBuffer buffer, float value) {
+                buffer.putByte(MathHelper.normalFloatToByte(value));
+            }
+
+            @Override
+            public int floatPutCount() {
+                return 3;
+            }
+        };
 
         /**
-         * Returns a composed {@code Putter} that performs, in sequence, this operation followed by the after operation.
+         * Processes a vertex.
          *
-         * @param after the operation to perform after this operation.
-         * @return a composed {@code Putter} that performs in sequence this operation followed by the {@code after} operation.
+         * @param buffer the data buffer.
+         * @param vertex the vertex.
          */
-        default Putter andThen(Putter after) {
-            return (buffer, vector3fc) -> {
-                accept(buffer, vector3fc);
-                after.accept(buffer, vector3fc);
-            };
-        }
+        void accept(DataBuffer buffer, Vector3fc vertex);
+
+        /**
+         * Processes a float value.
+         *
+         * @param buffer the data buffer.
+         * @param value  the value.
+         */
+        void accept(DataBuffer buffer, float value);
+
+        /**
+         * Gets the required putting float count.
+         *
+         * @return the putted float count.
+         */
+        int floatPutCount();
     }
 
     /**

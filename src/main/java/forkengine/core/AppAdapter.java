@@ -49,6 +49,12 @@ public class AppAdapter implements ISizeListener, IMouseListener, IKeyListener {
     protected Window window;
 
     /**
+     * Early-initialization. This method is invoked before creating window.
+     */
+    public void earlyInit() {
+    }
+
+    /**
      * Pre-initialization. This method is invoked before initializing context.
      */
     public void preInit() {
@@ -127,6 +133,18 @@ public class AppAdapter implements ISizeListener, IMouseListener, IKeyListener {
     }
 
     /**
+     * Closes the resources.
+     *
+     * @param autoCloseables the resources.
+     * @throws Exception if the resource cannot be closed.
+     */
+    public void dispose(@Nullable AutoCloseable... autoCloseables) throws Exception {
+        for (AutoCloseable autoCloseable : autoCloseables) {
+            dispose(autoCloseable);
+        }
+    }
+
+    /**
      * Exiting.
      */
     public void exit() throws Exception {
@@ -161,6 +179,7 @@ public class AppAdapter implements ISizeListener, IMouseListener, IKeyListener {
             throw new IllegalStateException("Failed to initialize GLFW!");
         }
         try {
+            earlyInit();
             window = app.createWindow(config.width, config.height, config.title, config.monitor, 0);
             if (window == null) {
                 throw new IllegalStateException("Failed to create the GLFW window!");

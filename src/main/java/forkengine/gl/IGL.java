@@ -310,6 +310,17 @@ public interface IGL {
     void bufferData(int target, int buffer, long size, long data, int usage);
 
     /**
+     * Updates a subset of a buffer object's data store.
+     *
+     * @param target the target buffer object.
+     * @param buffer the name of the target buffer object.
+     * @param offset the offset into the buffer object's data store where data replacement will begin, measured in bytes.
+     * @param size   the size in bytes of the data store region being replaced.
+     * @param data   a pointer to the new data that will be copied into the data store.
+     */
+    void bufferSubData(int target, int buffer, long offset, long size, long data);
+
+    /**
      * Returns the location of an attribute variable.
      *
      * @param program the program object to be queried.

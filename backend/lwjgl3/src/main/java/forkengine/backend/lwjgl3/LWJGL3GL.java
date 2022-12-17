@@ -143,6 +143,15 @@ public final class LWJGL3GL implements IGL {
     }
 
     @Override
+    public void bufferSubData(int target, int buffer, long offset, long size, long data) {
+        if (hasDSA()) {
+            nglNamedBufferSubData(buffer, offset, size, data);
+        } else {
+            nglBufferSubData(target, offset, size, data);
+        }
+    }
+
+    @Override
     public int getAttribLocation(int program, String name) {
         return glGetAttribLocation(program, name);
     }

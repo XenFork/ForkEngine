@@ -46,6 +46,28 @@ public interface TextureData extends ISized, AutoCloseable {
     }
 
     /**
+     * Loads the texture data from a local file.
+     *
+     * @param path       the resource name.
+     * @param bufferSize the initial buffer size.
+     * @return the texture data.
+     */
+    static TextureData local(String path, int bufferSize) {
+        return create().load(FileProvider.LOCAL, path, bufferSize);
+    }
+
+    /**
+     * Loads the texture data from a classpath file.
+     *
+     * @param path       the resource name.
+     * @param bufferSize the initial buffer size.
+     * @return the texture data.
+     */
+    static TextureData internal(String path, int bufferSize) {
+        return create().load(FileProvider.CLASSPATH, path, bufferSize);
+    }
+
+    /**
      * Loads the texture data from the given data buffer.
      *
      * @param dataBuffer the data buffer.

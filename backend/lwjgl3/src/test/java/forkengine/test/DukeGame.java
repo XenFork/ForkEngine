@@ -33,8 +33,10 @@ import forkengine.backend.lwjgl3.LWJGL3App;
 import forkengine.camera.OrthographicCamera;
 import forkengine.core.AppConfig;
 import forkengine.core.Game;
+import forkengine.core.Window;
 import forkengine.gl.GLStateManager;
 import forkengine.gl.IGL;
+import forkengine.graphics.Color;
 import forkengine.graphics.model.Model;
 import forkengine.graphics.model.StaticModel;
 import forkengine.graphics.model.VertexElement;
@@ -51,12 +53,27 @@ import org.joml.Matrix4f;
  */
 public final class DukeGame extends Game {
     private Shader shader;
-    private StaticModel model;
+    private Model model;
     private Texture2D texture;
+    private Texture2D redBulletTex;
+    private Texture2D greenBulletTex;
+    private Texture2D blueBulletTex;
     private final GameObject duke = new GameObject();
     private final OrthographicCamera camera = new OrthographicCamera();
     private final Matrix4f projViewMat = new Matrix4f();
     private final Matrix4f modelMat = new Matrix4f();
+
+    private static Texture2D loadTexture(String path, int bufferSize, int levels) {
+        Texture2D texture = Texture2D.create();
+        texture.bind(0);
+        texture.setParameter(Texture.MAG_FILTER, IGL.LINEAR)
+            .setParameter(Texture.MIN_FILTER, IGL.LINEAR_MIPMAP_LINEAR);
+        try (TextureData data = TextureData.internal(path, bufferSize)) {
+            texture.specifyImage(levels, data);
+        }
+        texture.generateMipmap();
+        return texture;
+    }
 
     @Override
     public void init() {
@@ -68,7 +85,7 @@ public final class DukeGame extends Game {
         ScreenUtil.clearColor(0.4f, 0.6f, 0.9f, 1.0f);
 
         VertexElement positionElement = VertexElement.position(0);
-        VertexElement colorElement = VertexElement.colorNormalized(1);
+        VertexElement colorElement = VertexElement.colorPacked(1);
         VertexElement texCoordElement = VertexElement.texCoord2(2, 0);
         VertexLayout layout = VertexLayout.interleaved(positionElement, colorElement, texCoordElement);
 
@@ -76,34 +93,34 @@ public final class DukeGame extends Game {
 
         model = new StaticModel(layout, Model.Type.POLYGON, 4,
             new float[]{
-                0.0f, 96.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-                72.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-                72.0f, 96.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f
+                0.0f, 96.0f, 0.0f, Color.pack(1.0f, 1.0f, 1.0f), 0.0f, 0.0f,
+                0.0f, 0.0f, 0.0f, Color.pack(1.0f, 1.0f, 1.0f), 0.0f, 1.0f,
+                72.0f, 0.0f, 0.0f, Color.pack(1.0f, 1.0f, 1.0f), 1.0f, 1.0f,
+                72.0f, 96.0f, 0.0f, Color.pack(1.0f, 1.0f, 1.0f), 1.0f, 0.0f
             },
             new int[]{0, 1, 2, 0, 2, 3});
 
-        texture = Texture2D.create();
-        texture.bind(0);
-        texture.setParameter(Texture.MAG_FILTER, IGL.LINEAR)
-            .setParameter(Texture.MIN_FILTER, IGL.LINEAR_MIPMAP_LINEAR);
-        try (TextureData data = TextureData.create().load(FileProvider.CLASSPATH, "texture/duke.png", 4096)) {
-            texture.specifyImage(4, data);
-        }
-        texture.generateMipmap();
+        texture = loadTexture("texture/duke.png", 4096, 4);
+        redBulletTex = loadTexture("texture/red_bullet.png", 6144, 8);
+        greenBulletTex = loadTexture("texture/green_bullet.png", 3072, 8);
+        blueBulletTex = loadTexture("texture/blue_bullet.png", 4096, 8);
         Texture2D.bind(0, 0);
+
+        window.setInputMode(Window.CURSOR, Window.CURSOR_HIDDEN);
     }
 
     @Override
     public void onResize(int oldWidth, int oldHeight, int newWidth, int newHeight) {
         super.onResize(oldWidth, oldHeight, newWidth, newHeight);
-        camera.set2D(0, newWidth, 0, newHeight);
+        camera.setSymmetric(newWidth, newHeight, -1, 1);
     }
 
     @Override
     public void onCursorPos(double oldX, double oldY, double newX, double newY) {
         super.onCursorPos(oldX, oldY, newX, newY);
-        duke.position().set(newX - texture.width() * 0.5f, (height - newY) - texture.height() * 0.5f, 0.0f);
+        duke.position().set(newX - texture.width() * 0.5f - width * 0.5f,
+            (height - newY) - texture.height() * 0.5f - height * 0.5f,
+            0.0f);
     }
 
     @Override
@@ -116,8 +133,8 @@ public final class DukeGame extends Game {
     public void render() {
         ScreenUtil.clear(ScreenUtil.COLOR_BUFFER_BIT | ScreenUtil.DEPTH_BUFFER_BIT);
         shader.use();
-        shader.getUniform("u_ProjectionViewMatrix").orElseThrow().set(projViewMat);
-        shader.getUniform("u_ModelMatrix").orElseThrow().set(modelMat.translation(duke.position()));
+        shader.setUniform("u_ProjectionViewMatrix", projViewMat);
+        shader.setUniform("u_ModelMatrix", modelMat.translation(duke.position()));
         shader.uploadUniforms();
         texture.bind(0);
         model.render();
@@ -128,9 +145,7 @@ public final class DukeGame extends Game {
 
     @Override
     public void exit() throws Exception {
-        dispose(shader);
-        dispose(model);
-        dispose(texture);
+        dispose(shader, model, texture, redBulletTex, greenBulletTex, blueBulletTex);
         super.exit();
     }
 

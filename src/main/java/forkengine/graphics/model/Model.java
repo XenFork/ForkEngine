@@ -37,7 +37,7 @@ import java.util.function.Consumer;
  * @author squid233
  * @since 0.1.0
  */
-public class Model implements AutoCloseable {
+public abstract class Model implements AutoCloseable {
     /**
      * The model render type.
      *
@@ -195,7 +195,32 @@ public class Model implements AutoCloseable {
         return new MultiBuilder();
     }
 
+    /**
+     * Renders this model.
+     */
+    public abstract void render();
+
+    /**
+     * Gets the layout.
+     *
+     * @return the layout.
+     */
+    public abstract VertexLayout layout();
+
+    /**
+     * Gets the vertex count.
+     *
+     * @return the vertex count.
+     */
+    public abstract int vertexCount();
+
+    /**
+     * Gets the index count.
+     *
+     * @return the index count.
+     */
+    public abstract int indexCount();
+
     @Override
-    public void close() {
-    }
+    public abstract void close();
 }

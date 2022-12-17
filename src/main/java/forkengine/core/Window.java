@@ -34,6 +34,15 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface Window extends ISized, ISizeable, ISizeListener {
     /**
+     * The input options.
+     */
+    int CURSOR = 0x33001, STICKY_KEYS = 0x33002, STICKY_MOUSE_BUTTONS = 0x33003, LOCK_KEY_MODS = 0x33004, RAW_MOUSE_MOTION = 0x33005;
+    /**
+     * The cursor states.
+     */
+    int CURSOR_NORMAL = 0x34001, CURSOR_HIDDEN = 0x34002, CURSOR_DISABLED = 0x34003;
+
+    /**
      * Register the callbacks.
      *
      * @return the callbacks.
@@ -168,6 +177,24 @@ public interface Window extends ISized, ISizeable, ISizeListener {
      * @param keyListener the key listener.
      */
     void setKeyListener(@Nullable IKeyListener keyListener);
+
+    /**
+     * Sets an input option for this window.
+     *
+     * @param mode  the input mode to set.
+     * @param value the new value of the specified input mode.
+     */
+    void setInputMode(int mode, int value);
+
+    /**
+     * Sets an input option for this window.
+     *
+     * @param mode  the input mode to set.
+     * @param value the new value of the specified input mode.
+     */
+    default void setInputMode(int mode, boolean value) {
+        setInputMode(mode, value ? 1 : 0);
+    }
 
     /**
      * Gets the raw address.

@@ -42,12 +42,7 @@ import static forkengine.gl.GLStateManager.bindVertexArray;
  * @author squid233
  * @since 0.1.0
  */
-public class StaticModel extends Model {
-    private final VertexLayout layout;
-    private final Type type;
-    private final int vao;
-    private final int vbo;
-    private final int ebo;
+public class StaticModel extends BufferModel {
     private final int vertexCount;
     private final int indexCount;
 
@@ -63,28 +58,34 @@ public class StaticModel extends Model {
     public StaticModel(VertexLayout layout, Type type,
                        int vertexCount,
                        float[] vertices, int[] indices) {
-        this.layout = layout;
-        this.type = type;
+        super(layout, type, gl.genVertexArray(), gl.genBuffer(), gl.genBuffer());
         this.vertexCount = vertexCount;
         this.indexCount = indices.length;
 
+        final var elements = layout.getElements();
+
         // Build GL buffer
-        vao = gl.genVertexArray();
-        vbo = gl.genBuffer();
-        ebo = gl.genBuffer();
         bindVertexArray(vao);
 
         gl.bindBuffer(IGL.ARRAY_BUFFER, vbo);
-        DataBuffer buffer = DataBuffer.allocate(vertices.length * 4L);
-        for (int i = 0; i < vertices.length; i++) {
-            buffer.putFloat(i * 4L, vertices[i]);
+        DataBuffer buffer = DataBuffer.allocate((long) vertexCount * layout.elementBytesSize());
+        for (int i = 0; i < vertices.length; ) {
+            for (VertexElement element : elements) {
+                VertexElement.Putter putter = element.putter();
+                for (int j = 0; j < putter.floatPutCount(); j++) {
+                    putter.accept(buffer, vertices[i]);
+                    i++;
+                }
+            }
         }
+        buffer.position(0);
         gl.bufferData(IGL.ARRAY_BUFFER, vbo, buffer.capacity(), buffer.address(), IGL.STATIC_DRAW);
         buffer.free();
+        // Enable vertex attributes
         switch (layout) {
             case VertexLayout.Flat flat -> {
                 long pointer = 0;
-                for (VertexElement element : flat.getElements()) {
+                for (VertexElement element : elements) {
                     flat.enable(element);
                     flat.pointer(element, pointer);
                     pointer += (long) vertexCount * element.bytesSize();
@@ -92,7 +93,7 @@ public class StaticModel extends Model {
             }
             case VertexLayout.Interleaved interleaved -> {
                 long pointer = 0;
-                for (VertexElement element : interleaved.getElements()) {
+                for (VertexElement element : elements) {
                     interleaved.enable(element);
                     interleaved.pointer(element, interleaved.elementBytesSize(), pointer);
                     pointer += element.bytesSize();
@@ -123,8 +124,7 @@ public class StaticModel extends Model {
      */
     public StaticModel(VertexLayout layout, VertexElement positionElement,
                        Type type, Mesh... meshes) {
-        this.layout = layout;
-        this.type = type;
+        super(layout, type, gl.genVertexArray(), gl.genBuffer(), gl.genBuffer());
 
         final var elements = layout.getElements();
         for (Mesh mesh : meshes) {
@@ -189,9 +189,6 @@ public class StaticModel extends Model {
         indexCount = indices.size();
 
         // Build GL buffer
-        vao = gl.genVertexArray();
-        vbo = gl.genBuffer();
-        ebo = gl.genBuffer();
         bindVertexArray(vao);
 
         gl.bindBuffer(IGL.ARRAY_BUFFER, vbo);
@@ -249,47 +246,13 @@ public class StaticModel extends Model {
         bindVertexArray(0);
     }
 
-    /**
-     * Renders the model.
-     */
-    public void render() {
-        bindVertexArray(vao);
-        gl.drawElements(type.value(), indexCount(), IGL.UNSIGNED_INT, 0);
-        bindVertexArray(0);
-    }
-
-    /**
-     * Gets the layout.
-     *
-     * @return the layout.
-     */
-    public VertexLayout layout() {
-        return layout;
-    }
-
-    /**
-     * Gets the vertex count.
-     *
-     * @return the vertex count.
-     */
+    @Override
     public int vertexCount() {
         return vertexCount;
     }
 
-    /**
-     * Gets the index count.
-     *
-     * @return the index count.
-     */
+    @Override
     public int indexCount() {
         return indexCount;
-    }
-
-    @Override
-    public void close() {
-        super.close();
-        gl.deleteVertexArray(vao);
-        gl.deleteBuffer(vbo);
-        gl.deleteBuffer(ebo);
     }
 }

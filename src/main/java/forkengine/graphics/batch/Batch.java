@@ -25,9 +25,10 @@
 package forkengine.graphics.batch;
 
 /**
- * The base batch
+ * The base batch.
+ *
  * @author squid233
  * @since 0.1.0
  */
-public class Batch {
+public interface Batch {
 }

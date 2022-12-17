@@ -22,13 +22,21 @@
  * SOFTWARE.
  */
 
-package forkengine.graphics.batch;
+package forkengine.asset.texture;
 
 /**
- * The sprite batch.
+ * The texture atlas information.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class SpriteBatch implements Batch {
+public class TextureAtlas extends Texture2D {
+    /**
+     * Creates the texture with the given id.
+     *
+     * @param id the texture id.
+     */
+    public TextureAtlas(int id) {
+        super(id);
+    }
 }

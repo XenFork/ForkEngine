@@ -25,10 +25,10 @@
 package forkengine.graphics.batch;
 
 /**
- * The sprite batch.
+ * The model batch.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class SpriteBatch implements Batch {
+public class ModelBatch implements Batch {
 }

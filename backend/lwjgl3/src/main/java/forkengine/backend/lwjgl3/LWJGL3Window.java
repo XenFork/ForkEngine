@@ -256,6 +256,11 @@ public class LWJGL3Window implements Window {
     }
 
     @Override
+    public void setInputMode(int mode, int value) {
+        glfwSetInputMode(address(), mode, value);
+    }
+
+    @Override
     public long address() {
         return address;
     }

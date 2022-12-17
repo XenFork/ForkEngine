@@ -24,8 +24,6 @@
 
 package forkengine.util;
 
-import org.joml.Math;
-
 /**
  * The math utilities.
  *
@@ -33,16 +31,6 @@ import org.joml.Math;
  * @since 0.1.0
  */
 public final class MathHelper {
-    /**
-     * Converts the float color to byte.
-     *
-     * @param c the color value.
-     * @return the converted value.
-     */
-    public static byte colorFloatToByte(float c) {
-        return (byte) (Math.min(c * 256.0f, 255.0f));
-    }
-
     /**
      * Converts the float vertex normal to byte.
      *

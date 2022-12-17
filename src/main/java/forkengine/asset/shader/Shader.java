@@ -30,6 +30,7 @@ import forkengine.asset.Asset;
 import forkengine.asset.FileProvider;
 import forkengine.gl.GLStateManager;
 import forkengine.graphics.model.VertexLayout;
+import org.joml.*;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -73,6 +74,22 @@ public abstract class Shader extends Asset {
      * The vertex shader enum value.
      */
     public static final int VERTEX_SHADER = 0x8B31;
+    /**
+     * The name of the position attribute.
+     */
+    public static final String POSITION_ATTRIBUTE = "fe_Position";
+    /**
+     * The name of the color attribute.
+     */
+    public static final String COLOR_ATTRIBUTE = "fe_Color";
+    /**
+     * The name of the texture coordinate attribute.
+     */
+    public static final String TEX_COORD_ATTRIBUTE = "fe_TexCoord";
+    /**
+     * The name of the vertex normal attribute.
+     */
+    public static final String NORMAL_ATTRIBUTE = "fe_Normal";
 
     private final int id;
     private final Map<String, Integer> attribIndexCache = new HashMap<>();
@@ -444,6 +461,429 @@ public abstract class Shader extends Asset {
      */
     public void uploadUniforms() {
         uniformCache.values().forEach(uniform -> uniform.upload(id()));
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     */
+    public void setUniform(String name, int x) {
+        getUniform(name).orElseThrow().set(x);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     * @param y    y.
+     */
+    public void setUniform(String name, int x, int y) {
+        getUniform(name).orElseThrow().set(x, y);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     * @param y    y.
+     * @param z    z.
+     */
+    public void setUniform(String name, int x, int y, int z) {
+        getUniform(name).orElseThrow().set(x, y, z);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     * @param y    y.
+     * @param z    z.
+     * @param w    w.
+     */
+    public void setUniform(String name, int x, int y, int z, int w) {
+        getUniform(name).orElseThrow().set(x, y, z, w);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     */
+    public void setUniform(String name, boolean x) {
+        getUniform(name).orElseThrow().set(x);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     * @param y    y.
+     */
+    public void setUniform(String name, boolean x, boolean y) {
+        getUniform(name).orElseThrow().set(x, y);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     * @param y    y.
+     * @param z    z.
+     */
+    public void setUniform(String name, boolean x, boolean y, boolean z) {
+        getUniform(name).orElseThrow().set(x, y, z);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     * @param y    y.
+     * @param z    z.
+     * @param w    w.
+     */
+    public void setUniform(String name, boolean x, boolean y, boolean z, boolean w) {
+        getUniform(name).orElseThrow().set(x, y, z, w);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     */
+    public void setUniform(String name, float x) {
+        getUniform(name).orElseThrow().set(x);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     * @param y    y.
+     */
+    public void setUniform(String name, float x, float y) {
+        getUniform(name).orElseThrow().set(x, y);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     * @param y    y.
+     * @param z    z.
+     */
+    public void setUniform(String name, float x, float y, float z) {
+        getUniform(name).orElseThrow().set(x, y, z);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     * @param y    y.
+     * @param z    z.
+     * @param w    w.
+     */
+    public void setUniform(String name, float x, float y, float z, float w) {
+        getUniform(name).orElseThrow().set(x, y, z, w);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     */
+    public void setUniform(String name, double x) {
+        getUniform(name).orElseThrow().set(x);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     * @param y    y.
+     */
+    public void setUniform(String name, double x, double y) {
+        getUniform(name).orElseThrow().set(x, y);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     * @param y    y.
+     * @param z    z.
+     */
+    public void setUniform(String name, double x, double y, double z) {
+        getUniform(name).orElseThrow().set(x, y, z);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name the name of the uniform.
+     * @param x    x.
+     * @param y    y.
+     * @param z    z.
+     * @param w    w.
+     */
+    public void setUniform(String name, double x, double y, double z, double w) {
+        getUniform(name).orElseThrow().set(x, y, z, w);
+    }
+
+    /**
+     * Sets the values of the given uniform.
+     *
+     * @param name   the name of the uniform.
+     * @param values the values.
+     */
+    public void setUniform(String name, int[] values) {
+        getUniform(name).orElseThrow().set(values);
+    }
+
+    /**
+     * Sets the values of the given uniform.
+     *
+     * @param name   the name of the uniform.
+     * @param values the values.
+     */
+    public void setUniform(String name, boolean[] values) {
+        getUniform(name).orElseThrow().set(values);
+    }
+
+    /**
+     * Sets the values of the given uniform.
+     *
+     * @param name   the name of the uniform.
+     * @param values the values.
+     */
+    public void setUniform(String name, float[] values) {
+        getUniform(name).orElseThrow().set(values);
+    }
+
+    /**
+     * Sets the values of the given uniform.
+     *
+     * @param name   the name of the uniform.
+     * @param values the values.
+     */
+    public void setUniform(String name, double[] values) {
+        getUniform(name).orElseThrow().set(values);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Vector2ic value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Vector3ic value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Vector4ic value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Vector2fc value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Vector3fc value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Vector4fc value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Vector2dc value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Vector3dc value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Vector4dc value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Matrix2fc value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Matrix2dc value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Matrix3fc value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Matrix3dc value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Matrix4fc value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Matrix4dc value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Matrix3x2fc value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Matrix3x2dc value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Matrix4x3fc value) {
+        getUniform(name).orElseThrow().set(value);
+    }
+
+    /**
+     * Sets the value of the given uniform.
+     *
+     * @param name  the name of the uniform.
+     * @param value the value.
+     */
+    public void setUniform(String name, Matrix4x3dc value) {
+        getUniform(name).orElseThrow().set(value);
     }
 
     /**

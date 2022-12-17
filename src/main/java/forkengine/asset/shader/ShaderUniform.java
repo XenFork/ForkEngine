@@ -25,7 +25,6 @@
 package forkengine.asset.shader;
 
 import forkengine.core.DataBuffer;
-import forkengine.core.ForkEngine;
 import forkengine.util.DataType;
 import org.joml.*;
 

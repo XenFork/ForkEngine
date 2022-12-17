@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-package forkengine.graphics.batch;
+package forkengine.asset.texture;
 
 /**
- * The sprite batch.
+ * The texture packer.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class SpriteBatch implements Batch {
+public class TexturePacker {
 }

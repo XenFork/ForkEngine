@@ -1,4 +1,4 @@
-{
+ {
   "assetType": "internal",
   "vertex": "shader/position_color_tex.vert",
   "fragment": "shader/position_color_tex.frag",

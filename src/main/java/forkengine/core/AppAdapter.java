@@ -34,7 +34,7 @@ import java.util.Objects;
  * @author squid233
  * @since 0.1.0
  */
-public class AppAdapter implements ISizeListener, IMouseListener, IKeyListener {
+public class AppAdapter implements ISized, ISizeListener, IMouseListener, IKeyListener {
     /**
      * The application implementation.
      */
@@ -47,6 +47,14 @@ public class AppAdapter implements ISizeListener, IMouseListener, IKeyListener {
      * The window instance.
      */
     protected Window window;
+    /**
+     * The framebuffer width of this application adapter.
+     */
+    protected int width;
+    /**
+     * The framebuffer height of this application adapter.
+     */
+    protected int height;
 
     /**
      * Early-initialization. This method is invoked before creating window.
@@ -162,6 +170,16 @@ public class AppAdapter implements ISizeListener, IMouseListener, IKeyListener {
     protected void loop() {
     }
 
+    @Override
+    public int width() {
+        return width;
+    }
+
+    @Override
+    public int height() {
+        return height;
+    }
+
     /**
      * Launch this application adapter with the implemented features.
      *
@@ -187,6 +205,8 @@ public class AppAdapter implements ISizeListener, IMouseListener, IKeyListener {
             window.setFramebufferSizeCb(this);
             window.setCursorListener(this);
             window.setKeyListener(this);
+            width = window.framebufferWidth();
+            height = window.framebufferHeight();
             try {
                 preInit();
                 window.makeContextCurrent();

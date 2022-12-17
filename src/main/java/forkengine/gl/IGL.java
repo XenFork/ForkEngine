@@ -524,6 +524,17 @@ public interface IGL {
     void blendFuncSeparate(int srcRGB, int dstRGB, int srcAlpha, int dstAlpha);
 
     ///////////////////////////////////////////////////////////////////////////
+    // Depth buffer
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Masks the writing of depth values to the depth buffer. In the initial state, the depth buffer is enabled for writing.
+     *
+     * @param flag whether depth values are written or not.
+     */
+    void depthMask(boolean flag);
+
+    ///////////////////////////////////////////////////////////////////////////
     // State management
     ///////////////////////////////////////////////////////////////////////////
 

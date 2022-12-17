@@ -155,6 +155,15 @@ public class DynamicModel extends BufferModel {
         indexCount = indices.length;
     }
 
+    /**
+     * Sets a limit for the index count.
+     *
+     * @param indexCount new index count.
+     */
+    public void indexCountLimit(int indexCount) {
+        this.indexCount = indexCount;
+    }
+
     @Override
     public int vertexCount() {
         return vertexCount;

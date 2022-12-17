@@ -311,6 +311,11 @@ public final class LWJGL3GL implements IGL {
         glDisable(target);
     }
 
+    @Override
+    public void depthMask(boolean flag) {
+        glDepthMask(flag);
+    }
+
     /**
      * Gets the instance of this.
      *

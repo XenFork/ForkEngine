@@ -22,43 +22,21 @@
  * SOFTWARE.
  */
 
-package forkengine.graphics.batch;
+package forkengine.graphics;
 
 /**
- * The base batch.
+ * The sprite.
  *
  * @author squid233
  * @since 0.1.0
  */
-public interface Batch extends AutoCloseable {
-    void begin();
-
+public class Sprite {
     /**
-     * Finishes off rendering. Enables depth writes, disables blending and texturing. Must always be called after a call to
-     * {@link #begin()}.
+     * The float count of a sprite vertex.
      */
-    void end();
-
+    public static final int VERTEX_SIZE = 2 + 1 + 2;
     /**
-     * Causes any pending sprites to be rendered, without ending the Batch.
+     * The bytes size of the sprite vertices.
      */
-    void flush();
-
-
-    /**
-     * Returns true if blending for sprites is enabled.
-     *
-     * @return true if blending for sprites is enabled.
-     */
-    boolean isBlendEnabled();
-
-    /**
-     * Returns true if currently between begin and end.
-     *
-     * @return true if currently between begin and end.
-     */
-    boolean isDrawing();
-
-    @Override
-    void close();
+    public static final int SPRITE_SIZE = 4 * VERTEX_SIZE;
 }

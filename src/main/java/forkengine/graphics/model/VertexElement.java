@@ -40,7 +40,7 @@ import java.util.StringJoiner;
  * <h2>Builtin Elements</h2>
  * Builtin elements are used for easily creating vertex layouts. The available builtin elements are:
  * <ul>
- *     <li>{@link #position(int) fe_Position}</li>
+ *     <li>{@link #position3(int) fe_Position}, or {@link #position2(int) 2-Dimension version}</li>
  *     <li>{@link #color(int) fe_Color}, or {@link #colorNormalized(int) normalized version}, or {@link #colorPacked(int) packed version}</li>
  *     <li>{@link #texCoord2(int, int) fe_TexCoord}, or {@link #texCoord3(int, int) 3-Dimension version},
  *     requires a number at the end, i.e. {@code fe_TexCoord0}, {@code fe_TexCoord1}, etc.</li>
@@ -92,12 +92,22 @@ public final class VertexElement {
     }
 
     /**
-     * Creates a position element.
+     * Creates a 2D position element.
      *
      * @param index the index of the element.
      * @return the element.
      */
-    public static VertexElement position(int index) {
+    public static VertexElement position2(int index) {
+        return new VertexElement(Putter.VEC2, index, Shader.POSITION_ATTRIBUTE, DataType.FLOAT, 2, false);
+    }
+
+    /**
+     * Creates a 3D position element.
+     *
+     * @param index the index of the element.
+     * @return the element.
+     */
+    public static VertexElement position3(int index) {
         return new VertexElement(Putter.VEC3, index, Shader.POSITION_ATTRIBUTE, DataType.FLOAT, 3, false);
     }
 
@@ -122,17 +132,17 @@ public final class VertexElement {
     }
 
     /**
-     * Creates a color element, which source contains one {@link Color#pack packed} float.
+     * Creates a 4D color element, which source contains one {@link Color#pack packed} float.
      *
      * @param index the index of the element.
      * @return the element.
      */
     public static VertexElement colorPacked(int index) {
-        return new VertexElement(Putter.COLOR_PACKED3, index, Shader.COLOR_ATTRIBUTE, DataType.UNSIGNED_BYTE, 3, true);
+        return new VertexElement(Putter.COLOR_PACKED4, index, Shader.COLOR_ATTRIBUTE, DataType.UNSIGNED_BYTE, 4, true);
     }
 
     /**
-     * Creates a 2d texture coordinate element.
+     * Creates a 2D texture coordinate element.
      *
      * @param index  the index of the element.
      * @param number the number of the texture coordinate.
@@ -143,7 +153,7 @@ public final class VertexElement {
     }
 
     /**
-     * Creates a 3d texture coordinate element.
+     * Creates a 3D texture coordinate element.
      *
      * @param index  the index of the element.
      * @param number the number of the texture coordinate.
@@ -239,7 +249,7 @@ public final class VertexElement {
         /**
          * The color putter with a packed float, which is ordered in ABGR.
          */
-        Putter COLOR_PACKED3 = new Putter() {
+        Putter COLOR_PACKED4 = new Putter() {
             @Override
             public void accept(DataBuffer buffer, Vector3fc vertex) {
                 accept(buffer, vertex.x());
@@ -250,7 +260,8 @@ public final class VertexElement {
                 int bits = Float.floatToRawIntBits(value);
                 buffer.putByte(Color.getRedComponent(bits))
                     .putByte(Color.getGreenComponent(bits))
-                    .putByte(Color.getBlueComponent(bits));
+                    .putByte(Color.getBlueComponent(bits))
+                    .putByte(Color.getAlphaComponent(bits));
             }
 
             @Override

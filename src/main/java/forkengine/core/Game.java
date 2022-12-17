@@ -41,22 +41,12 @@ public class Game extends AppAdapter {
      * The frames per second.
      */
     protected int framesPerSecond;
-    /**
-     * The framebuffer width of this game.
-     */
-    protected int width;
-    /**
-     * The framebuffer height of this game.
-     */
-    protected int height;
     private int frames;
     private double lastTime;
 
     @Override
     public void preInit() {
         super.preInit();
-        width = window.framebufferWidth();
-        height = window.framebufferHeight();
         defaultTimer = application.createTimer(config.ticksPerSecond);
     }
 

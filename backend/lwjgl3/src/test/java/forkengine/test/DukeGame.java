@@ -84,7 +84,7 @@ public final class DukeGame extends Game {
 
         ScreenUtil.clearColor(0.4f, 0.6f, 0.9f, 1.0f);
 
-        VertexElement positionElement = VertexElement.position(0);
+        VertexElement positionElement = VertexElement.position2(0);
         VertexElement colorElement = VertexElement.colorPacked(1);
         VertexElement texCoordElement = VertexElement.texCoord2(2, 0);
         VertexLayout layout = VertexLayout.interleaved(positionElement, colorElement, texCoordElement);

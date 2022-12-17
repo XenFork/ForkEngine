@@ -24,20 +24,23 @@
 
 package forkengine.test;
 
-import forkengine.asset.AssetFile;
+import forkengine.asset.FileProvider;
 import forkengine.asset.shader.Shader;
+import forkengine.asset.texture.Texture;
+import forkengine.asset.texture.Texture2D;
+import forkengine.asset.texture.TextureData;
 import forkengine.backend.lwjgl3.LWJGL3App;
 import forkengine.core.AppConfig;
 import forkengine.core.Game;
+import forkengine.gl.IGL;
 import forkengine.gui.screen.ScreenUtil;
 import forkengine.level.LinearTransformation;
 import forkengine.level.model.Model;
 import forkengine.level.model.StaticModel;
 import forkengine.level.model.VertexElement;
 import forkengine.level.model.VertexLayout;
-import forkengine.level.scene.Actor;
+import forkengine.level.scene.GameObject;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 /**
  * Tests basic features
@@ -48,7 +51,8 @@ import org.joml.Vector3f;
 public final class DukeGame extends Game {
     private Shader shader;
     private StaticModel model;
-    private final Actor duke = new Actor();
+    private Texture2D texture;
+    private final GameObject duke = new GameObject();
     private final LinearTransformation transformation = new LinearTransformation();
     private final Matrix4f modelMat = new Matrix4f();
 
@@ -56,26 +60,33 @@ public final class DukeGame extends Game {
     public void init() {
         super.init();
 
+        ScreenUtil.clearColor(0.4f, 0.6f, 0.9f, 1.0f);
+
         VertexElement positionElement = VertexElement.position(0);
         VertexElement colorElement = VertexElement.colorNormalized(1);
-        VertexLayout layout = VertexLayout.interleaved(positionElement, colorElement);
+        VertexElement texCoordElement = VertexElement.texCoord2(2, 0);
+        VertexLayout layout = VertexLayout.interleaved(positionElement, colorElement, texCoordElement);
 
-        shader = Shader.loadJson(AssetFile.internal("shader/position_color.json"), layout);
+        shader = Shader.loadJson(FileProvider.internal("shader/position_color_texture.json"), layout);
 
-        Vector3f v0 = new Vector3f(-0.5f, 0.5f, 0.0f);
-        Vector3f v1 = new Vector3f(-0.5f, -0.5f, 0.0f);
-        Vector3f v2 = new Vector3f(0.5f, -0.5f, 0.0f);
-        Vector3f v3 = new Vector3f(0.5f, 0.5f, 0.0f);
-        Vector3f c0 = new Vector3f(1.0f, 0.0f, 0.0f);
-        Vector3f c1 = new Vector3f(0.0f, 1.0f, 0.0f);
-        Vector3f c2 = new Vector3f(0.0f, 0.0f, 1.0f);
-        Vector3f c3 = new Vector3f(1.0f, 1.0f, 1.0f);
-        model = Model.single()
-            .addVertex(positionElement, v0).addVertex(colorElement, c0)
-            .addVertex(positionElement, v1).addVertex(colorElement, c1)
-            .addVertex(positionElement, v2).addVertex(colorElement, c2)
-            .addVertex(positionElement, v3).addVertex(colorElement, c3)
-            .buildStatic(layout, positionElement, Model.Type.POLYGON);
+        model = new StaticModel(layout, Model.Type.POLYGON, 4,
+            new float[]{
+                -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+                -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+                0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+                0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f
+            },
+            new int[]{0, 1, 2, 0, 2, 3});
+
+        texture = Texture2D.create();
+        texture.bind(0);
+        texture.setParameter(Texture.MAG_FILTER, IGL.LINEAR)
+            .setParameter(Texture.MIN_FILTER, IGL.LINEAR_MIPMAP_LINEAR);
+        try (TextureData data = TextureData.create().load(FileProvider.CLASSPATH, "texture/duke.png", 4096)) {
+            texture.specifyImage(4, data);
+        }
+        texture.generateMipmap();
+        Texture2D.bind(0, 0);
     }
 
     @Override
@@ -91,7 +102,9 @@ public final class DukeGame extends Game {
         shader.use();
         shader.getUniform("u_ModelMatrix").orElseThrow().set(modelMat);
         shader.uploadUniforms();
+        texture.bind(0);
         model.render();
+        Texture2D.bind(0, 0);
         Shader.useProgram(0);
         super.render();
     }
@@ -100,6 +113,7 @@ public final class DukeGame extends Game {
     public void exit() throws Exception {
         dispose(shader);
         dispose(model);
+        dispose(texture);
         super.exit();
     }
 

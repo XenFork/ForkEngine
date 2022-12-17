@@ -24,10 +24,15 @@
 
 package forkengine.backend.lwjgl3;
 
+import forkengine.asset.FileProvider;
 import forkengine.core.DataBuffer;
 import org.lwjgl.system.MemoryUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 
 /**
  * The data buffer implemented with LWJGL 3.
@@ -86,6 +91,12 @@ public class LWJGL3DataBuffer extends DataBuffer {
     }
 
     @Override
+    public DataBuffer putBuffer(long offset, ByteBuffer buffer) {
+        buffer.put(buffer).position(buffer.position() - buffer.remaining());
+        return this;
+    }
+
+    @Override
     public byte getByte(long offset) {
         return buffer.get((int) offset);
     }
@@ -119,6 +130,25 @@ public class LWJGL3DataBuffer extends DataBuffer {
     public DataBuffer realloc(long size) {
         buffer = MemoryUtil.memRealloc(buffer, (int) size);
         capacity = size;
+        return this;
+    }
+
+    @Override
+    public DataBuffer loadFile(FileProvider provider, String resource) {
+        try (InputStream source = provider.toStream(resource);
+             ReadableByteChannel rbc = Channels.newChannel(source)) {
+            while (true) {
+                int bytes = rbc.read(buffer);
+                if (bytes == -1) {
+                    break;
+                }
+                if (!buffer.hasRemaining()) {
+                    realloc(capacity * 3 / 2); // 50%
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return this;
     }
 }

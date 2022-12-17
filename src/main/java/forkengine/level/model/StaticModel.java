@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static forkengine.core.ForkEngine.application;
 import static forkengine.core.ForkEngine.gl;
 import static forkengine.gl.GLStateManager.bindVertexArray;
 
@@ -51,6 +50,68 @@ public class StaticModel extends Model {
     private final int ebo;
     private final int vertexCount;
     private final int indexCount;
+
+    /**
+     * Creates the static model with the given vertices.
+     *
+     * @param layout      the vertex layout. all elements are float type.
+     * @param type        the render type.
+     * @param vertexCount the vertex count.
+     * @param vertices    the vertices.
+     * @param indices     the indices.
+     */
+    public StaticModel(VertexLayout layout, Type type,
+                       int vertexCount,
+                       float[] vertices, int[] indices) {
+        this.layout = layout;
+        this.type = type;
+        this.vertexCount = vertexCount;
+        this.indexCount = indices.length;
+
+        // Build GL buffer
+        vao = gl.genVertexArray();
+        vbo = gl.genBuffer();
+        ebo = gl.genBuffer();
+        bindVertexArray(vao);
+
+        gl.bindBuffer(IGL.ARRAY_BUFFER, vbo);
+        DataBuffer buffer = DataBuffer.allocate(vertices.length * 4L);
+        for (int i = 0; i < vertices.length; i++) {
+            buffer.putFloat(i * 4L, vertices[i]);
+        }
+        gl.bufferData(IGL.ARRAY_BUFFER, vbo, buffer.capacity(), buffer.address(), IGL.STATIC_DRAW);
+        buffer.free();
+        switch (layout) {
+            case VertexLayout.Flat flat -> {
+                long pointer = 0;
+                for (VertexElement element : flat.getElements()) {
+                    flat.enable(element);
+                    flat.pointer(element, pointer);
+                    pointer += (long) vertexCount * element.bytesSize();
+                }
+            }
+            case VertexLayout.Interleaved interleaved -> {
+                long pointer = 0;
+                for (VertexElement element : interleaved.getElements()) {
+                    interleaved.enable(element);
+                    interleaved.pointer(element, interleaved.elementBytesSize(), pointer);
+                    pointer += element.bytesSize();
+                }
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + layout);
+        }
+        gl.bindBuffer(IGL.ARRAY_BUFFER, 0);
+
+        gl.bindBuffer(IGL.ELEMENT_ARRAY_BUFFER, ebo);
+        DataBuffer indexBuffer = DataBuffer.allocate(indices.length * 4L);
+        for (int i = 0; i < indices.length; i++) {
+            indexBuffer.putInt(i * 4L, indices[i]);
+        }
+        gl.bufferData(IGL.ELEMENT_ARRAY_BUFFER, ebo, indexBuffer.capacity(), indexBuffer.address(), IGL.STATIC_DRAW);
+        indexBuffer.free();
+
+        bindVertexArray(0);
+    }
 
     /**
      * Creates the static model with the given vertex layout and render type.
@@ -134,7 +195,7 @@ public class StaticModel extends Model {
         bindVertexArray(vao);
 
         gl.bindBuffer(IGL.ARRAY_BUFFER, vbo);
-        DataBuffer buffer = application.allocateNative((long) vertexCount * stride);
+        DataBuffer buffer = DataBuffer.allocate((long) vertexCount * stride);
         switch (layout) {
             case VertexLayout.Flat flat -> {
                 for (VertexElement element : elements) {
@@ -155,7 +216,7 @@ public class StaticModel extends Model {
         // Resets position
         buffer.position(0);
         gl.bufferData(IGL.ARRAY_BUFFER, vbo, buffer.capacity(), buffer.address(), IGL.STATIC_DRAW);
-        application.freeNative(buffer);
+        buffer.free();
         switch (layout) {
             case VertexLayout.Flat flat -> {
                 long pointer = 0;
@@ -178,12 +239,12 @@ public class StaticModel extends Model {
         gl.bindBuffer(IGL.ARRAY_BUFFER, 0);
 
         gl.bindBuffer(IGL.ELEMENT_ARRAY_BUFFER, ebo);
-        DataBuffer indexBuffer = application.allocateNative(indexCount * 4L);
+        DataBuffer indexBuffer = DataBuffer.allocate(indexCount * 4L);
         for (int i = 0; i < indexCount; i++) {
             indexBuffer.putInt(i * 4L, indices.get(i));
         }
         gl.bufferData(IGL.ELEMENT_ARRAY_BUFFER, ebo, indexBuffer.capacity(), indexBuffer.address(), IGL.STATIC_DRAW);
-        application.freeNative(indexBuffer);
+        indexBuffer.free();
 
         bindVertexArray(0);
     }

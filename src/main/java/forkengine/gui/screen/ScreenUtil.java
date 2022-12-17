@@ -24,9 +24,9 @@
 
 package forkengine.gui.screen;
 
-import forkengine.core.ForkEngine;
 import forkengine.gl.IGL;
-import org.intellij.lang.annotations.MagicConstant;
+
+import static forkengine.core.ForkEngine.gl;
 
 /**
  * The screen util.
@@ -43,15 +43,26 @@ public final class ScreenUtil {
         COLOR_BUFFER_BIT = IGL.COLOR_BUFFER_BIT;
 
     /**
-     * Call {@code glClear}.
+     * Sets portions of every pixel in a particular buffer to the same value.
+     * The value to which each buffer is cleared depends on the setting of the clear value for that buffer.
      *
-     * @param flag the clear flag.
+     * @param mask Zero or the bitwise OR of one or more values indicating which buffers are to be cleared.
      */
-    public static void clear(@MagicConstant(
-        flags = {IGL.DEPTH_BUFFER_BIT, IGL.STENCIL_BUFFER_BIT, IGL.COLOR_BUFFER_BIT,
-            DEPTH_BUFFER_BIT, STENCIL_BUFFER_BIT, COLOR_BUFFER_BIT}
-    ) int flag) {
-        ForkEngine.gl.clear(flag);
+    public static void clear(int mask) {
+        gl.clear(mask);
+    }
+
+    /**
+     * Sets the clear value for fixed-point and floating-point color buffers in RGBA mode.
+     * The specified components are stored as floating-point values.
+     *
+     * @param red   the value to which to clear the R channel of the color buffer.
+     * @param green the value to which to clear the G channel of the color buffer.
+     * @param blue  the value to which to clear the B channel of the color buffer.
+     * @param alpha the value to which to clear the A channel of the color buffer.
+     */
+    public static void clearColor(float red, float green, float blue, float alpha) {
+        gl.clearColor(red, green, blue, alpha);
     }
 
     /**
@@ -63,6 +74,6 @@ public final class ScreenUtil {
      * @param h viewport height.
      */
     public static void viewport(int x, int y, int w, int h) {
-        ForkEngine.gl.viewport(x, y, w, h);
+        gl.viewport(x, y, w, h);
     }
 }

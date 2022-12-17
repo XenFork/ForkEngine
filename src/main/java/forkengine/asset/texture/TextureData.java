@@ -22,42 +22,54 @@
  * SOFTWARE.
  */
 
-package forkengine.level;
+package forkengine.asset.texture;
 
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
+import forkengine.asset.FileProvider;
+import forkengine.core.DataBuffer;
+import forkengine.core.ForkEngine;
+import forkengine.core.ISized;
 
 /**
- * The linear transformation.
+ * The base texture data.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class LinearTransformation implements ITransformation {
-    private final Vector3f scale = new Vector3f(1);
-    private final Quaternionf rotate = new Quaternionf();
-
+public interface TextureData extends ISized, AutoCloseable {
     /**
-     * Gets the scaling value.
+     * Creates a new texture data.
      *
-     * @return the scale vector.
+     * @return the texture data.
      */
-    public Vector3f scale() {
-        return scale;
+    static TextureData create() {
+        return ForkEngine.application.newTextureData();
     }
 
     /**
-     * Gets the rotation value.
+     * Loads the texture data from the given data buffer.
      *
-     * @return the quaternion.
+     * @param dataBuffer the data buffer.
+     * @return this.
      */
-    public Quaternionf rotate() {
-        return rotate;
-    }
+    TextureData load(DataBuffer dataBuffer);
+
+    /**
+     * Loads the texture data from the given file.
+     *
+     * @param provider   the file provider.
+     * @param path       the resource name.
+     * @param bufferSize the initial buffer size.
+     * @return this.
+     */
+    TextureData load(FileProvider provider, String path, int bufferSize);
+
+    /**
+     * Gets the address of the pixel data.
+     *
+     * @return the pixel data address.
+     */
+    long address();
 
     @Override
-    public Matrix4f applyMatrix(Matrix4f dest) {
-        return dest.scale(scale()).rotate(rotate());
-    }
+    void close();
 }

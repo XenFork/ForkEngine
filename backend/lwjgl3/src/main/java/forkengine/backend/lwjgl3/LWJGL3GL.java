@@ -45,9 +45,22 @@ public final class LWJGL3GL implements IGL {
     private LWJGL3GL() {
     }
 
+    private static boolean hasDSA(GLCapabilities caps) {
+        return caps.GL_ARB_direct_state_access;
+    }
+
+    private static boolean hasDSA() {
+        return hasDSA(GL.getCapabilities());
+    }
+
     @Override
-    public void clear(int flag) {
-        glClear(flag);
+    public void clear(int mask) {
+        glClear(mask);
+    }
+
+    @Override
+    public void clearColor(float red, float green, float blue, float alpha) {
+        glClearColor(red, green, blue, alpha);
     }
 
     @Override
@@ -122,8 +135,7 @@ public final class LWJGL3GL implements IGL {
 
     @Override
     public void bufferData(int target, int buffer, long size, long data, int usage) {
-        GLCapabilities caps = GL.getCapabilities();
-        if (caps.GL_ARB_direct_state_access) {
+        if (hasDSA()) {
             nglNamedBufferData(buffer, size, data, usage);
         } else {
             nglBufferData(target, size, data, usage);
@@ -162,8 +174,7 @@ public final class LWJGL3GL implements IGL {
 
     @Override
     public int createTexture(int target) {
-        GLCapabilities caps = GL.getCapabilities();
-        if (caps.GL_ARB_direct_state_access) {
+        if (hasDSA()) {
             return glCreateTextures(target);
         }
         return glGenTextures();
@@ -171,8 +182,7 @@ public final class LWJGL3GL implements IGL {
 
     @Override
     public void bindTexture(int target, int unit, int texture) {
-        GLCapabilities caps = GL.getCapabilities();
-        if (caps.GL_ARB_direct_state_access) {
+        if (hasDSA()) {
             glBindTextureUnit(unit, texture);
         } else {
             glActiveTexture(unit);
@@ -183,6 +193,83 @@ public final class LWJGL3GL implements IGL {
     @Override
     public void deleteTexture(int texture) {
         glDeleteTextures(texture);
+    }
+
+    @Override
+    public void textureParameter(int target, int texture, int pname, int param) {
+        if (hasDSA()) {
+            glTextureParameteri(texture, pname, param);
+        } else {
+            glTexParameteri(target, pname, param);
+        }
+    }
+
+    @Override
+    public void textureParameter(int target, int texture, int pname, float param) {
+        if (hasDSA()) {
+            glTextureParameterf(texture, pname, param);
+        } else {
+            glTexParameterf(target, pname, param);
+        }
+    }
+
+    @Override
+    public void textureStorage2D(int target, int texture,
+                                 int levels,
+                                 int internalFormat,
+                                 int width, int height,
+                                 int format, int type) {
+        if (hasDSA()) {
+            glTextureStorage2D(texture, levels, internalFormat, width, height);
+        } else {
+            switch (target) {
+                case GL_TEXTURE_1D, GL_TEXTURE_1D_ARRAY -> {
+                    for (int i = 0; i < levels; i++) {
+                        nglTexImage2D(target, i, internalFormat, width, height, 0, format, type, 0);
+                        width = Math.max(1, width / 2);
+                    }
+                }
+                case TEXTURE_CUBE_MAP -> {
+                    for (int i = 0; i < levels; i++) {
+                        for (int face = 0; face < 6; face++) {
+                            nglTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, i, internalFormat, width, height, 0, format, type, 0);
+                        }
+                        width = Math.max(1, (width / 2));
+                        height = Math.max(1, (height / 2));
+                    }
+                }
+                default -> {
+                    for (int i = 0; i < levels; i++) {
+                        nglTexImage2D(target, i, internalFormat, width, height, 0, format, type, 0);
+                        width = Math.max(1, (width / 2));
+                        height = Math.max(1, (height / 2));
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void textureSubImage2D(int target, int texture,
+                                  int level,
+                                  int xOffset, int yOffset,
+                                  int width, int height,
+                                  int format, int type,
+                                  long pixels) {
+        if (hasDSA()) {
+            nglTextureSubImage2D(texture, level, xOffset, yOffset, width, height, format, type, pixels);
+        } else {
+            nglTexSubImage2D(target, level, xOffset, yOffset, width, height, format, type, pixels);
+        }
+    }
+
+    @Override
+    public void generateMipmap(int target, int texture) {
+        if (hasDSA()) {
+            glGenerateTextureMipmap(texture);
+        } else {
+            glGenerateMipmap(target);
+        }
     }
 
     /**

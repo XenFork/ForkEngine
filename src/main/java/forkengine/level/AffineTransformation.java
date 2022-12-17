@@ -48,7 +48,7 @@ public class AffineTransformation extends LinearTransformation {
     }
 
     @Override
-    public Matrix4f applyMatrix(Matrix4f matrix) {
-        return super.applyMatrix(matrix.translate(translate()));
+    public Matrix4f applyMatrix(Matrix4f dest) {
+        return super.applyMatrix(dest.translate(translate()));
     }
 }

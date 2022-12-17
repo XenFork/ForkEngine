@@ -45,6 +45,7 @@ public sealed abstract class VertexLayout permits VertexLayout.Flat, VertexLayou
     protected final Map<String, VertexElement> elements = new LinkedHashMap<>();
     protected final Map<VertexElement, Integer> elementIndex = new LinkedHashMap<>();
     private int nextIndex = 0;
+    private int elementBytesSize = 0;
 
     /**
      * Creates the flat vertex layout.
@@ -142,18 +143,15 @@ public sealed abstract class VertexLayout permits VertexLayout.Flat, VertexLayou
      * @since 0.1.0
      */
     public static final class Interleaved extends VertexLayout {
-        private int stride;
-
         @Override
         public Interleaved addElement(VertexElement element) {
             super.addElement(element);
-            stride += element.bytesSize();
             return this;
         }
 
         @Override
         public void pointer(VertexElement element, long pointer) {
-            pointer(element, stride(), pointer);
+            pointer(element, elementBytesSize(), pointer);
         }
 
         /**
@@ -164,18 +162,9 @@ public sealed abstract class VertexLayout permits VertexLayout.Flat, VertexLayou
             for (var e : elementIndex.entrySet()) {
                 VertexElement element = e.getKey();
                 int index = e.getValue();
-                element.pointer(index, stride(), pointer);
+                element.pointer(index, elementBytesSize(), pointer);
                 pointer += element.bytesSize();
             }
-        }
-
-        /**
-         * Gets the stride.
-         *
-         * @return the stride.
-         */
-        public int stride() {
-            return stride;
         }
     }
 
@@ -195,6 +184,7 @@ public sealed abstract class VertexLayout permits VertexLayout.Flat, VertexLayou
         }
         elementIndex.put(element, index);
         nextIndex++;
+        elementBytesSize += element.bytesSize();
         return this;
     }
 
@@ -264,6 +254,15 @@ public sealed abstract class VertexLayout permits VertexLayout.Flat, VertexLayou
      */
     public Set<VertexElement> getElements() {
         return elementIndex.keySet();
+    }
+
+    /**
+     * Gets the bytes size of the elements in this layout.
+     *
+     * @return the bytes size.
+     */
+    public int elementBytesSize() {
+        return elementBytesSize;
     }
 
     private void checkElement(VertexElement element) {

@@ -39,7 +39,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * @author squid233
  * @since 0.1.0
  */
-public class LWJGL3Window extends Window {
+public class LWJGL3Window implements Window {
     private final long address;
     private int width, height;
     private String title;

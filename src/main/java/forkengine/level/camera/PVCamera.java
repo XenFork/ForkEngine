@@ -22,42 +22,40 @@
  * SOFTWARE.
  */
 
-package forkengine.level;
+package forkengine.level.camera;
 
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 /**
- * The linear transformation.
+ * The camera with projection and view matrix.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class LinearTransformation implements ITransformation {
-    private final Vector3f scale = new Vector3f(1);
-    private final Quaternionf rotate = new Quaternionf();
+public class PVCamera extends Camera {
+    private final Matrix4f projection = new Matrix4f();
+    private final Matrix4f view = new Matrix4f();
 
     /**
-     * Gets the scaling value.
+     * Gets the projection matrix.
      *
-     * @return the scale vector.
+     * @return the projection matrix.
      */
-    public Vector3f scale() {
-        return scale;
+    public Matrix4f projection() {
+        return projection;
     }
 
     /**
-     * Gets the rotation value.
+     * Gets the view matrix.
      *
-     * @return the quaternion.
+     * @return the view matrix.
      */
-    public Quaternionf rotate() {
-        return rotate;
+    public Matrix4f view() {
+        return view;
     }
 
     @Override
     public Matrix4f applyMatrix(Matrix4f dest) {
-        return dest.scale(scale()).rotate(rotate());
+        return dest.mul(projection).mul(view);
     }
 }

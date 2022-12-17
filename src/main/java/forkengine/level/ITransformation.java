@@ -36,8 +36,8 @@ public interface ITransformation {
     /**
      * Applies this transformation to the given matrix.
      *
-     * @param matrix the matrix to be applied.
+     * @param dest the matrix to be applied.
      * @return the matrix.
      */
-    Matrix4f applyMatrix(Matrix4f matrix);
+    Matrix4f applyMatrix(Matrix4f dest);
 }

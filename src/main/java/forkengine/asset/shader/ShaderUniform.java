@@ -55,7 +55,7 @@ public abstract class ShaderUniform implements AutoCloseable {
     public ShaderUniform(int location, Type type) {
         this.location = location;
         this.type = type;
-        buffer = ForkEngine.application.allocateNative(type.bytesSize());
+        buffer = DataBuffer.allocate(type.bytesSize());
     }
 
     /**
@@ -799,6 +799,6 @@ public abstract class ShaderUniform implements AutoCloseable {
 
     @Override
     public void close() {
-        ForkEngine.application.freeNative(buffer);
+        buffer.free();
     }
 }

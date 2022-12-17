@@ -24,6 +24,10 @@
 
 package forkengine.core;
 
+import forkengine.asset.FileProvider;
+
+import java.nio.ByteBuffer;
+
 /**
  * The data buffer wrapped byte operation.
  *
@@ -48,64 +52,92 @@ public abstract class DataBuffer {
     }
 
     /**
+     * Allocates native memory.
+     *
+     * @param bytesSize the bytes size.
+     * @return the memory address.
+     */
+    public static DataBuffer allocate(long bytesSize) {
+        return ForkEngine.application.allocateNative(bytesSize);
+    }
+
+    /**
+     * Releases native memory.
+     *
+     * @param address the memory address.
+     */
+    public static void free(DataBuffer address) {
+        if (address != null) ForkEngine.application.freeNative(address);
+    }
+
+    /**
      * Puts the byte at the given offset.
      *
-     * @param offset the offset in bytes
-     * @param value  the value
-     * @return this
+     * @param offset the offset in bytes.
+     * @param value  the value.
+     * @return this.
      */
     public abstract DataBuffer putByte(long offset, byte value);
 
     /**
      * Puts the short at the given offset.
      *
-     * @param offset the offset in bytes
-     * @param value  the value
-     * @return this
+     * @param offset the offset in bytes.
+     * @param value  the value.
+     * @return this.
      */
     public abstract DataBuffer putShort(long offset, short value);
 
     /**
      * Puts the int at the given offset.
      *
-     * @param offset the offset in bytes
-     * @param value  the value
-     * @return this
+     * @param offset the offset in bytes.
+     * @param value  the value.
+     * @return this.
      */
     public abstract DataBuffer putInt(long offset, int value);
 
     /**
      * Puts the long at the given offset.
      *
-     * @param offset the offset in bytes
-     * @param value  the value
-     * @return this
+     * @param offset the offset in bytes.
+     * @param value  the value.
+     * @return this.
      */
     public abstract DataBuffer putLong(long offset, long value);
 
     /**
      * Puts the float at the given offset.
      *
-     * @param offset the offset in bytes
-     * @param value  the value
-     * @return this
+     * @param offset the offset in bytes.
+     * @param value  the value.
+     * @return this.
      */
     public abstract DataBuffer putFloat(long offset, float value);
 
     /**
      * Puts the double at the given offset.
      *
-     * @param offset the offset in bytes
-     * @param value  the value
-     * @return this
+     * @param offset the offset in bytes.
+     * @param value  the value.
+     * @return this.
      */
     public abstract DataBuffer putDouble(long offset, double value);
 
     /**
+     * Puts the buffer at the given offset.
+     *
+     * @param offset the offset in bytes.
+     * @param buffer the buffer.
+     * @return this.
+     */
+    public abstract DataBuffer putBuffer(long offset, ByteBuffer buffer);
+
+    /**
      * Puts the byte at the current position.
      *
-     * @param value the value
-     * @return this
+     * @param value the value.
+     * @return this.
      */
     public DataBuffer putByte(byte value) {
         putByte(position(), value);
@@ -116,8 +148,8 @@ public abstract class DataBuffer {
     /**
      * Puts the short at the current position.
      *
-     * @param value the value
-     * @return this
+     * @param value the value.
+     * @return this.
      */
     public DataBuffer putShort(short value) {
         putShort(position(), value);
@@ -128,8 +160,8 @@ public abstract class DataBuffer {
     /**
      * Puts the int at the current position.
      *
-     * @param value the value
-     * @return this
+     * @param value the value.
+     * @return this.
      */
     public DataBuffer putInt(int value) {
         putInt(position(), value);
@@ -140,8 +172,8 @@ public abstract class DataBuffer {
     /**
      * Puts the long at the current position.
      *
-     * @param value the value
-     * @return this
+     * @param value the value.
+     * @return this.
      */
     public DataBuffer putLong(long value) {
         putLong(position(), value);
@@ -152,8 +184,8 @@ public abstract class DataBuffer {
     /**
      * Puts the float at the current position.
      *
-     * @param value the value
-     * @return this
+     * @param value the value.
+     * @return this.
      */
     public DataBuffer putFloat(float value) {
         putFloat(position(), value);
@@ -164,8 +196,8 @@ public abstract class DataBuffer {
     /**
      * Puts the double at the current position.
      *
-     * @param value the value
-     * @return this
+     * @param value the value.
+     * @return this.
      */
     public DataBuffer putDouble(double value) {
         putDouble(position(), value);
@@ -174,50 +206,62 @@ public abstract class DataBuffer {
     }
 
     /**
+     * Puts the buffer at the current position.
+     *
+     * @param buffer the buffer.
+     * @return this.
+     */
+    public DataBuffer putBuffer(ByteBuffer buffer) {
+        putBuffer(position(), buffer);
+        position += buffer.remaining();
+        return this;
+    }
+
+    /**
      * Gets the byte at the given offset.
      *
-     * @param offset the offset in bytes
-     * @return the value
+     * @param offset the offset in bytes.
+     * @return the value.
      */
     public abstract byte getByte(long offset);
 
     /**
      * Gets the short at the given offset.
      *
-     * @param offset the offset in bytes
-     * @return the value
+     * @param offset the offset in bytes.
+     * @return the value.
      */
     public abstract short getShort(long offset);
 
     /**
      * Gets the int at the given offset.
      *
-     * @param offset the offset in bytes
-     * @return the value
+     * @param offset the offset in bytes.
+     * @return the value.
      */
     public abstract int getInt(long offset);
 
     /**
      * Gets the long at the given offset.
      *
-     * @param offset the offset in bytes
-     * @return the value
+     * @param offset the offset in bytes.
+     * @return the value.
      */
     public abstract long getLong(long offset);
 
     /**
      * Gets the float at the given offset.
      *
-     * @param offset the offset in bytes
-     * @return the value
+     * @param offset the offset in bytes.
+     * @return the value.
      */
     public abstract float getFloat(long offset);
 
     /**
      * Gets the double at the given offset.
      *
-     * @param offset the offset in bytes
-     * @return the value
+     * @param offset the offset in bytes.
+     * @return the value.
      */
     public abstract double getDouble(long offset);
 
@@ -228,6 +272,15 @@ public abstract class DataBuffer {
      * @return this.
      */
     public abstract DataBuffer realloc(long size);
+
+    /**
+     * Loads a file from the given file provider.
+     *
+     * @param provider the file provider.
+     * @param resource the resource name.
+     * @return this.
+     */
+    public abstract DataBuffer loadFile(FileProvider provider, String resource);
 
     /**
      * Sets the current position of this buffer.
@@ -265,5 +318,12 @@ public abstract class DataBuffer {
      */
     public long address() {
         return address;
+    }
+
+    /**
+     * Releases the native memory.
+     */
+    public void free() {
+        free(this);
     }
 }

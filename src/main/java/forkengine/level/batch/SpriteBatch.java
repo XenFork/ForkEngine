@@ -22,42 +22,13 @@
  * SOFTWARE.
  */
 
-package forkengine.level;
-
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
+package forkengine.level.batch;
 
 /**
- * The linear transformation.
+ * The sprite batch.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class LinearTransformation implements ITransformation {
-    private final Vector3f scale = new Vector3f(1);
-    private final Quaternionf rotate = new Quaternionf();
-
-    /**
-     * Gets the scaling value.
-     *
-     * @return the scale vector.
-     */
-    public Vector3f scale() {
-        return scale;
-    }
-
-    /**
-     * Gets the rotation value.
-     *
-     * @return the quaternion.
-     */
-    public Quaternionf rotate() {
-        return rotate;
-    }
-
-    @Override
-    public Matrix4f applyMatrix(Matrix4f dest) {
-        return dest.scale(scale()).rotate(rotate());
-    }
+public class SpriteBatch extends Batch {
 }

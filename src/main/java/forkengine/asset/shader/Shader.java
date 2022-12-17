@@ -27,7 +27,7 @@ package forkengine.asset.shader;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 import forkengine.asset.Asset;
-import forkengine.asset.AssetFile;
+import forkengine.asset.FileProvider;
 import forkengine.gl.GLStateManager;
 import forkengine.level.model.VertexLayout;
 
@@ -199,7 +199,7 @@ public abstract class Shader extends Asset {
     }
 
     private static Shader readJson(JsonReader in, VertexLayout layout) throws IOException {
-        AssetFile assetType = AssetFile.CLASSPATH;
+        FileProvider assetType = FileProvider.CLASSPATH;
         String vertex = null, fragment = null;
         Map<String, Map.Entry<ShaderUniform.Type, Object>> uniforms = new HashMap<>();
         in.beginObject();
@@ -208,8 +208,8 @@ public abstract class Shader extends Asset {
                 case "assetType" -> {
                     String v = in.nextString().toLowerCase(Locale.ROOT);
                     switch (v) {
-                        case "local" -> assetType = AssetFile.LOCAL;
-                        case "internal", "classpath" -> assetType = AssetFile.CLASSPATH;
+                        case "local" -> assetType = FileProvider.LOCAL;
+                        case "internal", "classpath" -> assetType = FileProvider.CLASSPATH;
                     }
                 }
                 case "vertex" -> vertex = in.nextString();

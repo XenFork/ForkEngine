@@ -34,6 +34,37 @@ import forkengine.core.ForkEngine;
  * @since 0.1.0
  */
 public abstract class Texture extends Asset {
+    /**
+     * The texture parameters.
+     */
+    public static final int
+        MAG_FILTER = 0x2800,
+        MIN_FILTER = 0x2801,
+        WRAP_S = 0x2802,
+        WRAP_T = 0x2803,
+        WRAP_R = 0x8072,
+        MIN_LOD = 0x813A,
+        MAX_LOD = 0x813B,
+        BASE_LEVEL = 0x813C,
+        MAX_LEVEL = 0x813D,
+        LOD_BIAS = 0x8501,
+        COMPARE_MODE = 0x884C,
+        COMPARE_FUNC = 0x884D,
+        SWIZZLE_R = 0x8E42,
+        SWIZZLE_G = 0x8E43,
+        SWIZZLE_B = 0x8E44,
+        SWIZZLE_A = 0x8E45,
+        DEPTH_STENCIL_TEXTURE_MODE = 0x90EA;
+    /**
+     * The cube-map texture faces.
+     */
+    public static final int
+        CUBE_MAP_POSITIVE_X = 0x8515,
+        CUBE_MAP_NEGATIVE_X = 0x8516,
+        CUBE_MAP_POSITIVE_Y = 0x8517,
+        CUBE_MAP_NEGATIVE_Y = 0x8518,
+        CUBE_MAP_POSITIVE_Z = 0x8519,
+        CUBE_MAP_NEGATIVE_Z = 0x851A;
     private final int id;
     private final int target;
 
@@ -49,11 +80,38 @@ public abstract class Texture extends Asset {
     }
 
     /**
-     * Binds this texture to the given unit started at 0.
+     * Binds this texture to the given unit started from 0.
      *
      * @param unit the texture unit to be bound.
      */
     public abstract void bind(int unit);
+
+    /**
+     * Sets the integer value of a texture parameter, which controls how the texel array is treated when specified or changed,
+     * and when applied to a fragment.
+     *
+     * @param pname the parameter to set.
+     * @param param the parameter value.
+     */
+    public abstract Texture setParameter(int pname, int param);
+
+    /**
+     * Float version of {@link #setParameter(int, int) setParameter}.
+     *
+     * @param pname the parameter to set.
+     * @param param the parameter value.
+     */
+    public abstract Texture setParameter(int pname, float param);
+
+    /**
+     * Generate mipmaps for a specified texture target.
+     *
+     * @return this.
+     */
+    public Texture generateMipmap() {
+        ForkEngine.gl.generateMipmap(target(), id());
+        return this;
+    }
 
     /**
      * Gets the id of this texture.

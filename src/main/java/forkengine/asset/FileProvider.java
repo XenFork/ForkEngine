@@ -24,37 +24,40 @@
 
 package forkengine.asset;
 
+import forkengine.core.DataBuffer;
+
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 /**
- * The asset file io utilities.
+ * The file io utilities.
  *
  * @author squid233
  * @since 0.1.0
  */
 @FunctionalInterface
-public interface AssetFile {
+public interface FileProvider {
     /**
      * The local file loader.
      */
-    AssetFile LOCAL = path -> new File(path).toURI().toURL();
+    FileProvider LOCAL = path -> new File(path).toURI();
     /**
      * The classpath file loader.
      */
-    AssetFile CLASSPATH = ClassLoader::getSystemResource;
+    FileProvider CLASSPATH = path -> ClassLoader.getSystemResource(path).toURI();
 
     /**
-     * Applies the path to an url.
+     * Applies the path to an uri.
      *
      * @param path the path.
-     * @return the url.
-     * @throws MalformedURLException If a protocol handler for the URL could not be found,
-     *                               or if some other error occurred while constructing the URL.
+     * @return the uri.
+     * @throws URISyntaxException if this URL is not formatted strictly according to RFC2396 and cannot be converted to a URI.
      */
-    URL apply(String path) throws MalformedURLException;
+    URI apply(String path) throws URISyntaxException;
 
     /**
      * Loads the string from the given local file.
@@ -77,6 +80,20 @@ public interface AssetFile {
     }
 
     /**
+     * Applies the path to an uri.
+     *
+     * @param path the path.
+     * @return the uri.
+     */
+    default URI toURI(String path) {
+        try {
+            return apply(path);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Applies the path to an url.
      *
      * @param path the path.
@@ -84,8 +101,8 @@ public interface AssetFile {
      */
     default URL toURL(String path) {
         try {
-            return apply(path);
-        } catch (MalformedURLException e) {
+            return apply(path).toURL();
+        } catch (URISyntaxException | MalformedURLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -121,5 +138,16 @@ public interface AssetFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Loads the file with the given name.
+     *
+     * @param resource   the resource name.
+     * @param bufferSize the initial buffer size.
+     * @return the data buffer.
+     */
+    default DataBuffer toDataBuffer(String resource, int bufferSize) {
+        return DataBuffer.allocate(bufferSize).loadFile(this, resource);
     }
 }

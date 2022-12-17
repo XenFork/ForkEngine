@@ -1,0 +1,15 @@
+{
+  "assetType": "internal",
+  "vertex": "shader/position_color_texture.vert",
+  "fragment": "shader/position_color_texture.frag",
+  "uniform": {
+    "u_ModelMatrix": {
+      "type": "mat4",
+      "values": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+    },
+    "u_Sampler0": {
+      "type": "int",
+      "values": [0]
+    }
+  }
+}

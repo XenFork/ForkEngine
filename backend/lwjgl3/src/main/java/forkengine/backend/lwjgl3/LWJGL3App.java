@@ -24,6 +24,7 @@
 
 package forkengine.backend.lwjgl3;
 
+import forkengine.asset.texture.TextureData;
 import forkengine.core.*;
 import forkengine.gl.IGL;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +45,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * @author squid233
  * @since 0.1.0
  */
-public final class LWJGL3App extends Application {
+public final class LWJGL3App implements Application {
     private static LWJGL3App instance;
 
     private LWJGL3App() {
@@ -146,6 +147,11 @@ public final class LWJGL3App extends Application {
     @Override
     public void freeNative(DataBuffer address) {
         MemoryUtil.nmemFree(address.address());
+    }
+
+    @Override
+    public TextureData newTextureData() {
+        return new LWJGL3TextureData();
     }
 
     /**

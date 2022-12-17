@@ -30,20 +30,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The actor, or game object.
+ * The game object.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class Actor {
-    public static final String COMP_POSITION = "fe_ActorPosition";
+public class GameObject {
+    public static final String COMP_POSITION = "fe_GameObject.Position";
     private final Map<String, Object> components = new HashMap<>();
     private final Vector3f position = new Vector3f();
 
     /**
-     * Creates the actor.
+     * Creates the game object.
      */
-    public Actor() {
+    public GameObject() {
         components.put(COMP_POSITION, position);
     }
 
@@ -61,7 +61,7 @@ public class Actor {
     }
 
     /**
-     * Gets the position of this actor.
+     * Gets the position of this game object.
      *
      * @return the position.
      */

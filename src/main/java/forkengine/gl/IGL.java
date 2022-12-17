@@ -29,7 +29,7 @@ import forkengine.asset.shader.ShaderUniform;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The OpenGL functions.
+ * The OpenGL functions and constants.
  *
  * @author squid233
  * @since 0.1.0
@@ -38,32 +38,22 @@ public interface IGL {
     /**
      * The data type enum values.
      */
-    int BYTE = 0x1400,
-        UNSIGNED_BYTE = 0x1401,
-        SHORT = 0x1402,
-        UNSIGNED_SHORT = 0x1403,
-        INT = 0x1404,
-        UNSIGNED_INT = 0x1405,
+    int BYTE = 0x1400, UNSIGNED_BYTE = 0x1401,
+        SHORT = 0x1402, UNSIGNED_SHORT = 0x1403,
+        INT = 0x1404, UNSIGNED_INT = 0x1405,
         FLOAT = 0x1406,
         DOUBLE = 0x140A;
     /**
      * The clear flag enum values.
      */
-    int
-        DEPTH_BUFFER_BIT = 0x100,
-        STENCIL_BUFFER_BIT = 0x400,
-        COLOR_BUFFER_BIT = 0x4000;
+    int DEPTH_BUFFER_BIT = 0x100, STENCIL_BUFFER_BIT = 0x400, COLOR_BUFFER_BIT = 0x4000;
     /**
      * The draw mode enum values.
      */
     int
         POINTS = 0x0,
-        LINES = 0x1,
-        LINE_LOOP = 0x2,
-        LINE_STRIP = 0x3,
-        TRIANGLES = 0x4,
-        TRIANGLE_STRIP = 0x5,
-        TRIANGLE_FAN = 0x6;
+        LINES = 0x1, LINE_LOOP = 0x2, LINE_STRIP = 0x3,
+        TRIANGLES = 0x4, TRIANGLE_STRIP = 0x5, TRIANGLE_FAN = 0x6;
     /**
      * The buffer target enum values.
      */
@@ -75,15 +65,9 @@ public interface IGL {
      * The buffer data usage enum values.
      */
     int
-        STREAM_DRAW = 0x88E0,
-        STREAM_READ = 0x88E1,
-        STREAM_COPY = 0x88E2,
-        STATIC_DRAW = 0x88E4,
-        STATIC_READ = 0x88E5,
-        STATIC_COPY = 0x88E6,
-        DYNAMIC_DRAW = 0x88E8,
-        DYNAMIC_READ = 0x88E9,
-        DYNAMIC_COPY = 0x88EA;
+        STREAM_DRAW = 0x88E0, STREAM_READ = 0x88E1, STREAM_COPY = 0x88E2,
+        STATIC_DRAW = 0x88E4, STATIC_READ = 0x88E5, STATIC_COPY = 0x88E6,
+        DYNAMIC_DRAW = 0x88E8, DYNAMIC_READ = 0x88E9, DYNAMIC_COPY = 0x88EA;
     /**
      * The texture targets.
      */
@@ -95,45 +79,126 @@ public interface IGL {
      * The texture units.
      */
     int
-        TEXTURE0 = 0x84C0,
-        TEXTURE1 = 0x84C1,
-        TEXTURE2 = 0x84C2,
-        TEXTURE3 = 0x84C3,
-        TEXTURE4 = 0x84C4,
-        TEXTURE5 = 0x84C5,
-        TEXTURE6 = 0x84C6,
-        TEXTURE7 = 0x84C7,
-        TEXTURE8 = 0x84C8,
-        TEXTURE9 = 0x84C9,
-        TEXTURE10 = 0x84CA,
-        TEXTURE11 = 0x84CB,
-        TEXTURE12 = 0x84CC,
-        TEXTURE13 = 0x84CD,
-        TEXTURE14 = 0x84CE,
-        TEXTURE15 = 0x84CF,
-        TEXTURE16 = 0x84D0,
-        TEXTURE17 = 0x84D1,
-        TEXTURE18 = 0x84D2,
-        TEXTURE19 = 0x84D3,
-        TEXTURE20 = 0x84D4,
-        TEXTURE21 = 0x84D5,
-        TEXTURE22 = 0x84D6,
-        TEXTURE23 = 0x84D7,
-        TEXTURE24 = 0x84D8,
-        TEXTURE25 = 0x84D9,
-        TEXTURE26 = 0x84DA,
-        TEXTURE27 = 0x84DB,
-        TEXTURE28 = 0x84DC,
-        TEXTURE29 = 0x84DD,
-        TEXTURE30 = 0x84DE,
-        TEXTURE31 = 0x84DF;
+        TEXTURE0 = 0x84C0, TEXTURE1 = 0x84C1, TEXTURE2 = 0x84C2, TEXTURE3 = 0x84C3, TEXTURE4 = 0x84C4, TEXTURE5 = 0x84C5, TEXTURE6 = 0x84C6, TEXTURE7 = 0x84C7,
+        TEXTURE8 = 0x84C8, TEXTURE9 = 0x84C9, TEXTURE10 = 0x84CA, TEXTURE11 = 0x84CB, TEXTURE12 = 0x84CC, TEXTURE13 = 0x84CD, TEXTURE14 = 0x84CE, TEXTURE15 = 0x84CF,
+        TEXTURE16 = 0x84D0, TEXTURE17 = 0x84D1, TEXTURE18 = 0x84D2, TEXTURE19 = 0x84D3, TEXTURE20 = 0x84D4, TEXTURE21 = 0x84D5, TEXTURE22 = 0x84D6, TEXTURE23 = 0x84D7,
+        TEXTURE24 = 0x84D8, TEXTURE25 = 0x84D9, TEXTURE26 = 0x84DA, TEXTURE27 = 0x84DB, TEXTURE28 = 0x84DC, TEXTURE29 = 0x84DD, TEXTURE30 = 0x84DE, TEXTURE31 = 0x84DF;
+    /**
+     * The compare functions.
+     */
+    int NEVER = 0x200, LESS = 0x201, EQUAL = 0x202, LEQUAL = 0x203, GREATER = 0x204, NOTEQUAL = 0x205, GEQUAL = 0x206, ALWAYS = 0x207;
+    /**
+     * The texture filters.
+     */
+    int
+        NEAREST = 0x2600, LINEAR = 0x2601,
+        NEAREST_MIPMAP_NEAREST = 0x2700, LINEAR_MIPMAP_NEAREST = 0x2701,
+        NEAREST_MIPMAP_LINEAR = 0x2702, LINEAR_MIPMAP_LINEAR = 0x2703;
+    /**
+     * The pixel formats.
+     */
+    int
+        STENCIL_INDEX = 0x1901,
+        DEPTH_COMPONENT = 0x1902,
+        RED = 0x1903, GREEN = 0x1904, BLUE = 0x1905, ALPHA = 0x1906,
+        RGB = 0x1907, RGBA = 0x1908;
+    /**
+     * The sized internal formats.
+     */
+    int
+        R3_G3_B2 = 0x2A10,
+        RGB4 = 0x804F,
+        RGB5 = 0x8050,
+        RGB8 = 0x8051,
+        RGB10 = 0x8052,
+        RGB12 = 0x8053,
+        RGB16 = 0x8054,
+        RGBA2 = 0x8055,
+        RGBA4 = 0x8056,
+        RGB5_A1 = 0x8057,
+        RGBA8 = 0x8058,
+        RGB10_A2 = 0x8059,
+        RGBA12 = 0x805A,
+        RGBA16 = 0x805B,
+        R8 = 0x8229,
+        R16 = 0x822A,
+        RG8 = 0x822B,
+        RG16 = 0x822C,
+        R16F = 0x822D,
+        R32F = 0x822E,
+        RG16F = 0x822F,
+        RG32F = 0x8230,
+        R8I = 0x8231,
+        R8UI = 0x8232,
+        R16I = 0x8233,
+        R16UI = 0x8234,
+        R32I = 0x8235,
+        R32UI = 0x8236,
+        RG8I = 0x8237,
+        RG8UI = 0x8238,
+        RG16I = 0x8239,
+        RG16UI = 0x823A,
+        RG32I = 0x823B,
+        RG32UI = 0x823C,
+        RG = 0x8227,
+        COMPRESSED_RED = 0x8225,
+        COMPRESSED_RG = 0x8226,
+        RGBA32F = 0x8814,
+        RGB32F = 0x8815,
+        RGBA16F = 0x881A,
+        RGB16F = 0x881B,
+        R11F_G11F_B10F = 0x8C3A,
+        RGB9_E5 = 0x8C3D,
+        SRGB = 0x8C40,
+        SRGB8 = 0x8C41,
+        SRGB_ALPHA = 0x8C42,
+        SRGB8_ALPHA8 = 0x8C43,
+        COMPRESSED_SRGB = 0x8C48,
+        COMPRESSED_SRGB_ALPHA = 0x8C49,
+        RGBA32UI = 0x8D70,
+        RGB32UI = 0x8D71,
+        RGBA16UI = 0x8D76,
+        RGB16UI = 0x8D77,
+        RGBA8UI = 0x8D7C,
+        RGB8UI = 0x8D7D,
+        RGBA32I = 0x8D82,
+        RGB32I = 0x8D83,
+        RGBA16I = 0x8D88,
+        RGB16I = 0x8D89,
+        RGBA8I = 0x8D8E,
+        RGB8I = 0x8D8F,
+        R8_SNORM = 0x8F94,
+        RG8_SNORM = 0x8F95,
+        RGB8_SNORM = 0x8F96,
+        RGBA8_SNORM = 0x8F97,
+        R16_SNORM = 0x8F98,
+        RG16_SNORM = 0x8F99,
+        RGB16_SNORM = 0x8F9A,
+        RGBA16_SNORM = 0x8F9B,
+        RGB10_A2UI = 0x906F;
+    /**
+     * The texture wrap parameters.
+     */
+    int REPEAT = 0x2901, CLAMP_TO_BORDER = 0x812D, CLAMP_TO_EDGE = 0x812F, MIRRORED_REPEAT = 0x8370, MIRROR_CLAMP_TO_EDGE = 0x8743;
 
     /**
-     * Call {@code glClear}.
+     * Sets portions of every pixel in a particular buffer to the same value.
+     * The value to which each buffer is cleared depends on the setting of the clear value for that buffer.
      *
-     * @param flag the clear flag.
+     * @param mask Zero or the bitwise OR of one or more values indicating which buffers are to be cleared.
      */
-    void clear(int flag);
+    void clear(int mask);
+
+    /**
+     * Sets the clear value for fixed-point and floating-point color buffers in RGBA mode.
+     * The specified components are stored as floating-point values.
+     *
+     * @param red   the value to which to clear the R channel of the color buffer.
+     * @param green the value to which to clear the G channel of the color buffer.
+     * @param blue  the value to which to clear the B channel of the color buffer.
+     * @param alpha the value to which to clear the A channel of the color buffer.
+     */
+    void clearColor(float red, float green, float blue, float alpha);
 
     /**
      * Call {@code glViewport}.
@@ -358,4 +423,74 @@ public interface IGL {
      * @param texture the texture to be deleted.
      */
     void deleteTexture(int texture);
+
+    /**
+     * Sets the integer value of a texture parameter, which controls how the texel array is treated when specified or changed,
+     * and when applied to a fragment.
+     *
+     * @param target  the texture target.
+     * @param texture the texture name.
+     * @param pname   the parameter to set.
+     * @param param   the parameter value.
+     */
+    void textureParameter(int target, int texture, int pname, int param);
+
+    /**
+     * Float version of {@link #textureParameter(int, int, int, int) textureParameter}.
+     *
+     * @param target  the texture target.
+     * @param texture the texture name.
+     * @param pname   the parameter to set.
+     * @param param   the parameter value.
+     */
+    void textureParameter(int target, int texture, int pname, float param);
+
+    /**
+     * Simultaneously specifies storage for all levels of a two-dimensional or one-dimensional array texture.
+     *
+     * @param target         the target of the operation.
+     * @param texture        the texture name.
+     * @param levels         the number of texture levels.
+     * @param internalFormat the sized internal format to be used to store texture image data.
+     * @param width          the width of the texture, in texels.
+     * @param height         the height of the texture, in texels.
+     * @param format         the texel data format.
+     * @param type           the texel data type.
+     */
+    void textureStorage2D(int target, int texture,
+                          int levels,
+                          int internalFormat,
+                          int width, int height,
+                          int format, int type);
+
+    /**
+     * Re-specifies a rectangular subregion of an existing texel array. No change is made to the internalFormat,
+     * width, height, depth, or border parameters of the specified texel array, nor is any change made to texel values
+     * outside the specified subregion.
+     *
+     * @param target  the texture target.
+     * @param texture the texture name.
+     * @param level   the level-of-detail-number.
+     * @param xOffset the left coordinate of the texel subregion.
+     * @param yOffset the bottom coordinate of the texel subregion.
+     * @param width   the subregion width.
+     * @param height  the subregion height.
+     * @param format  the pixel data format.
+     * @param type    the pixel data type.
+     * @param pixels  the pixel data.
+     */
+    void textureSubImage2D(int target, int texture,
+                           int level,
+                           int xOffset, int yOffset,
+                           int width, int height,
+                           int format, int type,
+                           long pixels);
+
+    /**
+     * Generate mipmaps for a specified texture target.
+     *
+     * @param target  the target to which the texture whose mimaps to generate is bound.
+     * @param texture the texture name.
+     */
+    void generateMipmap(int target, int texture);
 }

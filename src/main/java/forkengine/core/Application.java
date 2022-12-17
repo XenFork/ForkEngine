@@ -24,6 +24,7 @@
 
 package forkengine.core;
 
+import forkengine.asset.texture.TextureData;
 import forkengine.gl.IGL;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,16 +36,16 @@ import java.util.function.ObjIntConsumer;
  * @author squid233
  * @since 0.1.0
  */
-public abstract class Application {
+public interface Application {
     /**
      * Initialize GLFW.
      */
-    public abstract boolean initGLFW();
+    boolean initGLFW();
 
     /**
      * Terminate GLFW.
      */
-    public abstract void terminateGLFW();
+    void terminateGLFW();
 
     /**
      * Sets the GLFW error callback.
@@ -52,14 +53,14 @@ public abstract class Application {
      * @param logger the logger with type {@code (description, error) -> void }.
      * @return the previous callback.
      */
-    public abstract IResource setErrorCallback(ObjIntConsumer<String> logger);
+    IResource setErrorCallback(ObjIntConsumer<String> logger);
 
     /**
      * Gets the default GLFW error callback.
      *
      * @return the default GLFW error callback.
      */
-    public abstract ObjIntConsumer<String> defaultErrorCallback();
+    ObjIntConsumer<String> defaultErrorCallback();
 
     /**
      * Creates the window with the given parameters.
@@ -71,7 +72,7 @@ public abstract class Application {
      * @param share   the other window context to share with.
      * @return the instance of the window.
      */
-    public abstract @Nullable Window createWindow(int width, int height, String title, long monitor, long share);
+    @Nullable Window createWindow(int width, int height, String title, long monitor, long share);
 
     /**
      * Loads the OpenGL context.
@@ -79,7 +80,7 @@ public abstract class Application {
      * @param forwardCompatible {@code true} to creates a forward compatible context, which cannot access deprecated functions.
      * @return the OpenGL functions.
      */
-    public abstract IGL loadOpenGL(boolean forwardCompatible);
+    IGL loadOpenGL(boolean forwardCompatible);
 
     /**
      * Sets the swap interval for the current OpenGL or OpenGL ES context, i.e. the number of screen updates to wait from the time {@link Window#swapBuffers() SwapBuffers} was called
@@ -88,26 +89,26 @@ public abstract class Application {
      *
      * @param interval the minimum number of screen updates to wait for until the buffers are swapped by {@link Window#swapBuffers() SwapBuffers}.
      */
-    public abstract void swapInterval(int interval);
+    void swapInterval(int interval);
 
     /**
      * Poll GLFW events.
      */
-    public abstract void pollEvents();
+    void pollEvents();
 
     /**
      * Gets the monitors.
      *
      * @return the monitors.
      */
-    public abstract long @Nullable [] monitors();
+    long @Nullable [] monitors();
 
     /**
      * Gets the primary monitor.
      *
      * @return the primary monitor.
      */
-    public abstract long primaryMonitor();
+    long primaryMonitor();
 
     /**
      * Creates a timer.
@@ -115,7 +116,7 @@ public abstract class Application {
      * @param ticksPerSecond the ticks per second. defaults to 50.
      * @return the timer.
      */
-    public abstract Timer createTimer(int ticksPerSecond);
+    Timer createTimer(int ticksPerSecond);
 
     /**
      * Allocates native memory.
@@ -123,12 +124,19 @@ public abstract class Application {
      * @param bytesSize the bytes size.
      * @return the memory address.
      */
-    public abstract DataBuffer allocateNative(long bytesSize);
+    DataBuffer allocateNative(long bytesSize);
 
     /**
      * Releases native memory.
      *
      * @param address the memory address.
      */
-    public abstract void freeNative(DataBuffer address);
+    void freeNative(DataBuffer address);
+
+    /**
+     * Creates an implementation of the texture data.
+     *
+     * @return the texture data.
+     */
+    TextureData newTextureData();
 }

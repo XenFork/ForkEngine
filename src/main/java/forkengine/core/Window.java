@@ -32,63 +32,63 @@ import org.jetbrains.annotations.Nullable;
  * @author squid233
  * @since 0.1.0
  */
-public abstract class Window implements ISized, ISizeable, ISizeListener {
+public interface Window extends ISized, ISizeable, ISizeListener {
     /**
      * Register the callbacks.
      *
      * @return the callbacks.
      */
-    public abstract Window registerCallbacks();
+    Window registerCallbacks();
 
     /**
      * Destroys the callback and this window.
      */
-    public abstract void destroy();
+    void destroy();
 
     /**
      * Makes the OpenGL or OpenGL ES context of this window current on the calling thread.
      */
-    public abstract void makeContextCurrent();
+    void makeContextCurrent();
 
     /**
      * Returns the value of the close flag of this window.
      *
      * @return the value of the close flag
      */
-    public abstract boolean shouldClose();
+    boolean shouldClose();
 
     /**
      * Swap the buffers.
      */
-    public abstract void swapBuffers();
+    void swapBuffers();
 
     /**
      * Gets the width of the framebuffer.
      *
      * @return the width of the framebuffer.
      */
-    public abstract int framebufferWidth();
+    int framebufferWidth();
 
     /**
      * Gets the height of the framebuffer.
      *
      * @return the height of the framebuffer.
      */
-    public abstract int framebufferHeight();
+    int framebufferHeight();
 
     /**
      * Sets the title.
      *
      * @param title the new title of this window.
      */
-    public abstract void setTitle(String title);
+    void setTitle(String title);
 
     /**
      * Gets the title.
      *
      * @return the title of this window.
      */
-    public abstract String title();
+    String title();
 
     /**
      * Sets the monitor.
@@ -100,14 +100,14 @@ public abstract class Window implements ISized, ISizeable, ISizeListener {
      * @param height      the desired height, in screen coordinates, of the content area or video mode.
      * @param refreshRate the desired refresh rate, in Hz, of the video mode, or {@code -1} for don't care.
      */
-    public abstract void setMonitor(long monitor, int xpos, int ypos, int width, int height, int refreshRate);
+    void setMonitor(long monitor, int xpos, int ypos, int width, int height, int refreshRate);
 
     /**
      * Gets the monitor.
      *
      * @return the monitor of this window.
      */
-    public abstract long monitor();
+    long monitor();
 
     /**
      * Gets the status of the given mouse button.
@@ -115,7 +115,7 @@ public abstract class Window implements ISized, ISizeable, ISizeListener {
      * @param button the mouse button.
      * @return is the button pressing
      */
-    public abstract boolean isMouseButtonDown(int button);
+    boolean isMouseButtonDown(int button);
 
     /**
      * Gets the status of the given mouse button.
@@ -123,7 +123,7 @@ public abstract class Window implements ISized, ISizeable, ISizeListener {
      * @param button the mouse button.
      * @return is the button not pressing
      */
-    public abstract boolean isMouseButtonUp(int button);
+    boolean isMouseButtonUp(int button);
 
     /**
      * Gets the status of the given key.
@@ -131,7 +131,7 @@ public abstract class Window implements ISized, ISizeable, ISizeListener {
      * @param key the key.
      * @return is the key pressing
      */
-    public abstract boolean isKeyDown(int key);
+    boolean isKeyDown(int key);
 
     /**
      * Gets the status of the given key.
@@ -139,40 +139,40 @@ public abstract class Window implements ISized, ISizeable, ISizeListener {
      * @param key the key.
      * @return is the key not pressing
      */
-    public abstract boolean isKeyUp(int key);
+    boolean isKeyUp(int key);
 
     /**
      * Sets the size listener.
      *
      * @param sizeListener the size listener.
      */
-    public abstract void setSizeListener(@Nullable ISizeListener sizeListener);
+    void setSizeListener(@Nullable ISizeListener sizeListener);
 
     /**
      * Sets the framebuffer size callback.
      *
      * @param framebufferSizeCb the framebuffer size callback.
      */
-    public abstract void setFramebufferSizeCb(@Nullable ISizeListener framebufferSizeCb);
+    void setFramebufferSizeCb(@Nullable ISizeListener framebufferSizeCb);
 
     /**
      * Sets the cursor listener.
      *
      * @param cursorListener the cursor listener.
      */
-    public abstract void setCursorListener(@Nullable ICursorListener cursorListener);
+    void setCursorListener(@Nullable ICursorListener cursorListener);
 
     /**
      * Sets the key listener.
      *
      * @param keyListener the key listener.
      */
-    public abstract void setKeyListener(@Nullable IKeyListener keyListener);
+    void setKeyListener(@Nullable IKeyListener keyListener);
 
     /**
      * Gets the raw address.
      *
      * @return the raw address of this window.
      */
-    public abstract long address();
+    long address();
 }

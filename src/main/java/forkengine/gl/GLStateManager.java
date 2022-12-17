@@ -69,42 +69,42 @@ public final class GLStateManager {
     /**
      * Binds a 2D texture.
      *
-     * @param unit    the texture unit.
+     * @param unit    the texture unit started from 0.
      * @param texture the texture id.
      */
     public static void bindTexture2D(int unit, int texture) {
         if (activeTextureUnit2D != unit || boundTexture2D != texture) {
             activeTextureUnit2D = unit;
             boundTexture2D = texture;
-            gl.bindTexture(IGL.TEXTURE_2D, unit, texture);
+            gl.bindTexture(IGL.TEXTURE_2D, unit + IGL.TEXTURE0, texture);
         }
     }
 
     /**
      * Binds a 3D texture.
      *
-     * @param unit    the texture unit.
+     * @param unit    the texture unit started from 0.
      * @param texture the texture id.
      */
     public static void bindTexture3D(int unit, int texture) {
         if (activeTextureUnit3D != unit || boundTexture3D != texture) {
             activeTextureUnit3D = unit;
             boundTexture3D = texture;
-            gl.bindTexture(IGL.TEXTURE_3D, unit, texture);
+            gl.bindTexture(IGL.TEXTURE_3D, unit + IGL.TEXTURE0, texture);
         }
     }
 
     /**
      * Binds a cube-map texture.
      *
-     * @param unit    the texture unit.
+     * @param unit    the texture unit started from 0.
      * @param texture the texture id.
      */
     public static void bindTextureCubeMap(int unit, int texture) {
         if (activeTextureUnitCubeMap != unit || boundTextureCubeMap != texture) {
             activeTextureUnitCubeMap = unit;
             boundTextureCubeMap = texture;
-            gl.bindTexture(IGL.TEXTURE_CUBE_MAP, unit, texture);
+            gl.bindTexture(IGL.TEXTURE_CUBE_MAP, unit + IGL.TEXTURE0, texture);
         }
     }
 }

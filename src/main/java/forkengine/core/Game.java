@@ -24,6 +24,8 @@
 
 package forkengine.core;
 
+import forkengine.gui.screen.ScreenUtil;
+
 /**
  * The game.
  *
@@ -58,6 +60,12 @@ public class Game extends AppAdapter {
         defaultTimer = application.createTimer(config.ticksPerSecond);
     }
 
+    @Override
+    public void init() {
+        super.init();
+        onResize(0, 0, width, height);
+    }
+
     /**
      * Updating the things in the physical world.
      * <p>
@@ -82,6 +90,7 @@ public class Game extends AppAdapter {
     public void onResize(int oldWidth, int oldHeight, int newWidth, int newHeight) {
         width = newWidth;
         height = newHeight;
+        ScreenUtil.viewport(0, 0, newWidth, newHeight);
         super.onResize(oldWidth, oldHeight, newWidth, newHeight);
     }
 

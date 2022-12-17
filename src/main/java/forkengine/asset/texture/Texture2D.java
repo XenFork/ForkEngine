@@ -24,6 +24,7 @@
 
 package forkengine.asset.texture;
 
+import forkengine.core.ISized;
 import forkengine.gl.GLStateManager;
 import forkengine.gl.IGL;
 
@@ -35,7 +36,10 @@ import static forkengine.core.ForkEngine.gl;
  * @author squid233
  * @since 0.1.0
  */
-public class Texture2D extends Texture {
+public class Texture2D extends Texture implements ISized {
+    private int width = 0;
+    private int height = 0;
+
     /**
      * Creates the texture with the given id.
      *
@@ -89,8 +93,8 @@ public class Texture2D extends Texture {
      * @return this.
      */
     public Texture2D specifyImage(int levels, TextureData data) {
-        int width = data.width();
-        int height = data.height();
+        width = data.width();
+        height = data.height();
         gl.textureStorage2D(IGL.TEXTURE_2D, id(), levels, IGL.RGBA8, width, height, IGL.RGBA, IGL.UNSIGNED_BYTE);
         gl.textureSubImage2D(IGL.TEXTURE_2D, id(), 0, 0, 0, width, height, IGL.RGBA, IGL.UNSIGNED_BYTE, data.address());
         return this;
@@ -100,5 +104,15 @@ public class Texture2D extends Texture {
     public Texture2D generateMipmap() {
         super.generateMipmap();
         return this;
+    }
+
+    @Override
+    public int width() {
+        return width;
+    }
+
+    @Override
+    public int height() {
+        return height;
     }
 }

@@ -29,7 +29,7 @@ import com.google.gson.stream.JsonReader;
 import forkengine.asset.Asset;
 import forkengine.asset.FileProvider;
 import forkengine.gl.GLStateManager;
-import forkengine.level.model.VertexLayout;
+import forkengine.graphics.model.VertexLayout;
 
 import java.io.IOException;
 import java.io.StringReader;

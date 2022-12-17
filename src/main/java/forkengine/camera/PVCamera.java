@@ -22,13 +22,66 @@
  * SOFTWARE.
  */
 
-package forkengine.level.batch;
+package forkengine.camera;
+
+import org.joml.Matrix4f;
 
 /**
- * The sprite batch.
+ * The camera with projection and view matrix.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class SpriteBatch extends Batch {
+public class PVCamera extends Camera {
+    private final Matrix4f projection = new Matrix4f();
+    private final Matrix4f view = new Matrix4f();
+    /**
+     * the z near value.
+     */
+    protected float zNear = 0.0f;
+    /**
+     * the z far value.
+     */
+    protected float zFar = 0.0f;
+
+    /**
+     * Gets the z near value.
+     *
+     * @return the z near value.
+     */
+    public float zNear() {
+        return zNear;
+    }
+
+    /**
+     * Gets the z far value.
+     *
+     * @return the z far value.
+     */
+    public float zFar() {
+        return zFar;
+    }
+
+    /**
+     * Gets the projection matrix.
+     *
+     * @return the projection matrix.
+     */
+    public Matrix4f projection() {
+        return projection;
+    }
+
+    /**
+     * Gets the view matrix.
+     *
+     * @return the view matrix.
+     */
+    public Matrix4f view() {
+        return view;
+    }
+
+    @Override
+    public Matrix4f applyMatrix(Matrix4f dest) {
+        return dest.mul(projection).mul(view);
+    }
 }

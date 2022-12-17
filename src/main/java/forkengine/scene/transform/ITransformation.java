@@ -22,50 +22,22 @@
  * SOFTWARE.
  */
 
-package forkengine.level.scene;
+package forkengine.scene.transform;
 
-import org.joml.Vector3f;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.joml.Matrix4f;
 
 /**
- * The game object.
+ * The transformation.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class GameObject {
-    public static final String COMP_POSITION = "fe_GameObject.Position";
-    private final Map<String, Object> components = new HashMap<>();
-    private final Vector3f position = new Vector3f();
-
+public interface ITransformation {
     /**
-     * Creates the game object.
-     */
-    public GameObject() {
-        components.put(COMP_POSITION, position);
-    }
-
-    /**
-     * Gets a component by the given name.
+     * Applies this transformation to the given matrix.
      *
-     * @param name the name of the component.
-     * @param <T>  the type of the component.
-     * @return the component.
+     * @param dest the matrix to be applied.
+     * @return the matrix.
      */
-    @SuppressWarnings("unchecked")
-    public <T> T getComponent(String name) {
-        Object comp = components.get(name);
-        return comp != null ? (T) comp : null;
-    }
-
-    /**
-     * Gets the position of this game object.
-     *
-     * @return the position.
-     */
-    public Vector3f position() {
-        return position;
-    }
+    Matrix4f applyMatrix(Matrix4f dest);
 }

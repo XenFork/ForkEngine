@@ -22,13 +22,15 @@
  * SOFTWARE.
  */
 
-package forkengine.level.model;
+package forkengine.camera;
+
+import forkengine.scene.transform.ITransformation;
 
 /**
- * The dynamic model, which can be modified at any frame.
+ * The base camera.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class DynamicModel extends Model {
+public abstract class Camera implements ITransformation {
 }

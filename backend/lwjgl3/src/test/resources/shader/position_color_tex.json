@@ -1,8 +1,12 @@
 {
   "assetType": "internal",
-  "vertex": "shader/position_color_texture.vert",
-  "fragment": "shader/position_color_texture.frag",
+  "vertex": "shader/position_color_tex.vert",
+  "fragment": "shader/position_color_tex.frag",
   "uniform": {
+    "u_ProjectionViewMatrix": {
+      "type": "mat4",
+      "values": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+    },
     "u_ModelMatrix": {
       "type": "mat4",
       "values": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]

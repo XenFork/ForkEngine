@@ -22,40 +22,13 @@
  * SOFTWARE.
  */
 
-package forkengine.level.camera;
-
-import org.joml.Matrix4f;
+package forkengine.graphics.batch;
 
 /**
- * The camera with projection and view matrix.
+ * The sprite batch.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class PVCamera extends Camera {
-    private final Matrix4f projection = new Matrix4f();
-    private final Matrix4f view = new Matrix4f();
-
-    /**
-     * Gets the projection matrix.
-     *
-     * @return the projection matrix.
-     */
-    public Matrix4f projection() {
-        return projection;
-    }
-
-    /**
-     * Gets the view matrix.
-     *
-     * @return the view matrix.
-     */
-    public Matrix4f view() {
-        return view;
-    }
-
-    @Override
-    public Matrix4f applyMatrix(Matrix4f dest) {
-        return dest.mul(projection).mul(view);
-    }
+public class SpriteBatch extends Batch {
 }

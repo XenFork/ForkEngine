@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package forkengine.level.model;
+package forkengine.graphics.model;
 
 import forkengine.gl.IGL;
 import org.joml.Vector3fc;

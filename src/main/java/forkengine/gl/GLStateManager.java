@@ -41,6 +41,7 @@ public final class GLStateManager {
     private static int boundTexture3D = 0;
     private static int activeTextureUnitCubeMap = 0;
     private static int boundTextureCubeMap = 0;
+    private static boolean enabledBlend = false;
 
     /**
      * Installs a program object as part of current rendering state.
@@ -106,5 +107,66 @@ public final class GLStateManager {
             boundTextureCubeMap = texture;
             gl.bindTexture(IGL.TEXTURE_CUBE_MAP, unit + IGL.TEXTURE0, texture);
         }
+    }
+
+    /**
+     * Enables blend.
+     */
+    public static void enableBlend() {
+        if (!enabledBlend) {
+            enabledBlend = true;
+            gl.enable(IGL.BLEND);
+        }
+    }
+
+    /**
+     * Disables blend.
+     */
+    public static void disableBlend() {
+        if (enabledBlend) {
+            enabledBlend = false;
+            gl.disable(IGL.BLEND);
+        }
+    }
+
+    /**
+     * Controls the blend equations used for per-fragment blending.
+     *
+     * @param mode the blend equation.
+     */
+    public static void blendEquation(int mode) {
+        gl.blendEquation(mode);
+    }
+
+    /**
+     * Sets the RGB blend equation and the alpha blend equation separately.
+     *
+     * @param modeRGB   the RGB blend equation, how the red, green, and blue components of the source and destination colors are combined.
+     * @param modeAlpha the alpha blend equation, how the alpha component of the source and destination colors are combined.
+     */
+    public static void blendEquationSeparate(int modeRGB, int modeAlpha) {
+        gl.blendEquationSeparate(modeRGB, modeAlpha);
+    }
+
+    /**
+     * Specifies the weighting factors used by the blend equation, for both RGB and alpha functions and for all draw buffers.
+     *
+     * @param sfactor the source weighting factor.
+     * @param dfactor the destination weighting factor.
+     */
+    public static void blendFunc(int sfactor, int dfactor) {
+        gl.blendFunc(sfactor, dfactor);
+    }
+
+    /**
+     * Specifies pixel arithmetic for RGB and alpha components separately.
+     *
+     * @param srcRGB   how the red, green, and blue blending factors are computed. The initial value is GL_ONE.
+     * @param dstRGB   how the red, green, and blue destination blending factors are computed. The initial value is GL_ZERO.
+     * @param srcAlpha how the alpha source blending factor is computed. The initial value is GL_ONE.
+     * @param dstAlpha how the alpha destination blending factor is computed. The initial value is GL_ZERO.
+     */
+    public static void blendFuncSeparate(int srcRGB, int dstRGB, int srcAlpha, int dstAlpha) {
+        gl.blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
     }
 }

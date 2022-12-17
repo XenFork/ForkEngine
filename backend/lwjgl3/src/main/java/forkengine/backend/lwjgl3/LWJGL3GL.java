@@ -272,6 +272,36 @@ public final class LWJGL3GL implements IGL {
         }
     }
 
+    @Override
+    public void blendEquation(int mode) {
+        glBlendEquation(mode);
+    }
+
+    @Override
+    public void blendEquationSeparate(int modeRGB, int modeAlpha) {
+        glBlendEquationSeparate(modeRGB, modeAlpha);
+    }
+
+    @Override
+    public void blendFunc(int sfactor, int dfactor) {
+        glBlendFunc(sfactor, dfactor);
+    }
+
+    @Override
+    public void blendFuncSeparate(int srcRGB, int dstRGB, int srcAlpha, int dstAlpha) {
+        glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
+    }
+
+    @Override
+    public void enable(int target) {
+        glEnable(target);
+    }
+
+    @Override
+    public void disable(int target) {
+        glDisable(target);
+    }
+
     /**
      * Gets the instance of this.
      *

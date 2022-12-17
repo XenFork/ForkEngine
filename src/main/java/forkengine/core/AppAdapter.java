@@ -24,7 +24,6 @@
 
 package forkengine.core;
 
-import forkengine.gui.screen.ScreenUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -81,7 +80,6 @@ public class AppAdapter implements ISizeListener, IMouseListener, IKeyListener {
 
     @Override
     public void onResize(int oldWidth, int oldHeight, int newWidth, int newHeight) {
-        ScreenUtil.viewport(0, 0, newWidth, newHeight);
     }
 
     @Override

@@ -22,22 +22,12 @@
  * SOFTWARE.
  */
 
-package forkengine.level;
-
-import org.joml.Matrix4f;
+package forkengine.graphics.batch;
 
 /**
- * The transformation.
- *
+ * The base batch
  * @author squid233
  * @since 0.1.0
  */
-public interface ITransformation {
-    /**
-     * Applies this transformation to the given matrix.
-     *
-     * @param dest the matrix to be applied.
-     * @return the matrix.
-     */
-    Matrix4f applyMatrix(Matrix4f dest);
+public class Batch {
 }

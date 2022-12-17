@@ -22,12 +22,33 @@
  * SOFTWARE.
  */
 
-package forkengine.level.batch;
+package forkengine.scene.transform;
+
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 /**
- * The base batch
+ * The affine transformation, with a translation vector.
+ * <p>
+ * The translation is applied at last, that is, let the translation matrix be {@code T}, and the result will be {@code T * S * R * v}.
+ *
  * @author squid233
  * @since 0.1.0
  */
-public class Batch {
+public class AffineTransformation extends LinearTransformation {
+    private final Vector3f translate = new Vector3f();
+
+    /**
+     * Gets the translation vector.
+     *
+     * @return the translation vector.
+     */
+    public Vector3f translate() {
+        return translate;
+    }
+
+    @Override
+    public Matrix4f applyMatrix(Matrix4f dest) {
+        return super.applyMatrix(dest.translate(translate()));
+    }
 }

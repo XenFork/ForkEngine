@@ -196,6 +196,14 @@ public abstract class Model implements AutoCloseable {
     }
 
     /**
+     * Renders this model with the given primitive mode and index count.
+     *
+     * @param mode       the primitive mode.
+     * @param indexCount the index count.
+     */
+    public abstract void render(int mode, int indexCount);
+
+    /**
      * Renders this model.
      */
     public abstract void render();

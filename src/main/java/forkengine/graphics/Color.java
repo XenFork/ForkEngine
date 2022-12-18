@@ -250,6 +250,22 @@ public class Color {
     }
 
     /**
+     * Converts the packed color that ordered in ABGR to color.
+     *
+     * @param dest        the destination.
+     * @param packedColor the packed color.
+     */
+    public static void abgr8888ToColor(Color dest, float packedColor) {
+        int bits = Float.floatToRawIntBits(packedColor);
+        dest.set(
+            byteToFloat(getRedComponent(bits)),
+            byteToFloat(getGreenComponent(bits)),
+            byteToFloat(getBlueComponent(bits)),
+            byteToFloat(getAlphaComponent(bits))
+        );
+    }
+
+    /**
      * Sets this with the given component values.
      *
      * @param r the red value.
@@ -275,6 +291,17 @@ public class Color {
         this.r = r;
         this.g = g;
         this.b = b;
+    }
+
+    /**
+     * Sets this with the given color.
+     *
+     * @param color the other color.
+     */
+    public void set(Color color) {
+        this.r = color.r;
+        this.g = color.g;
+        this.b = color.b;
     }
 
     /**

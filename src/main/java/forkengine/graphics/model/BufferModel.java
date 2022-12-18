@@ -76,10 +76,15 @@ public abstract class BufferModel extends Model {
     }
 
     @Override
-    public void render() {
+    public void render(int mode, int indexCount) {
         bindVertexArray(vao);
-        gl.drawElements(type.value(), indexCount(), IGL.UNSIGNED_INT, 0);
+        gl.drawElements(mode, indexCount, IGL.UNSIGNED_INT, 0);
         bindVertexArray(0);
+    }
+
+    @Override
+    public void render() {
+        render(type.value(), indexCount());
     }
 
     @Override

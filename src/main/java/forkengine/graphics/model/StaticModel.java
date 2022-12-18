@@ -68,7 +68,7 @@ public class StaticModel extends BufferModel {
         bindVertexArray(vao);
 
         gl.bindBuffer(IGL.ARRAY_BUFFER, vbo);
-        DataBuffer buffer = DataBuffer.allocate((long) vertexCount * layout.elementBytesSize());
+        DataBuffer buffer = DataBuffer.allocate(vertexCount * layout.floatPutCount() * 4L);
         for (int i = 0; i < vertices.length; ) {
             for (VertexElement element : elements) {
                 VertexElement.Putter putter = element.putter();

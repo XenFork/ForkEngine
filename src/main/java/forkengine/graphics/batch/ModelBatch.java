@@ -24,11 +24,14 @@
 
 package forkengine.graphics.batch;
 
+import org.jetbrains.annotations.ApiStatus;
+
 /**
  * The model batch.
  *
  * @author squid233
  * @since 0.1.0
  */
-public class ModelBatch implements Batch {
+@ApiStatus.Experimental
+public abstract class ModelBatch implements Batch {
 }

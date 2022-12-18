@@ -108,9 +108,9 @@ public abstract class Timer {
     }
 
     /**
-     * Gets the percentage of the ticks performed.
+     * Gets the interval between 2 ticks performed.
      *
-     * @return the partial tick, that <code>partialTick * {@link #ticksPerSecond() tps} = currentTick</code>.
+     * @return the partial tick.
      */
     public double partialTick() {
         return partialTick;

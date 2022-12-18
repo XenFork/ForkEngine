@@ -96,6 +96,7 @@ public class LWJGL3Shader extends Shader {
 
     @Override
     public void close() {
+        super.close();
         glDeleteProgram(id());
     }
 }

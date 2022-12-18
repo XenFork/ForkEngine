@@ -36,15 +36,24 @@ import java.util.Map;
  * @since 0.1.0
  */
 public class GameObject {
+    /**
+     * The previous position.
+     */
+    public static final String COMP_PREV_POSITION = "fe_GameObject.PrevPosition";
+    /**
+     * The position.
+     */
     public static final String COMP_POSITION = "fe_GameObject.Position";
     private final Map<String, Object> components = new HashMap<>();
+    private final Vector3f prevPosition = new Vector3f();
     private final Vector3f position = new Vector3f();
 
     /**
      * Creates the game object.
      */
     public GameObject() {
-        components.put(COMP_POSITION, position);
+        addComponent(COMP_PREV_POSITION, prevPosition);
+        addComponent(COMP_POSITION, position);
     }
 
     /**
@@ -58,6 +67,27 @@ public class GameObject {
     public <T> T getComponent(String name) {
         Object comp = components.get(name);
         return comp != null ? (T) comp : null;
+    }
+
+    /**
+     * Adds a component with the given name.
+     *
+     * @param name the name of the component.
+     * @param comp the component.
+     * @return this.
+     */
+    public GameObject addComponent(String name, Object comp) {
+        components.put(name, comp);
+        return this;
+    }
+
+    /**
+     * Gets the previous position of this game object.
+     *
+     * @return the previous position.
+     */
+    public Vector3f prevPosition() {
+        return prevPosition;
     }
 
     /**

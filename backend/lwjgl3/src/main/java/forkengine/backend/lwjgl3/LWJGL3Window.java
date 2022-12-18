@@ -236,6 +236,16 @@ public class LWJGL3Window implements Window {
     }
 
     @Override
+    public double cursorX() {
+        return cursorX;
+    }
+
+    @Override
+    public double cursorY() {
+        return cursorY;
+    }
+
+    @Override
     public void setSizeListener(@Nullable ISizeListener sizeListener) {
         this.sizeListener = sizeListener;
     }

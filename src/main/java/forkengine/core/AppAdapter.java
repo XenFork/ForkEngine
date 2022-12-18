@@ -87,8 +87,10 @@ public class AppAdapter implements ISized, ISizeListener, IMouseListener, IKeyLi
 
     /**
      * Rendering. You should use {@code super} call at the end of the overridden.
+     *
+     * @param partialTick {@link Timer#partialTick()}
      */
-    public void render() {
+    public void render(double partialTick) {
         window.swapBuffers();
     }
 
@@ -134,7 +136,7 @@ public class AppAdapter implements ISized, ISizeListener, IMouseListener, IKeyLi
      * @param autoCloseable the resource.
      * @throws Exception if the resource cannot be closed.
      */
-    public void dispose(@Nullable AutoCloseable autoCloseable) throws Exception {
+    public static void dispose(@Nullable AutoCloseable autoCloseable) throws Exception {
         if (autoCloseable != null) {
             autoCloseable.close();
         }
@@ -146,7 +148,7 @@ public class AppAdapter implements ISized, ISizeListener, IMouseListener, IKeyLi
      * @param autoCloseables the resources.
      * @throws Exception if the resource cannot be closed.
      */
-    public void dispose(@Nullable AutoCloseable... autoCloseables) throws Exception {
+    public static void dispose(@Nullable AutoCloseable... autoCloseables) throws Exception {
         for (AutoCloseable autoCloseable : autoCloseables) {
             dispose(autoCloseable);
         }
@@ -227,7 +229,11 @@ public class AppAdapter implements ISized, ISizeListener, IMouseListener, IKeyLi
             e.printStackTrace();
         } finally {
             app.terminateGLFW();
-            app.setErrorCallback(null).close();
+            try {
+                dispose(app.setErrorCallback(null));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         ForkEngine.appAdapter = null;
     }

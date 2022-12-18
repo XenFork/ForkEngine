@@ -42,6 +42,12 @@ public final class GLStateManager {
     private static int activeTextureUnitCubeMap = 0;
     private static int boundTextureCubeMap = 0;
     private static boolean enabledBlend = false;
+    private static int blendEquationRGB = IGL.FUNC_ADD;
+    private static int blendEquationAlpha = IGL.FUNC_ADD;
+    private static int blendFuncSrcRGB = IGL.ONE;
+    private static int blendFuncDstRGB = IGL.ZERO;
+    private static int blendFuncSrcAlpha = IGL.ONE;
+    private static int blendFuncDstAlpha = IGL.ZERO;
 
     /**
      * Installs a program object as part of current rendering state.
@@ -110,6 +116,60 @@ public final class GLStateManager {
     }
 
     /**
+     * Gets the active 2D texture unit.
+     *
+     * @return the active 2D texture unit.
+     */
+    public static int activeTextureUnit2D() {
+        return activeTextureUnit2D;
+    }
+
+    /**
+     * Gets the active 3D texture unit.
+     *
+     * @return the active 3D texture unit.
+     */
+    public static int activeTextureUnit3D() {
+        return activeTextureUnit3D;
+    }
+
+    /**
+     * Gets the active cube-map texture unit.
+     *
+     * @return the active cube-map texture unit.
+     */
+    public static int activeTextureUnitCubeMap() {
+        return activeTextureUnitCubeMap;
+    }
+
+    /**
+     * Gets the bound 2D texture id.
+     *
+     * @return the bound 2D texture id.
+     */
+    public static int boundTexture2D() {
+        return boundTexture2D;
+    }
+
+    /**
+     * Gets the bound 3D texture id.
+     *
+     * @return the bound 3D texture id.
+     */
+    public static int boundTexture3D() {
+        return boundTexture3D;
+    }
+
+    /**
+     * Gets the bound cube-map texture id.
+     *
+     * @return the bound cube-map texture id.
+     */
+    public static int boundTextureCubeMap() {
+        return boundTextureCubeMap;
+    }
+
+    /**
      * Enables blend.
      */
     public static void enableBlend() {
@@ -135,7 +195,7 @@ public final class GLStateManager {
      * @param mode the blend equation.
      */
     public static void blendEquation(int mode) {
-        gl.blendEquation(mode);
+        blendEquationSeparate(mode, mode);
     }
 
     /**
@@ -145,7 +205,11 @@ public final class GLStateManager {
      * @param modeAlpha the alpha blend equation, how the alpha component of the source and destination colors are combined.
      */
     public static void blendEquationSeparate(int modeRGB, int modeAlpha) {
-        gl.blendEquationSeparate(modeRGB, modeAlpha);
+        if (blendEquationRGB != modeRGB || blendEquationAlpha != modeAlpha) {
+            blendEquationRGB = modeRGB;
+            blendEquationAlpha = modeAlpha;
+            gl.blendEquationSeparate(modeRGB, modeAlpha);
+        }
     }
 
     /**
@@ -155,7 +219,7 @@ public final class GLStateManager {
      * @param dfactor the destination weighting factor.
      */
     public static void blendFunc(int sfactor, int dfactor) {
-        gl.blendFunc(sfactor, dfactor);
+        blendFuncSeparate(sfactor, dfactor, sfactor, dfactor);
     }
 
     /**
@@ -167,6 +231,12 @@ public final class GLStateManager {
      * @param dstAlpha how the alpha destination blending factor is computed. The initial value is GL_ZERO.
      */
     public static void blendFuncSeparate(int srcRGB, int dstRGB, int srcAlpha, int dstAlpha) {
-        gl.blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
+        if (blendFuncSrcRGB != srcRGB || blendFuncDstRGB != dstRGB || blendFuncSrcAlpha != srcAlpha || blendFuncDstAlpha != dstAlpha) {
+            blendFuncSrcRGB = srcRGB;
+            blendFuncDstRGB = dstRGB;
+            blendFuncSrcAlpha = srcAlpha;
+            blendFuncDstAlpha = dstAlpha;
+            gl.blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
+        }
     }
 }

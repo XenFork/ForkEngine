@@ -32,6 +32,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * The file io utilities.
@@ -44,7 +46,25 @@ public interface FileProvider {
     /**
      * The local file loader.
      */
-    FileProvider LOCAL = path -> new File(path).toURI();
+    FileProvider LOCAL = new FileProvider() {
+        @Override
+        public URI apply(String path) {
+            return new File(path).toURI();
+        }
+
+        @Override
+        public DataBuffer toDataBuffer(String resource, long bufferSize) {
+            Path path = Path.of(apply(resource));
+            if (Files.isReadable(path)) {
+                try {
+                    return DataBuffer.allocate(bufferSize).loadLocalFile(resource);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return FileProvider.super.toDataBuffer(resource, bufferSize);
+        }
+    };
     /**
      * The classpath file loader.
      */
@@ -80,6 +100,22 @@ public interface FileProvider {
     }
 
     /**
+     * Returns the size of a file (in bytes).
+     *
+     * @param path the path to the file.
+     * @return the file size, in bytes.
+     * @throws IllegalStateException if an I/O error occurs.
+     * @see Files#size(Path)
+     */
+    static long size(Path path) throws IllegalStateException {
+        try {
+            return Files.size(path);
+        } catch (IOException e) {
+            throw new IllegalStateException("Couldn't get the size of the font file!", e);
+        }
+    }
+
+    /**
      * Applies the path to an uri.
      *
      * @param path the path.
@@ -103,7 +139,7 @@ public interface FileProvider {
         try {
             return apply(path).toURL();
         } catch (URISyntaxException | MalformedURLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to load resource '" + path + '\'', e);
         }
     }
 
@@ -147,7 +183,7 @@ public interface FileProvider {
      * @param bufferSize the initial buffer size.
      * @return the data buffer.
      */
-    default DataBuffer toDataBuffer(String resource, int bufferSize) {
+    default DataBuffer toDataBuffer(String resource, long bufferSize) {
         return DataBuffer.allocate(bufferSize).loadFile(this, resource);
     }
 }

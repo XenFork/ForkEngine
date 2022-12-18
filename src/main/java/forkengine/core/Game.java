@@ -24,7 +24,9 @@
 
 package forkengine.core;
 
+import forkengine.gui.screen.Screen;
 import forkengine.gui.screen.ScreenUtil;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The game.
@@ -41,8 +43,27 @@ public class Game extends AppAdapter {
      * The frames per second.
      */
     protected int framesPerSecond;
+    /**
+     * The opened screen.
+     */
+    protected Screen screen;
     private int frames;
     private double lastTime;
+
+    /**
+     * Opens a screen. The previous screen will be {@link Screen#onRemoved(Screen) removed}.
+     *
+     * @param screen the new screen.
+     */
+    public void openScreen(@Nullable Screen screen) {
+        if (this.screen != null) {
+            this.screen.onRemoved(screen);
+        }
+        this.screen = screen;
+        if (screen != null) {
+            screen.init();
+        }
+    }
 
     @Override
     public void preInit() {
@@ -56,14 +77,25 @@ public class Game extends AppAdapter {
         onResize(0, 0, width, height);
     }
 
+    @Override
+    public void update(double delta) {
+        if (screen != null) {
+            screen.update(delta);
+        }
+        super.update(delta);
+    }
+
     /**
      * Updating the things in the physical world.
      * <p>
-     * This method is invoked per tick.
+     * This method is invoked per tick. You should use {@code super} call at the end of the overridden.
      *
      * @param partialTick {@link Timer#partialTick()}
      */
     public void fixedUpdate(double partialTick) {
+        if (screen != null) {
+            screen.fixedUpdate(partialTick);
+        }
     }
 
     /**
@@ -77,11 +109,46 @@ public class Game extends AppAdapter {
     }
 
     @Override
+    public void render(double partialTick) {
+        if (screen != null) {
+            screen.render(partialTick, window.cursorX(), window.cursorY());
+        }
+        super.render(partialTick);
+    }
+
+    /**
+     * Resizing. You should use {@code super} call at the beginning of the overridden.
+     *
+     * @param oldWidth  the old width.
+     * @param oldHeight the old height.
+     * @param newWidth  the new width.
+     * @param newHeight the new height.
+     */
+    @Override
     public void onResize(int oldWidth, int oldHeight, int newWidth, int newHeight) {
         width = newWidth;
         height = newHeight;
         ScreenUtil.viewport(0, 0, newWidth, newHeight);
+        if (screen != null) {
+            screen.resize(newWidth, newHeight);
+        }
         super.onResize(oldWidth, oldHeight, newWidth, newHeight);
+    }
+
+    @Override
+    public void onKeyPress(int key, int scancode, int mods) {
+        super.onKeyPress(key, scancode, mods);
+        if (screen != null) {
+            screen.keyPressed(key, scancode, mods);
+        }
+    }
+
+    @Override
+    public void onMouseButtonPress(int button, int mods) {
+        super.onMouseButtonPress(button, mods);
+        if (screen != null) {
+            screen.mousePressed(window.cursorX(), window.cursorY(), button);
+        }
     }
 
     /**
@@ -109,7 +176,7 @@ public class Game extends AppAdapter {
         }
         update(defaultTimer.deltaFrameTime());
         lateUpdate(defaultTimer.deltaFrameTime());
-        render();
+        render(defaultTimer.partialTick());
         ++frames;
         while (defaultTimer.getTimeSecond() >= lastTime + 1.0) {
             onFpsChanged(framesPerSecond, frames);

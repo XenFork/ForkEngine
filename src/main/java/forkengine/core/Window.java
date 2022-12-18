@@ -34,15 +34,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface Window extends ISized, ISizeable, ISizeListener {
     /**
-     * The input options.
-     */
-    int CURSOR = 0x33001, STICKY_KEYS = 0x33002, STICKY_MOUSE_BUTTONS = 0x33003, LOCK_KEY_MODS = 0x33004, RAW_MOUSE_MOTION = 0x33005;
-    /**
-     * The cursor states.
-     */
-    int CURSOR_NORMAL = 0x34001, CURSOR_HIDDEN = 0x34002, CURSOR_DISABLED = 0x34003;
-
-    /**
      * Register the callbacks.
      *
      * @return the callbacks.
@@ -149,6 +140,20 @@ public interface Window extends ISized, ISizeable, ISizeListener {
      * @return is the key not pressing
      */
     boolean isKeyUp(int key);
+
+    /**
+     * Gets the x position of the cursor.
+     *
+     * @return the x position of the cursor.
+     */
+    double cursorX();
+
+    /**
+     * Gets the y position of the cursor.
+     *
+     * @return the y position of the cursor.
+     */
+    double cursorY();
 
     /**
      * Sets the size listener.

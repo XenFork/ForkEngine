@@ -27,6 +27,7 @@ package forkengine.backend.lwjgl3;
 import forkengine.asset.texture.TextureData;
 import forkengine.core.*;
 import forkengine.gl.IGL;
+import forkengine.graphics.font.BitmapFont;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -62,14 +63,9 @@ public final class LWJGL3App implements Application {
     }
 
     @Override
-    public IResource setErrorCallback(ObjIntConsumer<String> logger) {
-        GLFWErrorCallback cb = glfwSetErrorCallback((error, description) ->
+    public AutoCloseable setErrorCallback(ObjIntConsumer<String> logger) {
+        return glfwSetErrorCallback((error, description) ->
             logger.accept(GLFWErrorCallback.getDescription(description), error));
-        return () -> {
-            if (cb != null) {
-                cb.free();
-            }
-        };
     }
 
     @Override
@@ -152,6 +148,11 @@ public final class LWJGL3App implements Application {
     @Override
     public TextureData newTextureData() {
         return new LWJGL3TextureData();
+    }
+
+    @Override
+    public BitmapFont newBitmapFont() {
+        return new LWJGL3BitmapFont();
     }
 
     /**

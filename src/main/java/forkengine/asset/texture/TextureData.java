@@ -52,7 +52,7 @@ public interface TextureData extends ISized, AutoCloseable {
      * @param bufferSize the initial buffer size.
      * @return the texture data.
      */
-    static TextureData local(String path, int bufferSize) {
+    static TextureData local(String path, long bufferSize) {
         return create().load(FileProvider.LOCAL, path, bufferSize);
     }
 
@@ -63,9 +63,19 @@ public interface TextureData extends ISized, AutoCloseable {
      * @param bufferSize the initial buffer size.
      * @return the texture data.
      */
-    static TextureData internal(String path, int bufferSize) {
+    static TextureData internal(String path, long bufferSize) {
         return create().load(FileProvider.CLASSPATH, path, bufferSize);
     }
+
+    /**
+     * Sets the data to the given address.
+     *
+     * @param address the data address.
+     * @param width   the width.
+     * @param height  the height.
+     * @return this.
+     */
+    TextureData setAs(long address, int width, int height);
 
     /**
      * Loads the texture data from the given data buffer.
@@ -83,7 +93,16 @@ public interface TextureData extends ISized, AutoCloseable {
      * @param bufferSize the initial buffer size.
      * @return this.
      */
-    TextureData load(FileProvider provider, String path, int bufferSize);
+    default TextureData load(FileProvider provider, String path, long bufferSize) {
+        DataBuffer buffer = provider.toDataBuffer(path, bufferSize);
+        try {
+            return load(buffer);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to load image '" + path + '\'', e);
+        } finally {
+            buffer.free();
+        }
+    }
 
     /**
      * Gets the address of the pixel data.

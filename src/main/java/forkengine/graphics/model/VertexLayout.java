@@ -46,6 +46,7 @@ public sealed abstract class VertexLayout permits VertexLayout.Flat, VertexLayou
     protected final Map<VertexElement, Integer> elementIndex = new LinkedHashMap<>();
     private int nextIndex = 0;
     private int elementBytesSize = 0;
+    private int floatPutCount = 0;
 
     /**
      * Creates the flat vertex layout.
@@ -185,6 +186,7 @@ public sealed abstract class VertexLayout permits VertexLayout.Flat, VertexLayou
         elementIndex.put(element, index);
         nextIndex++;
         elementBytesSize += element.bytesSize();
+        floatPutCount += element.putter().floatPutCount();
         return this;
     }
 
@@ -263,6 +265,15 @@ public sealed abstract class VertexLayout permits VertexLayout.Flat, VertexLayou
      */
     public int elementBytesSize() {
         return elementBytesSize;
+    }
+
+    /**
+     * Gets the required putting float count.
+     *
+     * @return the putted float count.
+     */
+    public int floatPutCount() {
+        return floatPutCount;
     }
 
     private void checkElement(VertexElement element) {

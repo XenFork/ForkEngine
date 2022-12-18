@@ -28,10 +28,12 @@ import forkengine.asset.FileProvider;
 import forkengine.core.DataBuffer;
 import org.lwjgl.system.MemoryUtil;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 
 /**
@@ -130,6 +132,7 @@ public class LWJGL3DataBuffer extends DataBuffer {
     public DataBuffer realloc(long size) {
         buffer = MemoryUtil.memRealloc(buffer, (int) size);
         capacity = size;
+        address = MemoryUtil.memAddress(buffer);
         return this;
     }
 
@@ -146,8 +149,22 @@ public class LWJGL3DataBuffer extends DataBuffer {
                     realloc(capacity * 3 / 2); // 50%
                 }
             }
+            buffer.position(0);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+        return this;
+    }
+
+    @Override
+    public DataBuffer loadLocalFile(String resource) throws IOException {
+        try (FileInputStream fis = new FileInputStream(resource);
+             FileChannel fc = fis.getChannel()) {
+            long size = fc.size();
+            if (size > buffer.capacity()) {
+                realloc(size);
+            }
+            buffer.put(fc.map(FileChannel.MapMode.READ_ONLY, 0, size)).position(0);
         }
         return this;
     }

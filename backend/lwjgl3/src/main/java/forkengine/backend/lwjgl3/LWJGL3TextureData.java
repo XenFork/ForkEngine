@@ -24,7 +24,6 @@
 
 package forkengine.backend.lwjgl3;
 
-import forkengine.asset.FileProvider;
 import forkengine.asset.texture.TextureData;
 import forkengine.core.DataBuffer;
 import org.lwjgl.system.MemoryStack;
@@ -41,6 +40,7 @@ import static org.lwjgl.stb.STBImage.*;
  * @since 0.1.0
  */
 public class LWJGL3TextureData implements TextureData {
+    private boolean ownsData = false;
     private long address = 0;
     private int width = 0;
     private int height = 0;
@@ -56,6 +56,15 @@ public class LWJGL3TextureData implements TextureData {
     }
 
     @Override
+    public TextureData setAs(long address, int width, int height) {
+        ownsData=false;
+        this.address = address;
+        this.width = width;
+        this.height = height;
+        return this;
+    }
+
+    @Override
     public TextureData load(DataBuffer dataBuffer) {
         if (address() != 0) nstbi_image_free(address());
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -68,20 +77,14 @@ public class LWJGL3TextureData implements TextureData {
                 MemoryUtil.memAddress(py),
                 MemoryUtil.memAddress(pc),
                 STBI_rgb_alpha);
+            if (address == 0) {
+                throw new IllegalStateException("Failed to load the image: " + stbi_failure_reason());
+            }
+            ownsData = true;
             width = px.get(0);
             height = py.get(0);
         }
         return this;
-    }
-
-    @Override
-    public TextureData load(FileProvider provider, String path, int bufferSize) {
-        DataBuffer buffer = provider.toDataBuffer(path, bufferSize);
-        try {
-            return load(buffer);
-        } finally {
-            buffer.free();
-        }
     }
 
     @Override
@@ -91,6 +94,8 @@ public class LWJGL3TextureData implements TextureData {
 
     @Override
     public void close() {
-        nstbi_image_free(address());
+        if (ownsData) {
+            nstbi_image_free(address());
+        }
     }
 }

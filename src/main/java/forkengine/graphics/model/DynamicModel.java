@@ -59,7 +59,7 @@ public class DynamicModel extends BufferModel {
         bindVertexArray(vao);
 
         gl.bindBuffer(IGL.ARRAY_BUFFER, vbo);
-        gl.bufferData(IGL.ARRAY_BUFFER, vbo, (long) initialVertexCount * layout.elementBytesSize(), 0, IGL.DYNAMIC_DRAW);
+        gl.bufferData(IGL.ARRAY_BUFFER, vbo, initialVertexCount * layout.floatPutCount() * 4L, 0, IGL.DYNAMIC_DRAW);
         // Enable vertex attributes
         switch (layout) {
             case VertexLayout.Flat flat -> flatLayoutVA(vertexCount);
@@ -97,8 +97,8 @@ public class DynamicModel extends BufferModel {
      * @param vertices       the new vertices.
      */
     public void setVertices(int newVertexCount, float[] vertices) {
-        newVertexCount = Math.max(newVertexCount, vertices.length * 4 / layout.elementBytesSize());
-        DataBuffer buffer = DataBuffer.allocate((long) newVertexCount * layout().elementBytesSize());
+        newVertexCount = Math.max(newVertexCount, vertices.length * 4 / layout().elementBytesSize());
+        DataBuffer buffer = DataBuffer.allocate( newVertexCount * layout().floatPutCount() * 4L);
         for (int i = 0; i < vertices.length; ) {
             for (VertexElement element : layout().getElements()) {
                 VertexElement.Putter putter = element.putter();
@@ -115,7 +115,7 @@ public class DynamicModel extends BufferModel {
         } else {
             gl.bufferSubData(IGL.ARRAY_BUFFER, vbo, 0, buffer.capacity(), buffer.address());
         }
-        if (layout instanceof VertexLayout.Flat) {
+        if (layout() instanceof VertexLayout.Flat) {
             gl.bindVertexArray(vao);
             flatLayoutVA(newVertexCount);
             gl.bindVertexArray(0);

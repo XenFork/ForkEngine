@@ -24,9 +24,12 @@
 
 package forkengine.asset.texture;
 
+import forkengine.asset.FileProvider;
 import forkengine.core.ISized;
 import forkengine.gl.GLStateManager;
 import forkengine.gl.IGL;
+
+import java.util.function.Consumer;
 
 import static forkengine.core.ForkEngine.gl;
 
@@ -67,6 +70,57 @@ public class Texture2D extends Texture implements ISized {
     public static Texture2D create() {
         return new Texture2D(gl.createTexture(IGL.TEXTURE_2D));
     }
+
+    /**
+     * Loads a texture with the given parameters.
+     *
+     * @param provider   the file provider.
+     * @param path       the resource path.
+     * @param bufferSize the initial buffer size.
+     * @param levels     the number of texture levels.
+     * @param consumer   the action to be performed before loading image.
+     * @return the texture.
+     */
+    public static Texture2D load(FileProvider provider, String path, long bufferSize,
+                                 int levels, Consumer<Texture2D> consumer) {
+        Texture2D texture = create();
+        texture.bind(0);
+        consumer.accept(texture);
+        try (TextureData data = TextureData.create().load(provider, path, bufferSize)) {
+            texture.specifyImage(levels, data);
+        }
+        texture.generateMipmap();
+        return texture;
+    }
+
+    /**
+     * Loads a texture from local with the given parameters.
+     *
+     * @param path       the resource path.
+     * @param bufferSize the initial buffer size.
+     * @param levels     the number of texture levels.
+     * @param consumer   the action to be performed before loading image.
+     * @return the texture.
+     */
+    public static Texture2D local(String path, long bufferSize,
+                                  int levels, Consumer<Texture2D> consumer) {
+        return load(FileProvider.LOCAL, path, bufferSize, levels, consumer);
+    }
+
+    /**
+     * Loads a texture from classpath with the given parameters.
+     *
+     * @param path       the resource path.
+     * @param bufferSize the initial buffer size.
+     * @param levels     the number of texture levels.
+     * @param consumer   the action to be performed before loading image.
+     * @return the texture.
+     */
+    public static Texture2D internal(String path, long bufferSize,
+                                     int levels, Consumer<Texture2D> consumer) {
+        return load(FileProvider.CLASSPATH, path, bufferSize, levels, consumer);
+    }
+
 
     @Override
     public void bind(int unit) {

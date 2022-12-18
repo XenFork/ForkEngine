@@ -26,6 +26,7 @@ package forkengine.core;
 
 import forkengine.asset.texture.TextureData;
 import forkengine.gl.IGL;
+import forkengine.graphics.font.BitmapFont;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.ObjIntConsumer;
@@ -53,7 +54,7 @@ public interface Application {
      * @param logger the logger with type {@code (description, error) -> void }.
      * @return the previous callback.
      */
-    IResource setErrorCallback(ObjIntConsumer<String> logger);
+    AutoCloseable setErrorCallback(ObjIntConsumer<String> logger);
 
     /**
      * Gets the default GLFW error callback.
@@ -139,4 +140,11 @@ public interface Application {
      * @return the texture data.
      */
     TextureData newTextureData();
+
+    /**
+     * Creates an implementation of the bitmap font.
+     *
+     * @return the bitmap font.
+     */
+    BitmapFont newBitmapFont();
 }

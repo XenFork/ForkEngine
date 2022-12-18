@@ -25,44 +25,25 @@
 package forkengine.gui;
 
 /**
- * The gui element.
+ * The element with a position.
+ * <p>
+ * The position might be auto-detected with the given layout in the screen.
  *
  * @author squid233
  * @since 0.1.0
  */
-public interface XElement {
+public interface XPositionElement extends XElement {
     /**
-     * Returns {@code true} if the mouse button is pressed.
+     * Gets the x position.
      *
-     * @param cursorX the x position of the cursor.
-     * @param cursorY the y position of the cursor.
-     * @param button  the mouse button that is pressed.
-     * @return {@code true} if the mouse button is pressed.
+     * @return the x position.
      */
-    default boolean mousePressed(double cursorX, double cursorY, int button) {
-        return false;
-    }
+    int x();
 
     /**
-     * Returns {@code true} if the key is pressed.
+     * Gets the y position.
      *
-     * @param key      the key.
-     * @param scancode the scancode.
-     * @param mods     the modifiers.
-     * @return {@code true} if the key is pressed.
+     * @return the y position.
      */
-    default boolean keyPressed(int key, int scancode, int mods) {
-        return false;
-    }
-
-    /**
-     * Returns {@code true} if the cursor is hovering on this element.
-     *
-     * @param cursorX the x position of the cursor.
-     * @param cursorY the y position of the cursor.
-     * @return {@code true} if the cursor is hovering on this element.
-     */
-    default boolean isCursorHover(double cursorX, double cursorY) {
-        return false;
-    }
+    int y();
 }

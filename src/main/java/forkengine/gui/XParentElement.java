@@ -25,9 +25,10 @@
 package forkengine.gui;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
- * The element which contains elements.
+ * The element that contains child elements.
  *
  * @author squid233
  * @since 0.1.0
@@ -38,5 +39,39 @@ public interface XParentElement extends XElement {
      *
      * @return the children elements.
      */
-    List<XElement> getChildren();
+    List<? extends XElement> children();
+
+    /**
+     * Gets the hovered element with the given cursor position.
+     *
+     * @param cursorX the x position of the cursor.
+     * @param cursorY the y position of the cursor.
+     * @return the hovered element, or empty if no element was hovered.
+     */
+    default Optional<XElement> hoveredElement(double cursorX, double cursorY) {
+        for (XElement element : children()) {
+            if (element.isCursorHover(cursorX, cursorY)) {
+                return Optional.of(element);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Returns {@code true} if the mouse button is pressed and any element was performed.
+     *
+     * @param cursorX the x position of the cursor.
+     * @param cursorY the y position of the cursor.
+     * @param button  the mouse button that is pressed.
+     * @return {@code true} if the mouse button is pressed.
+     */
+    @Override
+    default boolean mousePressed(double cursorX, double cursorY, int button) {
+        for (XElement element : children()) {
+            if (element.mousePressed(cursorX, cursorY, button)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

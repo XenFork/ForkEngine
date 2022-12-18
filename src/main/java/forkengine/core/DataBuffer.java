@@ -26,6 +26,7 @@ package forkengine.core;
 
 import forkengine.asset.FileProvider;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -35,7 +36,10 @@ import java.nio.ByteBuffer;
  * @since 0.1.0
  */
 public abstract class DataBuffer {
-    private final long address;
+    /**
+     * The address of this buffer. It might be changed on reallocating.
+     */
+    protected long address;
     private long position = 0;
     /**
      * The capacity of this buffer.
@@ -281,6 +285,15 @@ public abstract class DataBuffer {
      * @return this.
      */
     public abstract DataBuffer loadFile(FileProvider provider, String resource);
+
+    /**
+     * Loads a file from local.
+     *
+     * @param resource the resource name.
+     * @return this.
+     * @throws IOException if error reading.
+     */
+    public abstract DataBuffer loadLocalFile(String resource) throws IOException;
 
     /**
      * Sets the current position of this buffer.

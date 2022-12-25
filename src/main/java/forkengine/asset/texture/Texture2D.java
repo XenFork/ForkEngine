@@ -55,7 +55,7 @@ public class Texture2D extends Texture implements ISized {
     /**
      * Binds a 2D texture with {@link GLStateManager#bindTexture2D}.
      *
-     * @param unit    the texture unit started from 0.
+     * @param unit    the texture unit starting at 0.
      * @param texture the texture id.
      */
     public static void bind(int unit, int texture) {

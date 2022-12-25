@@ -194,7 +194,7 @@ public final class LWJGL3GL implements IGL {
         if (hasDSA()) {
             glBindTextureUnit(unit, texture);
         } else {
-            glActiveTexture(unit);
+            glActiveTexture(unit + TEXTURE0);
             glBindTexture(target, texture);
         }
     }

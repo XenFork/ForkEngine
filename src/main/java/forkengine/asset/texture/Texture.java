@@ -80,7 +80,7 @@ public abstract class Texture extends Asset {
     }
 
     /**
-     * Binds this texture to the given unit started from 0.
+     * Binds this texture to the given unit starting at 0.
      *
      * @param unit the texture unit to be bound.
      */

@@ -72,13 +72,13 @@ public class LWJGL3BitmapFont implements BitmapFont {
 
         int pixelsSize = bitmapW * bitmapH;
         ByteBuffer pixels = memAlloc(pixelsSize);
-        DataBuffer pixelDataBuf = DataBuffer.allocate(pixelsSize * 4L);
+        ByteBuffer pixelDataBuf = memAlloc(pixelsSize * 4);
         nstbtt_BakeFontBitmap(data.address(), 0, pixelHeight, memAddress(pixels), bitmapW, bitmapH, firstChar, charCount, charData.address());
         for (int i = 0; i < pixelsSize; i++) {
-            pixelDataBuf.putByte(i * 4L, (byte) 0xFF)
-                .putByte(i * 4L + 1, (byte) 0xFF)
-                .putByte(i * 4L + 2, (byte) 0xFF)
-                .putByte(i * 4L + 3, pixels.get(i));
+            pixelDataBuf.put(i * 4, (byte) 0xFF)
+                .put(i * 4 + 1, (byte) 0xFF)
+                .put(i * 4 + 2, (byte) 0xFF)
+                .put(i * 4 + 3, pixels.get(i));
         }
 
         int prevUnit = GLStateManager.activeTextureUnit2D();
@@ -88,11 +88,11 @@ public class LWJGL3BitmapFont implements BitmapFont {
         }
         texture.bind(0);
         //setParam
-        try (TextureData textureData = TextureData.create().setAs(pixelDataBuf.address(), bitmapW, bitmapH)) {
+        try (TextureData textureData = TextureData.create().setAs(memAddress(pixelDataBuf), bitmapW, bitmapH)) {
             texture.specifyImage(1, textureData);
         }
         memFree(pixels);
-        pixelDataBuf.free();
+        memFree(pixelDataBuf);
         texture.generateMipmap();
         Texture2D.bind(prevUnit, prevTex);
     }
